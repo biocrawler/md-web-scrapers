@@ -29,7 +29,7 @@
         <maven.resources.plugin>3.0.2</maven.resources.plugin>
         <spring.boot.version>2.2.2.RELEASE</spring.boot.version>
         <spring.framework.support.version>5.2.5.RELEASE</spring.framework.support.version>
-        <lombok.version>1.18.12</lombok.version>
+        <lombok.version>1.18.16</lombok.version>
         <selenium.version>3.141.59</selenium.version>
         <guava.version>30.0-jre</guava.version>
         <junit.version>5.5.1</junit.version>

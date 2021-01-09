@@ -1,6 +1,5 @@
 package org.perpetualnetworks.mdcrawler.publishers;
 
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
@@ -26,11 +25,13 @@ public class AwsSnsPublisher {
     public static final String AWS_ACCESS_KEY_ID = "aws_access_key_id";
     private final AwsConfiguration awsConfiguration;
     private AwsBasicCredentials awsBasicCredentials;
+    private final SqsClient sqsClient;
 
     @Autowired
     public AwsSnsPublisher(AwsConfiguration awsConfiguration) {
         this.awsConfiguration = awsConfiguration;
         parseAwsCredentials(awsConfiguration).ifPresent(c -> this.awsBasicCredentials = c);
+        this.sqsClient = SqsClient.create();
     }
 
     @SneakyThrows
@@ -43,13 +44,18 @@ public class AwsSnsPublisher {
     }
 
     @SneakyThrows
-    public SendMessageResponse sendArticle(Article article) {
+    public Optional<SendMessageResponse> sendArticle(Article article) {
         String serialized = MAPPER.writeValueAsString(article);
-        return sendMessage(serialized);
+        try {
+            return sendMessage(serialized);
+        } catch (Exception e) {
+            log.error("could not send article", e.getCause());
+        }
+        return Optional.empty();
+
     }
 
-    public SendMessageResponse sendMessage(String message) {
-        SqsClient client = SqsClient.create();
+    public Optional<SendMessageResponse> sendMessage(String message) {
         AwsBasicCredentials credentials = AwsBasicCredentials.create(awsBasicCredentials.accessKeyId(), awsBasicCredentials.secretAccessKey());
         SendMessageRequest request = SendMessageRequest.builder()
                 .overrideConfiguration(AwsRequestOverrideConfiguration.builder()
@@ -58,6 +64,11 @@ public class AwsSnsPublisher {
                 .messageBody(message)
                 .queueUrl(awsConfiguration.getSqsUrl())
                 .build();
-        return client.sendMessage(request);
+        try {
+            return Optional.of(sqsClient.sendMessage(request));
+        } catch (Exception e) {
+            log.error("error sending message:", e.getCause());
+        }
+        return Optional.empty();
     }
 }

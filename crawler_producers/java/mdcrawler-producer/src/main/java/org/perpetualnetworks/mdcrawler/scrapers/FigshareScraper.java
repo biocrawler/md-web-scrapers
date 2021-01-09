@@ -57,7 +57,10 @@ public class FigshareScraper {
         log.info("closing webdriver");
         browserAutomator.closeWebDriver();
         log.info("starting publish");
-        List<SendMessageResponse> sendResponses = articles.stream().map(publisher::sendArticle).collect(Collectors.toList());
+        List<SendMessageResponse> sendResponses = articles.stream()
+                .map(publisher::sendArticle)
+                .flatMap(Optional::stream)
+                .collect(Collectors.toList());
         //TODO: assert all messages sent successfully, alert/log if not
         //TODO: add monitoring for messages sent
         log.info("send message responses: " + sendResponses);

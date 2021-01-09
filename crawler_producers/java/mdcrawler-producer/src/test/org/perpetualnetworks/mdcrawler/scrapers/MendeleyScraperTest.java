@@ -6,18 +6,29 @@ import okhttp3.OkHttpClient;
 import okhttp3.Response;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
+import org.perpetualnetworks.mdcrawler.config.AwsConfiguration;
 import org.perpetualnetworks.mdcrawler.config.MendeleyConfiguration;
 import org.perpetualnetworks.mdcrawler.converters.MendeleyArticleConverter;
 import org.perpetualnetworks.mdcrawler.publishers.AwsSnsPublisher;
 import org.perpetualnetworks.mdcrawler.scrapers.dto.MendeleyResponse;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 class MendeleyScraperTest {
 
-    @Mock
-    AwsSnsPublisher publisher;
+    private static final OkHttpClient OK_HTTP_CLIENT = new OkHttpClient.Builder()
+            .connectTimeout(5, TimeUnit.MINUTES)
+            .writeTimeout(5, TimeUnit.MINUTES)
+            .readTimeout(5, TimeUnit.MINUTES)
+            .build();
+    private static final AwsConfiguration AWS_CONFIG = AwsConfiguration.builder()
+            .credentialsFile("config/aws.json")
+            .sqsUrl("https://sqs.eu-central-1.amazonaws.com/397254617684/crawler_queue")
+            .build();
+
+    private static final AwsSnsPublisher publisher = new AwsSnsPublisher(AWS_CONFIG);
 
     private static final MendeleyConfiguration CONFIG = MendeleyConfiguration.builder()
             .host("data.mendeley.com")
@@ -33,7 +44,7 @@ class MendeleyScraperTest {
     @SneakyThrows
     @Test
     void queryresult() {
-        MendeleyScraper scraper = new MendeleyScraper(new OkHttpClient(), CONFIG, MENDELEY_ARTICLE_CONVERTER, publisher);
+        MendeleyScraper scraper = new MendeleyScraper(OK_HTTP_CLIENT, CONFIG, MENDELEY_ARTICLE_CONVERTER, publisher);
         Response fetch = scraper.fetch(scraper.buildHttpUrl(1));
         MendeleyResponse responses = MAPPER.readValue(fetch.body().byteStream(), MendeleyResponse.class);
         System.out.println("responses count: " + responses.getCount() + " size: " + responses.getResults().size());
@@ -44,9 +55,21 @@ class MendeleyScraperTest {
     @SneakyThrows
     @Test
     void queryresultAll() {
-        MendeleyScraper scraper = new MendeleyScraper(new OkHttpClient(), CONFIG, MENDELEY_ARTICLE_CONVERTER, publisher);
+        MendeleyScraper scraper = new MendeleyScraper(OK_HTTP_CLIENT, CONFIG, MENDELEY_ARTICLE_CONVERTER, publisher);
         System.out.println("starting fetchall");
         List<MendeleyResponse> responses = scraper.fetchAll();
         System.out.println("ending fetchall, size: " + responses.size());
+        System.out.println("total results, size: " + responses.stream()
+                .map(MendeleyResponse::getResults)
+                .flatMap(List::stream)
+                .collect(Collectors.toSet()).size());
+    }
+
+    @Disabled("works with live data")
+    @SneakyThrows
+    @Test
+    void runScraper_OK() {
+        MendeleyScraper scraper = new MendeleyScraper(OK_HTTP_CLIENT, CONFIG, MENDELEY_ARTICLE_CONVERTER, publisher);
+        scraper.runScraper();
     }
 }

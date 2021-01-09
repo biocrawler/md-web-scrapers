@@ -161,6 +161,9 @@ public class MendeleyResponse {
         @JsonProperty
         @JsonIgnore
         private String institutionName;
+        @JsonProperty
+        @JsonIgnore
+        private String urnId;
     }
 
     @Data

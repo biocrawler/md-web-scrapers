@@ -1,20 +1,21 @@
 package org.perpetualnetworks.mdcrawler.scrapers;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.*;
 import org.perpetualnetworks.mdcrawler.config.MendeleyConfiguration;
 import org.perpetualnetworks.mdcrawler.converters.MendeleyArticleConverter;
 import org.perpetualnetworks.mdcrawler.publishers.AwsSnsPublisher;
 import org.perpetualnetworks.mdcrawler.scrapers.dto.MendeleyResponse;
+import org.perpetualnetworks.mdcrawler.utils.ParallelService;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 @Component
 @Slf4j
@@ -24,6 +25,7 @@ public class MendeleyScraper {
     private final MendeleyConfiguration mendeleyConfiguration;
     private final MendeleyArticleConverter mendeleyArticleConverter;
     private final AwsSnsPublisher publisher;
+    private final ParallelService parallelService;
     private final ObjectMapper mapper;
 
     public MendeleyScraper(OkHttpClient client,
@@ -33,8 +35,10 @@ public class MendeleyScraper {
         this.client = client;
         this.mendeleyConfiguration = mendeleyConfiguration;
         this.mendeleyArticleConverter = mendeleyArticleConverter;
+        this.parallelService = new ParallelService(4);
         this.publisher = publisher;
         this.mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     @SneakyThrows
@@ -56,12 +60,16 @@ public class MendeleyScraper {
 
     @SneakyThrows
     public Optional<MendeleyResponse> convertResponse(Response response) {
-        if (response.isSuccessful()) {
-            assert response.body() != null;
-            return Optional.of(mapper.readValue(response.body().byteStream(),
-                    MendeleyResponse.class));
+        try (ResponseBody body = response.body();) {
+            assert body != null;
+            MendeleyResponse mendeleyResponse = mapper
+                    .readValue(body.byteStream(), MendeleyResponse.class);
+            response.close();
+            return Optional.of(mendeleyResponse);
+        } catch (Exception e) {
+            log.error("exception during response conversion", e.getCause());
+            return Optional.empty();
         }
-        return Optional.empty();
     }
 
     public List<MendeleyResponse> fetchAll() {
@@ -79,20 +87,31 @@ public class MendeleyScraper {
         responses.add(response);
         double pages = Math.ceil((double) count / size);
         System.out.println("pages found: " + pages);
-        IntStream.range(2, (int) pages)
-                .forEach(page -> {
-                    log.info("fetching page: " + page);
-                    convertResponse(fetch(buildHttpUrl(page)))
-                            .ifPresent(responses::add);
-                    log.info("current size: " + responses.size());
-                });
+        responses.addAll(parallelService.executeAndReturnParallelAndEventAware(this::fetchPage,
+                IntStream.range(2, (int) pages).boxed().collect(Collectors.toList())));
         return responses;
     }
+
+    private List<MendeleyResponse> fetchPage(Stream<Integer> pagesStream) {
+        return pagesStream
+                .map(page -> convertResponse(fetch(buildHttpUrl(page))))
+                .flatMap(Optional::stream)
+                .collect(Collectors.toList());
+    }
+
     public void runScraper() {
-        fetchAll().stream().map(MendeleyResponse::getResults)
+        fetchAll().stream()
+                .map(MendeleyResponse::getResults)
+                .filter(Objects::nonNull)
                 .flatMap(List::stream)
                 .map(mendeleyArticleConverter::convert)
-                .forEach(publisher::sendArticle);
+                .forEach(article -> {
+                    try {
+                        publisher.sendArticle(article);
+                    }catch (Exception e) {
+                        log.error("article could not be sent: ", e.getCause());
+                    }
+                });
     }
 
 }
