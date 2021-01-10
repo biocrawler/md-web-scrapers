@@ -13,7 +13,7 @@ public class MendeleyTask {
     @Autowired
     MendeleyScraper mendeleyScraper;
 
-    @Scheduled(fixedRate = 3*60*60*1000)
+    @Scheduled(fixedRate = 24*60*60*1000)
     public void run() {
         log.info("starting scheduled task mendeley scrape");
         mendeleyScraper.runScraper();

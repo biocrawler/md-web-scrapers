@@ -23,4 +23,10 @@ public class MendeleyConfiguration {
     private String searchQuery;
     @JsonProperty
     private String type;
+    @JsonProperty
+    private Integer connectTimeoutMinutes;
+    @JsonProperty
+    private Integer writeTimeoutMinutes;
+    @JsonProperty
+    private Integer readTimeoutMinutes;
 }

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.awscore.AwsRequestOverrideConfiguration;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 import software.amazon.awssdk.services.sqs.model.SendMessageResponse;
@@ -31,7 +32,9 @@ public class AwsSnsPublisher {
     public AwsSnsPublisher(AwsConfiguration awsConfiguration) {
         this.awsConfiguration = awsConfiguration;
         parseAwsCredentials(awsConfiguration).ifPresent(c -> this.awsBasicCredentials = c);
-        this.sqsClient = SqsClient.create();
+        this.sqsClient = SqsClient.builder()
+                .region(Region.of(awsConfiguration.getRegion()))
+                .build();
     }
 
     @SneakyThrows

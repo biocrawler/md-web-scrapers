@@ -13,6 +13,7 @@ import org.perpetualnetworks.mdcrawler.utils.ParallelService;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -28,11 +29,14 @@ public class MendeleyScraper {
     private final ParallelService parallelService;
     private final ObjectMapper mapper;
 
-    public MendeleyScraper(OkHttpClient client,
-                           MendeleyConfiguration mendeleyConfiguration,
+    public MendeleyScraper(MendeleyConfiguration mendeleyConfiguration,
                            MendeleyArticleConverter mendeleyArticleConverter,
                            AwsSnsPublisher publisher) {
-        this.client = client;
+        this.client = new OkHttpClient.Builder()
+                .connectTimeout(mendeleyConfiguration.getConnectTimeoutMinutes(), TimeUnit.MINUTES)
+                .writeTimeout(mendeleyConfiguration.getWriteTimeoutMinutes(), TimeUnit.MINUTES)
+                .readTimeout(mendeleyConfiguration.getReadTimeoutMinutes(), TimeUnit.MINUTES)
+                .build();
         this.mendeleyConfiguration = mendeleyConfiguration;
         this.mendeleyArticleConverter = mendeleyArticleConverter;
         this.parallelService = new ParallelService(4);

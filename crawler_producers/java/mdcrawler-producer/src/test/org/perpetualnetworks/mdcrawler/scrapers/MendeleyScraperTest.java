@@ -19,9 +19,6 @@ import java.util.stream.Collectors;
 class MendeleyScraperTest {
 
     private static final OkHttpClient OK_HTTP_CLIENT = new OkHttpClient.Builder()
-            .connectTimeout(5, TimeUnit.MINUTES)
-            .writeTimeout(5, TimeUnit.MINUTES)
-            .readTimeout(5, TimeUnit.MINUTES)
             .build();
     private static final AwsConfiguration AWS_CONFIG = AwsConfiguration.builder()
             .credentialsFile("config/aws.json")
@@ -35,6 +32,9 @@ class MendeleyScraperTest {
             .endPoint("api/research-data/search")
             .searchQuery("molecular trajectories")
             .type("DATASET")
+            .connectTimeoutMinutes(5)
+            .writeTimeoutMinutes(5)
+            .readTimeoutMinutes(5)
             .build();
 
     private static final MendeleyArticleConverter MENDELEY_ARTICLE_CONVERTER = new MendeleyArticleConverter();
@@ -44,7 +44,7 @@ class MendeleyScraperTest {
     @SneakyThrows
     @Test
     void queryresult() {
-        MendeleyScraper scraper = new MendeleyScraper(OK_HTTP_CLIENT, CONFIG, MENDELEY_ARTICLE_CONVERTER, publisher);
+        MendeleyScraper scraper = new MendeleyScraper(CONFIG, MENDELEY_ARTICLE_CONVERTER, publisher);
         Response fetch = scraper.fetch(scraper.buildHttpUrl(1));
         MendeleyResponse responses = MAPPER.readValue(fetch.body().byteStream(), MendeleyResponse.class);
         System.out.println("responses count: " + responses.getCount() + " size: " + responses.getResults().size());
@@ -55,7 +55,7 @@ class MendeleyScraperTest {
     @SneakyThrows
     @Test
     void queryresultAll() {
-        MendeleyScraper scraper = new MendeleyScraper(OK_HTTP_CLIENT, CONFIG, MENDELEY_ARTICLE_CONVERTER, publisher);
+        MendeleyScraper scraper = new MendeleyScraper(CONFIG, MENDELEY_ARTICLE_CONVERTER, publisher);
         System.out.println("starting fetchall");
         List<MendeleyResponse> responses = scraper.fetchAll();
         System.out.println("ending fetchall, size: " + responses.size());
@@ -69,7 +69,7 @@ class MendeleyScraperTest {
     @SneakyThrows
     @Test
     void runScraper_OK() {
-        MendeleyScraper scraper = new MendeleyScraper(OK_HTTP_CLIENT, CONFIG, MENDELEY_ARTICLE_CONVERTER, publisher);
+        MendeleyScraper scraper = new MendeleyScraper(CONFIG, MENDELEY_ARTICLE_CONVERTER, publisher);
         scraper.runScraper();
     }
 }

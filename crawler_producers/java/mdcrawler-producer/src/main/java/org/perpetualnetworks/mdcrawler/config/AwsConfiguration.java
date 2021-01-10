@@ -19,4 +19,6 @@ public class AwsConfiguration {
     private String sqsUrl;
     @JsonProperty
     private String credentialsFile;
+    @JsonProperty
+    private String region;
 }

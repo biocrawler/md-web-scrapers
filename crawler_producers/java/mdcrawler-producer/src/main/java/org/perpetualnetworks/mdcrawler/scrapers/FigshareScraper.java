@@ -67,6 +67,7 @@ public class FigshareScraper {
     }
 
     private Set<Article> fetchNewArticlesByBatch(BrowserAutomatorImpl browserAutomator, Set<WebElement> existingList, Set<Article> articles) {
+        //TODO: change fetch limit to parse all results from initial
         if (articles.size() > figshareConfiguration.getFetchLimit()) {
             log.info("fetch limit exceeded");
             return articles;
