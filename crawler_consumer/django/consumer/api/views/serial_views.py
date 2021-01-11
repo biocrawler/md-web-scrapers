@@ -1,0 +1,108 @@
+from django_filters.rest_framework import DjangoFilterBackend
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework import generics
+
+from api.serializers import *
+from api.filters import *
+
+
+class ArticleFileSerialView(generics.ListAPIView):
+    queryset = ArticleFile.objects.all()
+    serializer_class = ArticleFileSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = ArticleFileFilter
+
+    @swagger_auto_schema(operation_description="Article File List",
+                         responses={200: serializer_class},
+                         )
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+class ArticleFileSerialViewSingle(generics.ListAPIView):
+    queryset = ArticleFile.objects.all()
+    serializer_class = ArticleFileSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = ArticleFileFilterSingle
+
+    @swagger_auto_schema(operation_description="Article File",
+                         responses={200: serializer_class},
+                         )
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+
+class ArticleSerialView(generics.ListAPIView):
+    queryset = Article.objects.all()
+    serializer_class = ArticleSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = ArticleFilter
+
+    @swagger_auto_schema(operation_description="Article List",
+                         responses={200: serializer_class},
+                         tags=["articles"],
+                         )
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+
+class ArticleSerialViewSingle(generics.ListAPIView):
+    queryset = Article.objects.all()
+    serializer_class = ArticleSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = ArticleFilterSingle
+
+    @swagger_auto_schema(operation_description="Article",
+                         responses={200: serializer_class},
+                         tags=["articles"],
+                         )
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+
+class KeywordSerialView(generics.ListAPIView):
+    queryset = Keyword.objects.all()
+    serializer_class = KeywordSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = KeywordFilter
+
+    @swagger_auto_schema(operation_description="",
+                         responses={200: serializer_class},
+                         )
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+class KeywordSerialViewSingle(generics.ListAPIView):
+    queryset = Keyword.objects.all()
+    serializer_class = KeywordSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = KeywordFilterSingle
+
+    @swagger_auto_schema(operation_description="",
+                         responses={200: serializer_class},
+                         )
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+class AuthorSerialView(generics.ListAPIView):
+    queryset = Author.objects.all()
+    serializer_class = AuthorSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = AuthorFilter
+
+    @swagger_auto_schema(operation_description="",
+                         responses={200: serializer_class},
+                         )
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+class AuthorSerialViewSingle(generics.ListAPIView):
+    queryset = Author.objects.all()
+    serializer_class = AuthorSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = AuthorFilterSingle
+
+    @swagger_auto_schema(operation_description="",
+                         responses={200: serializer_class},
+                         )
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
