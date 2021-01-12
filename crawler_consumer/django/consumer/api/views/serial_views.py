@@ -1,16 +1,18 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import generics
+from rest_framework.settings import api_settings
 
 from api.serializers import *
 from api.filters import *
 
 
 class ArticleFileSerialView(generics.ListAPIView):
-    queryset = ArticleFile.objects.all()
+    queryset = ArticleFile.objects.all().prefetch_related("keyword_set")
     serializer_class = ArticleFileSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = ArticleFileFilter
+    renderer_classes = tuple(api_settings.DEFAULT_RENDERER_CLASSES)
 
     @swagger_auto_schema(operation_description="Article File List",
                          responses={200: serializer_class},
@@ -32,10 +34,11 @@ class ArticleFileSerialViewSingle(generics.ListAPIView):
 
 
 class ArticleSerialView(generics.ListAPIView):
-    queryset = Article.objects.all()
+    queryset = Article.objects.all().prefetch_related("keywords", "authors", "articlefile_set")
     serializer_class = ArticleSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = ArticleFilter
+    renderer_classes = tuple(api_settings.DEFAULT_RENDERER_CLASSES)
 
     @swagger_auto_schema(operation_description="Article List",
                          responses={200: serializer_class},
@@ -46,7 +49,7 @@ class ArticleSerialView(generics.ListAPIView):
 
 
 class ArticleSerialViewSingle(generics.ListAPIView):
-    queryset = Article.objects.all()
+    queryset = Article.objects.all().prefetch_related("keywords", "authors", "articlefile_set")
     serializer_class = ArticleSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = ArticleFilterSingle
@@ -64,6 +67,7 @@ class KeywordSerialView(generics.ListAPIView):
     serializer_class = KeywordSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = KeywordFilter
+    renderer_classes = tuple(api_settings.DEFAULT_RENDERER_CLASSES)
 
     @swagger_auto_schema(operation_description="",
                          responses={200: serializer_class},
@@ -88,6 +92,7 @@ class AuthorSerialView(generics.ListAPIView):
     serializer_class = AuthorSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = AuthorFilter
+    renderer_classes = tuple(api_settings.DEFAULT_RENDERER_CLASSES)
 
     @swagger_auto_schema(operation_description="",
                          responses={200: serializer_class},

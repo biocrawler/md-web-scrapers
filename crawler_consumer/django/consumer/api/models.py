@@ -27,6 +27,9 @@ class Article(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
 
+    def files(self):
+        return self.articlefile_set.all()
+
     class Meta:
         ordering = ['digital_object_id']
 
