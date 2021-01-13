@@ -14,24 +14,6 @@ def load():
     with open('/home/sgarcia/export.json') as s:
         return json.load(s)
 
-
-def pase_enriched_value(d):
-    return d.get("enriched", False) if d.get("enriched") != None else False
-
-
-def parse_parsed_value(d):
-    return d.get("parsed", False) if d.get("parsed") != None else False
-
-
-def parse_description(d):
-    return d.get("description", "") if d.get("description") != None else ""
-
-
-def parse_digital_object_id(d):
-    return d.get("digital_object_id", "") if d.get("digital_object_id") != None else ""
-
-
-
 def parse_data(data) -> list:
     parsed = list()
     titled_data = [x for x in data if x['title']]
