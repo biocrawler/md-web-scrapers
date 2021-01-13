@@ -5,3 +5,4 @@ jedi==0.17.2
 mysqlclient==2.0.3
 drf-yasg
 django-filter
+python-dateutil==2.8.1

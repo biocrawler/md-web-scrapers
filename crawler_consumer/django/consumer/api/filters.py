@@ -16,7 +16,7 @@ class ArticleFileFilterSingle(django_filters.FilterSet):
 class AuthorFilter(django_filters.FilterSet):
     class Meta:
         model = Author
-        fields = {'author_name': ['icontains']}
+        fields = {'name': ['icontains']}
 
 class AuthorFilterSingle(django_filters.FilterSet):
     class Meta:
