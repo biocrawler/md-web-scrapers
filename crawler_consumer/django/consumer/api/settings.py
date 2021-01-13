@@ -1,5 +1,5 @@
 from pathlib import Path
-
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -17,7 +17,7 @@ SECRET_KEY = config['django']['secret_key']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = config['django']['hosts']
 
@@ -81,6 +81,10 @@ DATABASES = {
 }
 
 
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 100
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -112,10 +116,16 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
-
 STATIC_URL = '/static/'
+#if DEBUG:
+#  STATICFILES_DIRS = [
+#      os.path.join(BASE_DIR, 'static'),
+#  ]
+#else:
+#  STATIC_ROOT = '/opt/app/md-web-scrapers/crawler_consumer/django/consumer/static/'
+STATIC_ROOT = '/opt/app/md-web-scrapers/crawler_consumer/django/consumer/static/'
