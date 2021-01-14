@@ -19,4 +19,12 @@ class AwsSnsPublisherTest {
         Optional<SendMessageResponse> bob = publisher.sendMessage("hello");
         System.out.println("response: " + bob);
     }
+
+    @Test
+    void sendArticle() {
+    }
+
+    @Test
+    void testSendMessage() {
+    }
 }
