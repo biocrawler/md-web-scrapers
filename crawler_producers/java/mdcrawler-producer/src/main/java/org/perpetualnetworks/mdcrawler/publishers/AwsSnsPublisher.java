@@ -2,6 +2,7 @@ package org.perpetualnetworks.mdcrawler.publishers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.perpetualnetworks.mdcrawler.config.AwsConfiguration;
@@ -21,7 +22,8 @@ import java.util.Optional;
 @Component
 @Slf4j
 public class AwsSnsPublisher {
-    private final static ObjectMapper MAPPER = new ObjectMapper();
+    private final static ObjectMapper MAPPER = new ObjectMapper()
+            .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
     public static final String AWS_SECRET_ACCESS_KEY = "aws_secret_access_key";
     public static final String AWS_ACCESS_KEY_ID = "aws_access_key_id";
     private final AwsConfiguration awsConfiguration;

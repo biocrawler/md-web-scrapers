@@ -12,7 +12,7 @@ public class FigshareTask {
     @Autowired
     FigshareScraper figshareScraper;
 
-    @Scheduled(fixedRate = 3*24*60*60*1000)
+    //@Scheduled(fixedRate = 3*24*60*60*1000)
     public void run() {
         log.info("starting scheduled task figshare scrape");
         figshareScraper.runScraper();

@@ -2,6 +2,7 @@ package org.perpetualnetworks.mdcrawler.scrapers;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
@@ -90,7 +91,7 @@ public class MendeleyScraper {
         log.info("count: " + count + " size: " + size);
         responses.add(response);
         double pages = Math.ceil((double) count / size);
-        System.out.println("pages found: " + pages);
+        log.info("pages found: " + pages);
         responses.addAll(parallelService.executeAndReturnParallelAndEventAware(this::fetchPage,
                 IntStream.range(2, (int) pages).boxed().collect(Collectors.toList())));
         return responses;
