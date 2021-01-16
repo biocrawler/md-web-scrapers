@@ -1,6 +1,5 @@
 package org.perpetualnetworks.mdcrawler.scrapers.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -94,13 +93,10 @@ public class MendeleyResponse {
         @JsonProperty
         private List<String> institutions;
         @JsonProperty
-        @JsonIgnore
         private Object institutionsEntities;
         @JsonProperty
-        @JsonIgnore
         private List<String> institutionsIds;
         @JsonProperty
-        @JsonIgnore
         private String institutionName;
         @JsonProperty
         private String version;
@@ -109,19 +105,14 @@ public class MendeleyResponse {
         @JsonProperty
         private Object howToCite;
         @JsonProperty
-        @JsonIgnore
         private List<String> journals;
         @JsonProperty
-        @JsonIgnore
         private List<String> journalsIssn;
         @JsonProperty
-        @JsonIgnore
         private List<String> isSupplementToDoi;
         @JsonProperty
-        @JsonIgnore
         private Object journalsEntities;
         @JsonProperty
-        @JsonIgnore
         private List<String> subjectAreas;
     }
 
@@ -149,20 +140,16 @@ public class MendeleyResponse {
         @JsonProperty
         private String source;
         @JsonProperty
-        @JsonIgnore
         private Object affiliations;
         @JsonProperty
-        @JsonIgnore
         private Object identifiers;
         @JsonProperty
         private String mendeleyProfileId;
         @JsonProperty
         private List<String> scopusAuthorId;
         @JsonProperty
-        @JsonIgnore
         private String institutionName;
         @JsonProperty
-        @JsonIgnore
         private String urnId;
     }
 

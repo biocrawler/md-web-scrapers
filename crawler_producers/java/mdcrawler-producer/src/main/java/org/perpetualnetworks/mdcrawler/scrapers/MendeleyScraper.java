@@ -1,6 +1,7 @@
 package org.perpetualnetworks.mdcrawler.scrapers;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import lombok.SneakyThrows;
@@ -13,6 +14,7 @@ import org.perpetualnetworks.mdcrawler.scrapers.dto.MendeleyResponse;
 import org.perpetualnetworks.mdcrawler.utils.ParallelService;
 import org.springframework.stereotype.Component;
 
+import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -66,15 +68,19 @@ public class MendeleyScraper {
     @SneakyThrows
     public Optional<MendeleyResponse> convertResponse(Response response) {
         try (ResponseBody body = response.body();) {
-            assert body != null;
-            MendeleyResponse mendeleyResponse = mapper
-                    .readValue(body.byteStream(), MendeleyResponse.class);
-            response.close();
-            return Optional.of(mendeleyResponse);
+            if (body != null) {
+                InputStream src = body.byteStream();
+                JsonNode srcNode = mapper.readTree(src);
+                //log.info("attempting to convert stream of: \n" + srcNode);
+                MendeleyResponse mendeleyResponse = mapper
+                        .convertValue(srcNode, MendeleyResponse.class);
+                response.close();
+                return Optional.of(mendeleyResponse);
+            }
         } catch (Exception e) {
-            log.error("exception during response conversion", e.getCause());
-            return Optional.empty();
+            log.error("exception during response conversion", e);
         }
+        return Optional.empty();
     }
 
     public List<MendeleyResponse> fetchAll() {

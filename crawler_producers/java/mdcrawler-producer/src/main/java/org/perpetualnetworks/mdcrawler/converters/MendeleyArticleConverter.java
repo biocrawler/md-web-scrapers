@@ -7,12 +7,15 @@ import org.perpetualnetworks.mdcrawler.models.Author;
 import org.perpetualnetworks.mdcrawler.scrapers.dto.MendeleyResponse;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.time.Instant;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static java.util.Objects.nonNull;
 
 @Component
 @Slf4j
@@ -39,13 +42,24 @@ public class MendeleyArticleConverter {
         HashSet<String> keywords = new HashSet<>();
         for (List<String> keywordList : Arrays.asList(result.getContainerKeywords(),
                 result.getSubjectAreas(), result.getExternalSubjectAreas())) {
-            try {
-                keywords.addAll(keywordList);
-            } catch (Exception e) {
-                log.info("keywordlist add failure for list in result: " + result);
+            if (keywordList != null) {
+                keywords.addAll(parseKeywordList(keywordList));
             }
         }
         return keywords;
+    }
+
+    private List<String> parseKeywordList(List<String> stringlist) {
+        List<String> keywords = new ArrayList<>();
+        for (String entry : stringlist) {
+            try {
+                keywords.add(Arrays.toString(entry.getBytes(StandardCharsets.UTF_8)));
+            } catch (Exception e) {
+                log.info("keyword add failure for entry:" + entry);
+            }
+        }
+        return keywords;
+
     }
 
     private Article.AdditionalData parseAddtionalData(MendeleyResponse.Result result) {
@@ -56,22 +70,34 @@ public class MendeleyArticleConverter {
         if (result.getSnippets() != null) {
             details.addAll(result.getSnippets());
         }
+        if (result.getAssetTypes() != null) {
+            details.addAll(result.getAssetTypes());
+        }
         return Article.AdditionalData.builder().labDetails(details).build();
     }
 
     private Set<Author> parseAuthors(MendeleyResponse.Result result) {
+        Set<Author> authorSet = new HashSet<>();
         try {
-            return result.getAuthors().stream()
-                    .map(MendeleyResponse.Author::getName)
-                    .filter(StringUtils::isNotBlank)
-                    .map(name -> Author.builder().name(name).build())
-                    .collect(Collectors.toSet());
+            if (nonNull(result.getAuthors())) {
+               authorSet.addAll(convertAuthors(result.getAuthors()));
+            }
+            if (nonNull(result.getAuthorEntities())) {
+                authorSet.addAll(convertAuthors(result.getAuthorEntities()));
+            }
         } catch (Exception e) {
             log.error("could not parse authors for result: " + result);
         }
-        return Collections.emptySet();
+        return authorSet;
     }
 
+    private Set<Author> convertAuthors(List<MendeleyResponse.Author> authors) {
+        return authors.stream()
+             .map(MendeleyResponse.Author::getName)
+             .filter(StringUtils::isNotBlank)
+             .map(name -> Author.builder().name(name).build())
+             .collect(Collectors.toSet());
+    }
 
 
     public static String removeTags(String string) {

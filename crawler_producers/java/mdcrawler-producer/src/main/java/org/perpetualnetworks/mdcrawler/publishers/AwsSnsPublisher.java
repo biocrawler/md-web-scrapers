@@ -7,6 +7,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.perpetualnetworks.mdcrawler.config.AwsConfiguration;
 import org.perpetualnetworks.mdcrawler.models.Article;
+import org.perpetualnetworks.mdcrawler.utils.lzw.LZWCompressor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -17,6 +18,8 @@ import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 import software.amazon.awssdk.services.sqs.model.SendMessageResponse;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Optional;
 
 @Component
@@ -51,28 +54,30 @@ public class AwsSnsPublisher {
     @SneakyThrows
     public Optional<SendMessageResponse> sendArticle(Article article) {
         String serialized = MAPPER.writeValueAsString(article);
-        try {
+        try{
             return sendMessage(serialized);
         } catch (Exception e) {
-            log.error("could not send article", e.getCause());
+            log.error("could not send article: " + e.getCause());
         }
         return Optional.empty();
 
     }
-
+    //TODO: setup message download for very large messages from s3
     public Optional<SendMessageResponse> sendMessage(String message) {
+        LZWCompressor compressor = new LZWCompressor();
         AwsBasicCredentials credentials = AwsBasicCredentials.create(awsBasicCredentials.accessKeyId(), awsBasicCredentials.secretAccessKey());
         SendMessageRequest request = SendMessageRequest.builder()
                 .overrideConfiguration(AwsRequestOverrideConfiguration.builder()
                         .credentialsProvider(() -> credentials)
                         .build())
-                .messageBody(message)
+                .messageBody(Arrays.toString(compressor.compress(message.getBytes(StandardCharsets.UTF_8))))
                 .queueUrl(awsConfiguration.getSqsUrl())
                 .build();
         try {
             return Optional.of(sqsClient.sendMessage(request));
         } catch (Exception e) {
-            log.error("error sending message:", e.getCause());
+            log.error("error sending message: ", e);
+            e.printStackTrace();
         }
         return Optional.empty();
     }
