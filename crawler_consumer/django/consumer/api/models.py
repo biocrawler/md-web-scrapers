@@ -16,8 +16,8 @@ class Author(models.Model):
 class Keyword(models.Model):
     # must be a word
     word = models.CharField(max_length=128)
-    created_date = models.DateTimeField(auto_now_add=True)
-    modified_date = models.DateTimeField(auto_now=True)
+    created_date = models.DateTimeField(auto_now_add=True, null=True)
+    modified_date = models.DateTimeField(auto_now=True, null=True)
 
     def to_json(self):
         return {
@@ -41,8 +41,8 @@ class Article(models.Model):
     published = models.BooleanField(default=False)
     parse_date = models.DateTimeField(null=True)
     upload_date = models.DateTimeField(null=True)
-    created_date = models.DateTimeField(auto_now_add=True)
-    modified_date = models.DateTimeField(auto_now=True)
+    created_date = models.DateTimeField(auto_now_add=True, null=True)
+    modified_date = models.DateTimeField(auto_now=True, null=True)
 
     def files(self):
         return self.articlefile_set.all()
