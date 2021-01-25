@@ -1,7 +1,7 @@
 from django.test import TestCase
 from api.models import Author, ArticleFile, Article, Keyword
 from api.serializers import ArticleSerializer
-from api.api_lib.serializers import ArtcileSerializer as apiserializer
+from api.api_lib.serializers import ArticleSerializer as apiserializer
 from api.api_lib.validators import ArticleValidator
 from api_tests.article_test_data_1 import *
 import json

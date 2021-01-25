@@ -11,7 +11,7 @@ fields = ("title", "source_url",
 related_fields = ("authors", "keywords", "files")
 
 
-class ArtcileSerializer(object):
+class ArticleSerializer(object):
 
     def __init__(self, data: dict):
         self.data = data
@@ -35,7 +35,6 @@ class ArtcileSerializer(object):
         for field in fields + related_fields:
             try:
                 d = self.data[field]
-                log.info("attempting to setting attribute: " + field + " as " + str(d))
                 setattr(self, field, d)
 
             except Exception as e:
@@ -43,7 +42,6 @@ class ArtcileSerializer(object):
 
     def save(self):
         self._parse_data()
-        log.info("saving article")
         article, _ = Article.objects.get_or_create(title=self.title,
                                                    source_url=self.source_url,
                                                    digital_object_id=self.digital_object_id,
@@ -64,9 +62,7 @@ class ArtcileSerializer(object):
             log.info("aut value: " + str(aut))
             article.authors.add(aut)
 
-        print("validated kws data: " + str(self.keyword_list))
         for keyword_data in self.data['keywords']:
-            print("validated kw data: " + str(keyword_data))
             kw_word = keyword_data.pop("word")
             kw_created_date = keyword_data.pop("created_date")
             kw_modified_date = keyword_data.pop("modified_date")
@@ -74,21 +70,21 @@ class ArtcileSerializer(object):
             kw,_ = Keyword.objects.get_or_create(word=kw_word,
                                                  created_date=kw_created_date,
                                                  modified_date=kw_modified_date)
-            log.info("kw value: " + str(kw))
             article.keywords.add(kw)
 
         for file_data in self.data['files']:
-            f_keywords = file_data.pop("keywords")
-            f_file_name = file_data.pop("file_name")
-            f_url = file_data.pop("url")
-            f_download_url = file_data.pop("url")
-            f_digial_object_id = file_data.pop("digital_object_id")
-            f_description = file_data.pop("description")
-            f_refering_url = file_data.pop("refering_url")
-            f_size = file_data.pop("size")
-            assert file_data == []
+            assert isinstance(file_data, dict)
+            log.info("processing file: " + str(file_data))
+            f_keywords = file_data.get("keywords", [])
+            f_file_name = file_data.get("file_name","")
+            f_url = file_data.get("url","")
+            f_download_url = file_data.get("url","")
+            f_digial_object_id = file_data.get("digital_object_id","")
+            f_description = file_data.get("description","")
+            f_refering_url = file_data.get("refering_url","")
+            f_size = file_data.get("size","")
             af,_ = ArticleFile.objects.get_or_create(article=article,
-                                                     keworkds=f_keywords,
+                                                     #keywords=f_keywords,
                                                      file_name=f_file_name,
                                                      url=f_url,
                                                      download_url=f_download_url,
@@ -96,6 +92,4 @@ class ArtcileSerializer(object):
                                                      description=f_description,
                                                      refering_url=f_refering_url,
                                                      size=f_size)
-            log.info("articlefile: " + str(af))
-        log.info("article save result: " + str(article))
         return article
