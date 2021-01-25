@@ -14,6 +14,7 @@ import org.perpetualnetworks.mdcrawler.config.MendeleyConfiguration;
 import org.perpetualnetworks.mdcrawler.converters.MendeleyArticleConverter;
 import org.perpetualnetworks.mdcrawler.publishers.AwsSnsPublisher;
 import org.perpetualnetworks.mdcrawler.scrapers.dto.MendeleyResponse;
+import org.perpetualnetworks.mdcrawler.utils.lzw.LZWCompressor;
 
 import java.io.InputStream;
 import java.util.List;
@@ -30,7 +31,9 @@ class MendeleyScraperTest {
             .region("eu-central-1")
             .build();
 
-    private static final AwsSnsPublisher publisher = new AwsSnsPublisher(AWS_CONFIG);
+    private static final LZWCompressor lzwCompressor = new LZWCompressor();
+
+    private static final AwsSnsPublisher publisher = new AwsSnsPublisher(AWS_CONFIG, lzwCompressor);
 
     private static final MendeleyConfiguration CONFIG = MendeleyConfiguration.builder()
             .host("data.mendeley.com")

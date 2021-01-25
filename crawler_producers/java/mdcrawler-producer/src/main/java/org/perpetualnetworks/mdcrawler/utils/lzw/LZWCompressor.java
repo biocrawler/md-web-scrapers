@@ -1,5 +1,7 @@
 package org.perpetualnetworks.mdcrawler.utils.lzw;
 
+import org.springframework.stereotype.Component;
+
 import javax.xml.bind.DatatypeConverter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -11,6 +13,7 @@ import java.nio.ByteBuffer;
  *
  * @author Saul Johnson, Alex Mullen, Lee Oliver
  */
+@Component
 public class LZWCompressor extends Compressor {
 
     /**
