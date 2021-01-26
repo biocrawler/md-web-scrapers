@@ -4,7 +4,7 @@ import re
 
 from api.api_lib.log import build_logger
 
-log = build_logger()
+log = build_logger(class_name=__name__)
 
 ARTICLE_KEYS = {"title": "",
                 "source_url": "",
@@ -21,6 +21,14 @@ ARTICLE_KEYS = {"title": "",
                 "published": False,
                 "created_date": "",
                 "modified_date": ""}
+
+file_keys = {"file_name": "",
+             "url": "",
+             "keywords": [],
+             "download_url": "",
+             "digital_object_id": "",
+             "refering_url": "",
+             "size": 0}
 
 
 class ArticleValidator(object):
@@ -42,13 +50,39 @@ class ArticleValidator(object):
     def get_validated_data(self) -> dict:
         for key in ARTICLE_KEYS:
             try:
-                if self.data.get(key) == None:
-                    self.data[key] = ARTICLE_KEYS.get(key)
-            except:
-                log.error("exception during adding of key: " + key + " to data: " + str(self.data))
+                if 'digital_object_id' in key and self.data.get(key) != None:
+                    doi_1 = self.data.get("digital_object_id", "")
+                    doi_2 = self.data.get("digitalObjectId", "")
+                    if doi_1:
+                        self.data[key] = doi_1
+                        continue
+                    if doi_2:
+                        self.data[key] = doi_2
+                        continue
+                    log.error("could not set doi for data: " + str(self.data[key]))
+                    continue
+
+            except Exception as e:
+                log.error("error while processing source in data", e)
+            try:
+                if 'files' in key and self.data.get(key) == None:
+                    self.data[key] = []
+                    continue
+                if 'files' in key and isinstance(self.data[key], list):
+                    file_list = list()
+                    for file in self.data[key]:
+                        assert isinstance(file, dict)
+                        for attr in file_keys:
+                            if not hasattr(file, attr):
+                                file[attr] = file_keys[attr]
+                        file_list.append(file)
+                    self.data[key] = file_list
+
+            except Exception as e:
+                log.error("error while processing authors in data", e)
             try:
                 import dateutil.parser
-                if 'date' in key and self.data[key] == None:
+                if 'date' in key and self.data.get(key) == None:
                     #self.data[key] = str(datetime.now().isoformat())
                     self.data[key] = None
                     continue
@@ -64,13 +98,13 @@ class ArticleValidator(object):
             except Exception as e:
                 log.error("error while processing dates in data", e)
             try:
-                if 'authors' in key and self.data[key] == None:
+                if 'authors' in key and self.data.get(key) == None:
                     self.data[key] = []
                     continue
             except Exception as e:
                 log.error("error while processing authors in data", e)
             try:
-                if 'keywords' in key and self.data[key] == None:
+                if 'keywords' in key and self.data.get(key) == None:
                     self.data[key] = []
                     continue
                 if 'keywords' in key and isinstance(self.data[key], list) and len(self.data[key]) > 1:
@@ -80,17 +114,23 @@ class ArticleValidator(object):
                     kw_list = list()
                     for kw in self.data[key]:
                         if hasattr(kw, "word"):
-                            log.info("word: " + str(kw))
-                            kw_list.append({"word": kw.get("word"), "created_date": "", "modified_date": ""})
+                            if isinstance(kw, dict):
+                                continue
+                        if isinstance(kw.get("word"), dict):
+                            kw_list.append(kw.get("word"))
+                            continue
+                        elif isinstance(kw.get("word"), str):
+                            kw_list.append({"word": kw.get("word"), "created_date": None, "modified_date": None})
+                            continue
                         else:
-                            log.info("keyword not valid: " + str(kw) + " adding to keyword object")
                             kw_list.append({"word": kw, "created_date": None, "modified_date": None})
                     self.data[key] = kw_list
             except Exception as e:
                 log.error("error while processing keywords in data", e)
             try:
                 if 'source_url' in key:
-                    self.data[key] = self.data[key] if self.data[key] else self.data.get("sourceUrl", "")
+                    if self.data[key] != None or self.data["sourceUrl"] != None:
+                        self.data[key] = self.data[key] if self.data[key] else self.data.get("sourceUrl", "")
                     continue
 
             except Exception as e:
@@ -104,29 +144,11 @@ class ArticleValidator(object):
             except Exception as e:
                 log.error("error while processing source in data", e)
             try:
-                if 'files' in key and self.data[key] == None:
-                    self.data[key] = []
-                    continue
-                if 'files' in key and isinstance(self.data[key], list):
-                    files = self.data[key]
-                    file_list = list()
-                    for file in files:
-                        if not file.get("file_name"):
-                            continue
-                        if not file.get('keywords'):
-                            file['keywords'] = []
-                            file_list.append(file)
-                        if not file.get("download_url"):
-                            file['download_url'] = ''
-                        if not file.get("url"):
-                            file['url'] = ''
-                        if not file.get("digital_object_id"):
-                            file['digital_object_id'] = ''
-                    self.data[key] = file_list
+                if self.data.get(key) == None:
+                    self.data[key] = ARTICLE_KEYS.get(key)
+            except:
+                log.error("exception during adding of key: " + key + " to data: " + str(self.data))
 
-            except Exception as e:
-                log.error("error while processing authors in data", e)
-        log.info("validator returing data: " + str(self.data))
         return self.data
 
 def snake_to_camel(word):

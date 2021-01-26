@@ -1,6 +1,7 @@
 package org.perpetualnetworks.mdcrawler.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Builder;
 import lombok.Data;
 
@@ -9,6 +10,7 @@ import java.util.Set;
 
 @Data
 @Builder(toBuilder = true)
+@JsonDeserialize(builder = Article.ArticleBuilder.class)
 public class Article {
     @JsonProperty
     private String title;
@@ -39,6 +41,7 @@ public class Article {
 
     @Data
     @Builder(toBuilder = true)
+    @JsonDeserialize(builder = AdditionalData.AdditionalDataBuilder.class)
     public static class AdditionalData {
         @JsonProperty("figshare_type")
         private String figshareType;

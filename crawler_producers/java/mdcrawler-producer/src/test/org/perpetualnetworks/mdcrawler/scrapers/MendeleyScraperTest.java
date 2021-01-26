@@ -1,5 +1,6 @@
 package org.perpetualnetworks.mdcrawler.scrapers;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import okhttp3.OkHttpClient;
@@ -11,9 +12,10 @@ import org.perpetualnetworks.mdcrawler.config.MendeleyConfiguration;
 import org.perpetualnetworks.mdcrawler.converters.MendeleyArticleConverter;
 import org.perpetualnetworks.mdcrawler.publishers.AwsSnsPublisher;
 import org.perpetualnetworks.mdcrawler.scrapers.dto.MendeleyResponse;
+import org.perpetualnetworks.mdcrawler.utils.lzw.LZWCompressor;
 
+import java.io.InputStream;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 class MendeleyScraperTest {
@@ -23,9 +25,12 @@ class MendeleyScraperTest {
     private static final AwsConfiguration AWS_CONFIG = AwsConfiguration.builder()
             .credentialsFile("config/aws.json")
             .sqsUrl("https://sqs.eu-central-1.amazonaws.com/397254617684/crawler_queue")
+            .region("eu-central-1")
             .build();
 
-    private static final AwsSnsPublisher publisher = new AwsSnsPublisher(AWS_CONFIG);
+    private static final LZWCompressor lzwCompressor = new LZWCompressor();
+
+    private static final AwsSnsPublisher publisher = new AwsSnsPublisher(AWS_CONFIG, lzwCompressor);
 
     private static final MendeleyConfiguration CONFIG = MendeleyConfiguration.builder()
             .host("data.mendeley.com")
@@ -46,7 +51,10 @@ class MendeleyScraperTest {
     void queryresult() {
         MendeleyScraper scraper = new MendeleyScraper(CONFIG, MENDELEY_ARTICLE_CONVERTER, publisher);
         Response fetch = scraper.fetch(scraper.buildHttpUrl(1));
-        MendeleyResponse responses = MAPPER.readValue(fetch.body().byteStream(), MendeleyResponse.class);
+        assert fetch.body() != null;
+        InputStream src = fetch.body().byteStream();
+        JsonNode srcNode = MAPPER.readTree(src);
+        MendeleyResponse responses = MAPPER.convertValue(srcNode, MendeleyResponse.class);
         System.out.println("responses count: " + responses.getCount() + " size: " + responses.getResults().size());
         System.out.println(MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(responses.getResults()));
     }

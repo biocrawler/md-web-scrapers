@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.perpetualnetworks.mdcrawler.models.Article;
 import org.perpetualnetworks.mdcrawler.models.Author;
 import org.perpetualnetworks.mdcrawler.models.FileArticle;
 import org.springframework.stereotype.Component;
@@ -54,7 +55,8 @@ public class WebParser {
                 keyWords.add(element.getAttribute("title")));
         webElements.forEach(element ->
                 keyWords.add(element.getText()));
-        return keyWords.stream().filter(Strings::isNotBlank).collect(Collectors.toSet());
+        return keyWords.stream().filter(Strings::isNotBlank)
+                .collect(Collectors.toSet());
     }
 
     public Set<String> parseArticleDoi(List<WebElement> webElements) {

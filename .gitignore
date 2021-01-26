@@ -6,6 +6,7 @@ __pycache__/
 *secrets.yaml*
 *.swp*
 *.DS*
+*testData*.txt
 
 # C extensions
 *.so
