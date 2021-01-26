@@ -135,6 +135,14 @@ class ArticleValidator(object):
 
             except Exception as e:
                 log.error("error while processing source in data", e)
+
+            try:
+                if 'digital_object_id' in key:
+                    self.data[key] = self.data[key] if self.data[key] else self.data.get("digitalObjectId", "")
+                    continue
+
+            except Exception as e:
+                log.error("error while processing source in data", e)
             try:
                 if self.data.get(key) == None:
                     self.data[key] = ARTICLE_KEYS.get(key)

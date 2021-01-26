@@ -28,4 +28,12 @@ class AwsSnsPublisherTest {
         Optional<SendMessageResponse> defaultArticleResponse = publisher.sendMessage(mapper.writeValueAsString(ArticleDefaults.anArticle().build()));
         System.out.println("response: " + defaultArticleResponse);
     }
+
+    @Test
+    void sendArticle() {
+    }
+
+    @Test
+    void testSendMessage() {
+    }
 }
