@@ -1,5 +1,6 @@
 package org.perpetualnetworks.mdcrawler.converters;
 
+import com.google.common.collect.ImmutableList;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.openqa.selenium.WebDriver;
@@ -72,7 +73,7 @@ public class FigshareArticleConverter {
         if (article.getAdditionalData() != null) {
             log.info("parsing article type: " + article.getAdditionalData().getFigshareType());
         }
-        Set<String> keywords = parser.parseAllKeywords(browserAutomator.fetchAllFSArticleKeywordElements(driver));
+        List<Article.Keyword> keywords = parser.parseAllKeywords(browserAutomator.fetchAllFSArticleKeywordElements(driver));
         log.info("keyword set not empty: " + CollectionUtils.isNotEmpty(keywords));
         builder.keywords(keywords);
         Set<String> dois = parser.parseArticleDoi(browserAutomator.fetchAllFSArticleDoiElements(driver));

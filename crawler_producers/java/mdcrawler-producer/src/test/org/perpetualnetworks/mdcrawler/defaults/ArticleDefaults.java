@@ -3,16 +3,16 @@ package org.perpetualnetworks.mdcrawler.defaults;
 import org.perpetualnetworks.mdcrawler.models.Article;
 import org.perpetualnetworks.mdcrawler.models.FileArticle;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.*;
 
 public class ArticleDefaults {
     static String TITLE = "test title";
     static String SOURCE_URL = "https://test.com/test";
-    static Set<String> KEYWORDS = new HashSet<>(Arrays.asList("word 1", "word 2", "word3", "WORD"));
+    static List<Article.Keyword> KEYWORDS = Arrays.asList(
+            Article.Keyword.builder().word("word 1").build(),
+            Article.Keyword.builder().word("word 2").build(),
+            Article.Keyword.builder().word("word3").build(),
+            Article.Keyword.builder().word("WORD").build());
     static String DOI = "10.12053/2016-026x-1x-2x9";
     static String DESC = "test description";
     static String PARSE_DATE = "1970-01-01T00:00:00";

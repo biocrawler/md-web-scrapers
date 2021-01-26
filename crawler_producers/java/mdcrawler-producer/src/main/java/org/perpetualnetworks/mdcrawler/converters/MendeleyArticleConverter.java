@@ -1,5 +1,6 @@
 package org.perpetualnetworks.mdcrawler.converters;
 
+import com.google.common.collect.ImmutableList;
 import lombok.extern.slf4j.Slf4j;
 import org.codehaus.plexus.util.StringUtils;
 import org.perpetualnetworks.mdcrawler.models.Article;
@@ -23,22 +24,27 @@ public class MendeleyArticleConverter {
 
     private static final Pattern REMOVE_TAGS = Pattern.compile("<.+?>");
 
-    public Article convert(MendeleyResponse.Result result) {
-        return Article.builder()
-                .title(removeTags(result.getContainerTitle()))
-                .digitalObjectId(result.getDoi() == null ? result.getDoi() : result.getExternalId())
-                .description(removeTags(result.getContainerDescription()))
-                .sourceUrl(result.getContainerURI())
-                .uploadDate(result.getDateCreated())
-                .parseDate(Date.from(Instant.now()).toString())
-                .keywords(parseKeywords(result))
-                .enriched(false)
-                .additionalData(parseAddtionalData(result))
-                .authors(parseAuthors(result))
-                .build();
+    public Optional<Article> convert(MendeleyResponse.Result result) {
+        try {
+            return Optional.of(Article.builder()
+                    .title(removeTags(result.getContainerTitle()))
+                    .digitalObjectId(result.getDoi() == null ? result.getDoi() : result.getExternalId())
+                    .description(removeTags(result.getContainerDescription()))
+                    .sourceUrl(result.getContainerURI())
+                    .uploadDate(result.getDateCreated())
+                    .parseDate(Date.from(Instant.now()).toString())
+                    .keywords(parseKeywords(result))
+                    .enriched(false)
+                    .additionalData(parseAddtionalData(result))
+                    .authors(parseAuthors(result))
+                    .build());
+        } catch (Exception e) {
+            log.error("exception during article conversion: " + e.getCause(), e);
+        }
+        return Optional.empty();
     }
 
-    private HashSet<String> parseKeywords(MendeleyResponse.Result result) {
+    private List<Article.Keyword> parseKeywords(MendeleyResponse.Result result) {
         HashSet<String> keywords = new HashSet<>();
         for (List<String> keywordList : Arrays.asList(result.getContainerKeywords(),
                 result.getSubjectAreas(), result.getExternalSubjectAreas())) {
@@ -46,7 +52,10 @@ public class MendeleyArticleConverter {
                 keywords.addAll(parseKeywordList(keywordList));
             }
         }
-        return keywords;
+        return keywords
+                .stream()
+                .map(word -> Article.Keyword.builder().word(word).build())
+                .collect(Collectors.toList());
     }
 
     private List<String> parseKeywordList(List<String> stringlist) {

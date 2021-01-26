@@ -19,10 +19,10 @@ import software.amazon.awssdk.services.sqs.model.SendMessageResponse;
 
 import javax.validation.constraints.NotNull;
 import java.io.File;
+import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
@@ -60,23 +60,17 @@ public class AwsSnsPublisher {
     @SneakyThrows
     public Optional<SendMessageResponse> sendArticle(Article article) {
         String serialized = MAPPER.writeValueAsString(article);
-        try{
-            return sendMessage(serialized);
-        } catch (Exception e) {
-            log.error("could not send article: " + e.getCause());
-        }
-        return Optional.empty();
+        return sendMessage(serialized);
 
     }
     //TODO: setup message download for very large messages from s3
     public Optional<SendMessageResponse> sendMessage(String message) {
+        try {
         AwsBasicCredentials credentials = AwsBasicCredentials.create(awsBasicCredentials.accessKeyId(), awsBasicCredentials.secretAccessKey());
         SendMessageRequest request = buildSqsRequest(credentials, message);
-        try {
             return Optional.of(sqsClient.sendMessage(request));
         } catch (Exception e) {
-            log.error("error sending message: ", e);
-            e.printStackTrace();
+            log.error("error sending message: ", e.getCause());
         }
         return Optional.empty();
     }
@@ -94,12 +88,34 @@ public class AwsSnsPublisher {
 
     @NotNull
     private String compressMessage(String message, LZWCompressor compressor) {
+        int maxDictionaryValue = 32767;
+        List<String> messageList = new ArrayList<>();
         final byte[] messageBytes = message.getBytes(StandardCharsets.UTF_8);
-        final String compressedMessage = Arrays.toString(compressor.compress(messageBytes));
-        final String finalMessage = compressedMessage.strip().replaceAll(", ", " ");
-        long initialSize = Stream.of(messageBytes).count();
-        long finalSize = Stream.of(compressedMessage.getBytes()).count();
-        log.info("message original size: " + initialSize + " message final size: " + finalSize);
-        return finalMessage;
+        byte[][] messageChunks = divideArray(messageBytes, maxDictionaryValue);
+        for (byte[] ba: messageChunks) {
+            String compressedMessage = null;
+            try {
+                compressedMessage = Arrays.toString(compressor.compress(ba));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            final String finalMessage = compressedMessage.strip().replaceAll(", ", " ");
+            messageList.add(finalMessage);
+        }
+        return String.join(",", messageList);
+    }
+
+    public static byte[][] divideArray(byte[] source, int chunksize) {
+
+        byte[][] ret = new byte[(int)Math.ceil(source.length / (double)chunksize)][chunksize];
+
+        int start = 0;
+
+        for(int i = 0; i < ret.length; i++) {
+            ret[i] = Arrays.copyOfRange(source,start, start + chunksize);
+            start += chunksize ;
+        }
+
+        return ret;
     }
 }

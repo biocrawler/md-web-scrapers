@@ -1,8 +1,6 @@
 package org.perpetualnetworks.mdcrawler.scrapers;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import okhttp3.OkHttpClient;
@@ -18,7 +16,6 @@ import org.perpetualnetworks.mdcrawler.utils.lzw.LZWCompressor;
 
 import java.io.InputStream;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 class MendeleyScraperTest {
@@ -48,7 +45,7 @@ class MendeleyScraperTest {
     private static final MendeleyArticleConverter MENDELEY_ARTICLE_CONVERTER = new MendeleyArticleConverter();
     public static final ObjectMapper MAPPER = new ObjectMapper();
 
-    //@Disabled("works with live data")
+    @Disabled("works with live data")
     @SneakyThrows
     @Test
     void queryresult() {
@@ -76,7 +73,7 @@ class MendeleyScraperTest {
                 .collect(Collectors.toSet()).size());
     }
 
-    @Disabled("works with live data")
+    //@Disabled("works with live data")
     @SneakyThrows
     @Test
     void runScraper_OK() {

@@ -3,7 +3,6 @@ package org.perpetualnetworks.mdcrawler.scrapers;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
@@ -74,11 +73,13 @@ public class MendeleyScraper {
                 //log.info("attempting to convert stream of: \n" + srcNode);
                 MendeleyResponse mendeleyResponse = mapper
                         .convertValue(srcNode, MendeleyResponse.class);
-                response.close();
                 return Optional.of(mendeleyResponse);
             }
         } catch (Exception e) {
-            log.error("exception during response conversion", e);
+            log.error("exception during response conversion, status code: " + response.code(), e.getCause());
+            if (response.code() == 200) {
+                log.info("error from 200 response: " + e.getCause(), e);
+            }
         }
         return Optional.empty();
     }
@@ -116,13 +117,8 @@ public class MendeleyScraper {
                 .filter(Objects::nonNull)
                 .flatMap(List::stream)
                 .map(mendeleyArticleConverter::convert)
-                .forEach(article -> {
-                    try {
-                        publisher.sendArticle(article);
-                    }catch (Exception e) {
-                        log.error("article could not be sent: ", e.getCause());
-                    }
-                });
+                .flatMap(Optional::stream)
+                .forEach(publisher::sendArticle);
     }
 
 }

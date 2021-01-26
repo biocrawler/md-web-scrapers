@@ -19,7 +19,7 @@ public class Article {
     @JsonProperty("source_url")
     private String sourceUrl;
     @JsonProperty
-    private Set<String> keywords;
+    private List<Keyword> keywords;
     @JsonProperty("digital_object_id")
     private String digitalObjectId;
     @JsonProperty
@@ -40,6 +40,13 @@ public class Article {
     private Boolean published;
     @JsonProperty("additional_data")
     private AdditionalData additionalData;
+
+    @Data
+    @Builder
+    public static class Keyword{
+        @JsonProperty
+        private String word;
+    }
 
     @Data
     @Builder(toBuilder = true)

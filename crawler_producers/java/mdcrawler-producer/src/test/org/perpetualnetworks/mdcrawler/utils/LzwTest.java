@@ -1,14 +1,20 @@
 package org.perpetualnetworks.mdcrawler.utils;
 
+import lombok.SneakyThrows;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.perpetualnetworks.mdcrawler.utils.lzw.LZWCompressor;
 
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class LzwTest {
 
@@ -36,5 +42,33 @@ class LzwTest {
         byte[] compressed = lzwCompressor.compress(testString.getBytes(StandardCharsets.UTF_8));
         byte[] decompressed = lzwCompressor.decompress(compressed);
         assertEquals(testString, new String(decompressed, StandardCharsets.UTF_8));
+    }
+
+    //TODO: Add create proper decompression on consumer side
+    //TODO: fix keyword decompression
+    @Disabled("requires a compressed article stored as testData.txt")
+    @Test
+    @SneakyThrows
+    void message_compression_test_3() {
+        LZWCompressor lzwCompressor = new LZWCompressor();
+        final String testDataPath = "src/test/org/perpetualnetworks/mdcrawler/utils/testData_1.txt";
+        File testData = new File(testDataPath);
+        String bigString = FileUtils.readFileToString(testData, "UTF-8");
+        final String originalArticle = Arrays.stream(bigString.split(","))
+                .map(string -> {
+                    final String replace1 = string
+                            .replace("\n", "")
+                            .replace("]", "")
+                            .replace("[", "");
+                    final String[] stringArray = replace1.split(" ");
+                    Byte[] bytes = Arrays.stream(stringArray).map(Byte::parseByte).toArray(Byte[]::new);
+                    return ArrayUtils.toPrimitive(bytes);
+                })
+                .filter(Objects::nonNull)
+                .map(lzwCompressor::decompress)
+                .map(bytes -> new String(bytes, StandardCharsets.UTF_8))
+                .collect(Collectors.joining("--"));
+        System.out.println(originalArticle);
+
     }
 }
