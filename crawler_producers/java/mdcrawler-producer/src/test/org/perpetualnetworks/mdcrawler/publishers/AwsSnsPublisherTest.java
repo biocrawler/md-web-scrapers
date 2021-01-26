@@ -1,8 +1,6 @@
 package org.perpetualnetworks.mdcrawler.publishers;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -29,13 +27,5 @@ class AwsSnsPublisherTest {
         ObjectMapper mapper = new ObjectMapper();
         Optional<SendMessageResponse> defaultArticleResponse = publisher.sendMessage(mapper.writeValueAsString(ArticleDefaults.anArticle().build()));
         System.out.println("response: " + defaultArticleResponse);
-    }
-
-    @Test
-    void sendArticle() {
-    }
-
-    @Test
-    void testSendMessage() {
     }
 }

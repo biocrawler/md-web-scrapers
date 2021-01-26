@@ -19,11 +19,11 @@ import software.amazon.awssdk.services.sqs.model.SendMessageResponse;
 
 import javax.validation.constraints.NotNull;
 import java.io.File;
-import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 @Component
 @Slf4j
@@ -63,11 +63,12 @@ public class AwsSnsPublisher {
         return sendMessage(serialized);
 
     }
+
     //TODO: setup message download for very large messages from s3
     public Optional<SendMessageResponse> sendMessage(String message) {
         try {
-        AwsBasicCredentials credentials = AwsBasicCredentials.create(awsBasicCredentials.accessKeyId(), awsBasicCredentials.secretAccessKey());
-        SendMessageRequest request = buildSqsRequest(credentials, message);
+            AwsBasicCredentials credentials = AwsBasicCredentials.create(awsBasicCredentials.accessKeyId(), awsBasicCredentials.secretAccessKey());
+            SendMessageRequest request = buildSqsRequest(credentials, message);
             return Optional.of(sqsClient.sendMessage(request));
         } catch (Exception e) {
             log.error("error sending message: ", e.getCause());
@@ -92,7 +93,7 @@ public class AwsSnsPublisher {
         List<String> messageList = new ArrayList<>();
         final byte[] messageBytes = message.getBytes(StandardCharsets.UTF_8);
         byte[][] messageChunks = divideArray(messageBytes, maxDictionaryValue);
-        for (byte[] ba: messageChunks) {
+        for (byte[] ba : messageChunks) {
             String compressedMessage = null;
             try {
                 compressedMessage = Arrays.toString(compressor.compress(ba));
@@ -107,13 +108,13 @@ public class AwsSnsPublisher {
 
     public static byte[][] divideArray(byte[] source, int chunksize) {
 
-        byte[][] ret = new byte[(int)Math.ceil(source.length / (double)chunksize)][chunksize];
+        byte[][] ret = new byte[(int) Math.ceil(source.length / (double) chunksize)][chunksize];
 
         int start = 0;
 
-        for(int i = 0; i < ret.length; i++) {
-            ret[i] = Arrays.copyOfRange(source,start, start + chunksize);
-            start += chunksize ;
+        for (int i = 0; i < ret.length; i++) {
+            ret[i] = Arrays.copyOfRange(source, start, start + chunksize);
+            start += chunksize;
         }
 
         return ret;

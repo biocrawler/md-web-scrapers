@@ -73,7 +73,7 @@ public class FigshareArticleConverter {
         if (article.getAdditionalData() != null) {
             log.info("parsing article type: " + article.getAdditionalData().getFigshareType());
         }
-        List<Article.Keyword> keywords = parser.parseAllKeywords(browserAutomator.fetchAllFSArticleKeywordElements(driver));
+        Set<String> keywords = parser.parseAllKeywords(browserAutomator.fetchAllFSArticleKeywordElements(driver));
         log.info("keyword set not empty: " + CollectionUtils.isNotEmpty(keywords));
         builder.keywords(keywords);
         Set<String> dois = parser.parseArticleDoi(browserAutomator.fetchAllFSArticleDoiElements(driver));

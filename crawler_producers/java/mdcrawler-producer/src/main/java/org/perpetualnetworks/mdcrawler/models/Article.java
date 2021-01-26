@@ -1,9 +1,7 @@
 package org.perpetualnetworks.mdcrawler.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Builder;
 import lombok.Data;
 
@@ -19,7 +17,7 @@ public class Article {
     @JsonProperty("source_url")
     private String sourceUrl;
     @JsonProperty
-    private List<Keyword> keywords;
+    private Set<String> keywords;
     @JsonProperty("digital_object_id")
     private String digitalObjectId;
     @JsonProperty
@@ -42,14 +40,8 @@ public class Article {
     private AdditionalData additionalData;
 
     @Data
-    @Builder
-    public static class Keyword{
-        @JsonProperty
-        private String word;
-    }
-
-    @Data
     @Builder(toBuilder = true)
+    @JsonDeserialize(builder = AdditionalData.AdditionalDataBuilder.class)
     public static class AdditionalData {
         @JsonProperty("figshare_type")
         private String figshareType;

@@ -44,7 +44,7 @@ public class MendeleyArticleConverter {
         return Optional.empty();
     }
 
-    private List<Article.Keyword> parseKeywords(MendeleyResponse.Result result) {
+    private Set<String> parseKeywords(MendeleyResponse.Result result) {
         HashSet<String> keywords = new HashSet<>();
         for (List<String> keywordList : Arrays.asList(result.getContainerKeywords(),
                 result.getSubjectAreas(), result.getExternalSubjectAreas())) {
@@ -52,10 +52,7 @@ public class MendeleyArticleConverter {
                 keywords.addAll(parseKeywordList(keywordList));
             }
         }
-        return keywords
-                .stream()
-                .map(word -> Article.Keyword.builder().word(word).build())
-                .collect(Collectors.toList());
+        return keywords;
     }
 
     private List<String> parseKeywordList(List<String> stringlist) {

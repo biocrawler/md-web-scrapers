@@ -49,15 +49,14 @@ public class WebParser {
         return linkList;
     }
 
-    public List<Article.Keyword> parseAllKeywords(List<WebElement> webElements) {
+    public Set<String> parseAllKeywords(List<WebElement> webElements) {
         Set<String> keyWords = new HashSet<>();
         webElements.forEach(element ->
                 keyWords.add(element.getAttribute("title")));
         webElements.forEach(element ->
                 keyWords.add(element.getText()));
         return keyWords.stream().filter(Strings::isNotBlank)
-                .map(word -> Article.Keyword.builder().word(word).build())
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
     public Set<String> parseArticleDoi(List<WebElement> webElements) {

@@ -73,7 +73,7 @@ class MendeleyScraperTest {
                 .collect(Collectors.toSet()).size());
     }
 
-    //@Disabled("works with live data")
+    @Disabled("works with live data")
     @SneakyThrows
     @Test
     void runScraper_OK() {
