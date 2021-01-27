@@ -36,17 +36,17 @@ class ArticleSerializer(serializers.ModelSerializer):
     keywords = KeywordSerializer(many=True)
     authors = AuthorSerializer(many=True)
     files = ArticleFileSerializer(many=True)
-    parsed_date = serializers.CharField(required=False)
+    parse_date = serializers.CharField(required=False)
     
-    def validate_parse_date(self, attrs, source):
-        return attrs
+    #def validate_parse_date(self, attrs, source=None):
+    #    return attrs
 
     class Meta:
         model = Article
         fields = ("title", "source_url", "authors", "keywords", "files",
                   "digital_object_id", "refering_url", "description",
                   "parsed", "enriched", "published",
-                  "parsed_date",) #"upload_date","created_date", "modified_date")
+                  "parse_date",) #"upload_date","created_date", "modified_date")
 
     def create(self, validated_data):
         keywords_data = validated_data.pop('keywords')
