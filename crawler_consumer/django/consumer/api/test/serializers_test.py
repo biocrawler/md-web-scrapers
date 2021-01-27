@@ -1,17 +1,19 @@
-from django.test import TestCase
-from api.models import Author, ArticleFile, Article, Keyword
-from api.serializers import ArticleSerializer
+import json
+
 from api.api_lib.serializers import ArticleSerializer as apiserializer
 from api.api_lib.validators import ArticleValidator
-from api.test.article_test_data_1 import test_data_1, test_data_2
-import json
+from api.models import Article, ArticleFile, Author, Keyword
+from api.serializers import ArticleSerializer
+from django.test import TestCase
+
+from api_tests.article_test_data_1 import test_data_1
 
 
 class ArticleSerializerTC(TestCase):
     def setUp(self) -> None:
         pass
 
-    def test_serializer_data_1_ok(self):
+    def serializer_data_1_ok(self):
         validator = ArticleValidator(test_data_1)
         data = validator.get_validated_data()
         print("validated data: " + str(json.dumps(data, indent=4)))
@@ -20,7 +22,7 @@ class ArticleSerializerTC(TestCase):
         a = serializer.save()
         print(Article.objects.get(digital_object_id=a).to_json())
 
-    def test_serializer_data_2_ok(self):
+    def serializer_data_2_ok(self):
         validator = ArticleValidator(test_data_2)
         data = validator.get_validated_data()
         print("validated data: " + str(json.dumps(data, indent=4)))
