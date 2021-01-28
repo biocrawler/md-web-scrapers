@@ -5,6 +5,7 @@ __pycache__/
 *.idea*
 *secrets.yaml*
 *.swp*
+*vscode*
 *.DS*
 *testData*.txt
 
