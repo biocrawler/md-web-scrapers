@@ -1,0 +1,31 @@
+<configuration>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!--recepies
+            %logger{36}.%M - %msg%n
+            -->
+            <Pattern>
+                %d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n
+            </Pattern>
+        </encoder>
+    </appender>
+
+    <!-- reflections remove -->
+    <Logger name="org.reflections" level="WARN" additivity="false"/>
+    <Logger name="org.reflections" level="INFO" additivity="false"/>
+    <!-- logback remove -->
+    <Logger name="ch.qos.logback" level="INFO" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </Logger>
+    <Logger name="ch.qos.logback" level="WARN" additivity="false"/>
+    <!-- add debug -->
+    <logger name="org.perpetualnetworks" level="debug" additivity="true">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <!-- add error -->
+    <root level="error">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+</configuration>
