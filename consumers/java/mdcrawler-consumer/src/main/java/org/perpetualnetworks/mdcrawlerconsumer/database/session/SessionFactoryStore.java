@@ -15,12 +15,14 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.persistence.Table;
 import javax.sql.DataSource;
+import javax.validation.constraints.NotNull;
 import java.util.EnumMap;
 import java.util.Set;
 
 @Singleton
 public class SessionFactoryStore {
 
+    public static final String MDCRAWLERCONSUMER = "org.perpetualnetworks.mdcrawlerconsumer";
     @Nonnull
     private final EnumMap<Database, SessionFactory> factories = new EnumMap<>(Database.class);
 
@@ -36,26 +38,37 @@ public class SessionFactoryStore {
         for (Database db : Database.values()) {
             DataSource dataSource = dataSourceFactories.getDataSourceForDatabase(db);
 
-            StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
-                    .configure(db.getHibernateConfigName())
-                    .applySetting(AvailableSettings.DATASOURCE, dataSource)
-                    .build();
+            MetadataSources metadataSources = buildMetaDataSources(db, dataSource);
 
-            MetadataSources metadataSources = new MetadataSources(registry);
+            metadataSources = setMetadataSources(db, metadataSources);
 
-            Reflections reflections = new Reflections("com.booking.amparsers.database.model");
-            Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(Table.class);
-            for (Class<?> controller : annotated) {
-                Table table = controller.getAnnotation(Table.class);
-                if (db.getDatabaseSchema().equals(table.schema())) {
-                    metadataSources = metadataSources.addAnnotatedClass(controller);
-                }
-            }
-
-            SessionFactory sessionFactory = metadataSources.buildMetadata().buildSessionFactory();
-
-            factories.put(db, sessionFactory);
+            factories.put(db, metadataSources.buildMetadata().buildSessionFactory());
         }
+    }
+
+    @NotNull
+    private MetadataSources buildMetaDataSources(Database db, DataSource dataSource) {
+        StandardServiceRegistry registry = buildServiceRegistry(db, dataSource);
+        return new MetadataSources(registry);
+    }
+
+    private MetadataSources setMetadataSources(Database db, MetadataSources metadataSources) {
+        Reflections reflections = new Reflections(MDCRAWLERCONSUMER);
+        Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(Table.class);
+        for (Class<?> controller : annotated) {
+            Table table = controller.getAnnotation(Table.class);
+            if (db.getDatabaseSchema().equals(table.schema())) {
+                metadataSources = metadataSources.addAnnotatedClass(controller);
+            }
+        }
+        return metadataSources;
+    }
+
+    private StandardServiceRegistry buildServiceRegistry(Database db, DataSource dataSource) {
+        return new StandardServiceRegistryBuilder()
+                .configure(db.getHibernateConfigName())
+                .applySetting(AvailableSettings.DATASOURCE, dataSource)
+                .build();
     }
 
     @Nonnull

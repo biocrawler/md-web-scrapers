@@ -15,7 +15,7 @@ public interface Constants {
     }
 
     interface DatabaseSchema {
-        String DBO = "dbo";
+        String CRAWLER_CONSUMER = "mdcrawler_consumer_d";
     }
 
     interface HibernateConfig {

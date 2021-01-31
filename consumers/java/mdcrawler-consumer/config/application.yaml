@@ -1,9 +1,9 @@
 spring:
-  datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:localhost;DB_CLOSE_ON_EXIT=FALSE
-    username: admin
-    password:
+ # datasource:
+ #   driver-class-name: org.h2.Driver
+ #   url: jdbc:h2:mem:localhost;DB_CLOSE_ON_EXIT=FALSE
+ #   username: admin
+ #   password:
 #  jackson:
 #    property-naming-strategy: SNAKE_CASE
   #main:
@@ -12,3 +12,5 @@ aws:
   sqsUrl: "https://sqs.eu-central-1.amazonaws.com/397254617684/crawler_queue"
   credentialsFile: "config/aws.json"
   region: "eu-central-1"
+crawlerConsumer:
+  dbCredentialsFile: "config/consumerdb.json"

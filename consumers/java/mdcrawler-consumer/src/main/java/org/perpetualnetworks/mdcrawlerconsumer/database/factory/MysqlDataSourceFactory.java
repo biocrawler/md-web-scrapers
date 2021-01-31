@@ -16,7 +16,7 @@ import javax.sql.DataSource;
 public class MysqlDataSourceFactory extends AbstractDataSourceFactory {
 
     public MysqlDataSourceFactory() {
-        //Constants.DataSources.init(Constants.Application.NAME);
+        //DataSources.init(Constants.Application.NAME);
     }
 
     DataSource createDataSource(String databaseName) {

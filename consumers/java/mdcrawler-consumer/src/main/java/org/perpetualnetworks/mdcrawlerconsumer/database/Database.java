@@ -9,7 +9,7 @@ import javax.annotation.Nonnull;
 public enum Database {
 
     CRAWLER_CONSUMER(Constants.DatabaseName.CRAWLER_CONSUMER,
-            Constants.DatabaseSchema.DBO,
+            Constants.DatabaseSchema.CRAWLER_CONSUMER,
             DatabaseProvider.MYSQL,
             Constants.HibernateConfig.CRAWLER_CONSUMER);
 
