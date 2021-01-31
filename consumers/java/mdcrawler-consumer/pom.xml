@@ -43,6 +43,7 @@
         <checkstyle.version>8.22</checkstyle.version>
         <jedis.version>3.2.0</jedis.version>
         <ozimov.version>0.7.2</ozimov.version>
+        <org.reflections.version>0.9.12</org.reflections.version>
     </properties>
 
     <dependencies>
@@ -58,10 +59,11 @@
             <version>${spring.boot.version}</version>
         </dependency>
 
+        <!-- MySQL JDBC driver -->
         <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-jpa</artifactId>
-            <version>${spring.boot.version}</version>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.23</version>
         </dependency>
 
         <dependency>
@@ -168,14 +170,14 @@
 
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
-            <artifactId>sns</artifactId>
+            <artifactId>sqs</artifactId>
             <version>${aws.sdk.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>sqs</artifactId>
-            <version>${aws.sdk.version}</version>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>${org.reflections.version}</version>
         </dependency>
 
 
