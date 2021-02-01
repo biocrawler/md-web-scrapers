@@ -6,6 +6,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.perpetualnetworks.mdcrawlerconsumer.config.CrawlerConsumerConfiguration;
 import org.perpetualnetworks.mdcrawlerconsumer.database.entity.KeyWordEntity;
@@ -35,10 +36,9 @@ public class DataSourceTest {
                 .databaseName("mdcrawler_consumer_d")
                 .build();
 
-
-    //@Disabled("works with local db")
+    @Disabled("works with local db")
     @Test
-    void bob() {
+    void queryBySql() {
         String sqlSelectAllPersons = "SELECT * FROM api_keyword";
 
 
@@ -59,7 +59,7 @@ public class DataSourceTest {
 
     @Test
     @SneakyThrows
-    void alice() {
+    void queryByEntity() {
         SessionFactoryStore factoryStore = new SessionFactoryStore(new DataSourceFactories(
                 new MysqlDataSourceFactory(Collections.singletonList(config))));
 

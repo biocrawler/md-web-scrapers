@@ -16,6 +16,8 @@ public class FileArticle {
     private String fileName;
     @JsonProperty
     private String url;
+    @JsonProperty
+    private String size;
     @JsonProperty("download_url")
     private String downloadUrl;
     @JsonProperty("digital_object_id")
