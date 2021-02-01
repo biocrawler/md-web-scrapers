@@ -10,9 +10,7 @@ public enum Database {
 
     CRAWLER_CONSUMER(Constants.DatabaseName.CRAWLER_CONSUMER,
             Constants.DatabaseSchema.CRAWLER_CONSUMER,
-            DatabaseProvider.MYSQL,
-            Constants.HibernateConfig.CRAWLER_CONSUMER);
-
+            DatabaseProvider.MYSQL);
 
     @Nonnull
     private final String databaseName;
@@ -21,12 +19,9 @@ public enum Database {
 
     private final DatabaseProvider databaseProvider;
 
-    private final String hibernateConfigName;
-
-    Database(@Nonnull String databaseName, String databaseSchema, DatabaseProvider databaseProvider, String hibernateConfigName) {
+    Database(@Nonnull String databaseName, String databaseSchema, DatabaseProvider databaseProvider) {
         this.databaseName = databaseName;
         this.databaseSchema = databaseSchema;
         this.databaseProvider = databaseProvider;
-        this.hibernateConfigName = hibernateConfigName;
     }
 }

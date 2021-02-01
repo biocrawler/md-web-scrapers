@@ -9,6 +9,7 @@ import org.hibernate.cfg.AvailableSettings;
 import org.perpetualnetworks.mdcrawlerconsumer.database.Database;
 import org.perpetualnetworks.mdcrawlerconsumer.database.factory.DataSourceFactories;
 import org.reflections.Reflections;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -19,16 +20,16 @@ import javax.validation.constraints.NotNull;
 import java.util.EnumMap;
 import java.util.Set;
 
+@Component
 @Singleton
 public class SessionFactoryStore {
 
-    public static final String MDCRAWLERCONSUMER = "org.perpetualnetworks.mdcrawlerconsumer";
+    public static final String TOP_LEVEL_ENTITY_PATH = "org.perpetualnetworks.mdcrawlerconsumer";
     @Nonnull
     private final EnumMap<Database, SessionFactory> factories = new EnumMap<>(Database.class);
 
     private final DataSourceFactories dataSourceFactories;
 
-    @Inject
     public SessionFactoryStore(DataSourceFactories dataSourceFactories) {
         this.dataSourceFactories = dataSourceFactories;
         init();
@@ -53,7 +54,7 @@ public class SessionFactoryStore {
     }
 
     private MetadataSources setMetadataSources(Database db, MetadataSources metadataSources) {
-        Reflections reflections = new Reflections(MDCRAWLERCONSUMER);
+        Reflections reflections = new Reflections(TOP_LEVEL_ENTITY_PATH);
         Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(Table.class);
         for (Class<?> controller : annotated) {
             Table table = controller.getAnnotation(Table.class);
@@ -66,7 +67,6 @@ public class SessionFactoryStore {
 
     private StandardServiceRegistry buildServiceRegistry(Database db, DataSource dataSource) {
         return new StandardServiceRegistryBuilder()
-                .configure(db.getHibernateConfigName())
                 .applySetting(AvailableSettings.DATASOURCE, dataSource)
                 .build();
     }

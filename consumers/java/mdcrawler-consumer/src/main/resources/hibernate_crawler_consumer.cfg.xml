@@ -12,6 +12,5 @@
         <property name="hibernate.temp.use_jdbc_metadata_defaults">false</property>
         <property name="hibernate.connection.driver_class">jdbc:mysql://localhost:3306/test?serverTimezone=UTC</property>
 
-        <!--<mapping class="com.org.perpetualnetworks.mdcrawlerconsumer.database.entity.KeyWord"/>-->
     </session-factory>
 </hibernate-configuration>

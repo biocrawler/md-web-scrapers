@@ -30,8 +30,8 @@ public class DataSourceFactories {
     }
 
     public DataSource getDataSourceForDatabase(Database db) {
-        return factories
-                .get(db.getDatabaseProvider())
-                .getDataSource(db.getDatabaseName());
+        final DataSourceFactory dataSourceFactory = factories
+                .get(db.getDatabaseProvider());
+        return dataSourceFactory.getDataSource(db.getDatabaseName());
     }
 }

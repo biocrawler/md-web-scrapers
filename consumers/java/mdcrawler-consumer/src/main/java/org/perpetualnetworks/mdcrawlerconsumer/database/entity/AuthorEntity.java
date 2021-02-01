@@ -8,17 +8,11 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "api_keyword", schema = Constants.DatabaseSchema.CRAWLER_CONSUMER)
-public class KeyWord {
+@Table(name = "api_author", schema = Constants.DatabaseSchema.CRAWLER_CONSUMER)
+public class AuthorEntity {
     @Id
     Long id;
 
-    @Column(name = "word")
-    String word;
-
-    @Column(name = "created_date")
-    String createdDate;
-
-    @Column(name = "modified_date")
-    String modifiedDate;
+    @Column(name = "name")
+    String name;
 }

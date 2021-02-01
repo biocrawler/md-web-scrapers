@@ -14,3 +14,5 @@ aws:
   region: "eu-central-1"
 crawlerConsumer:
   dbCredentialsFile: "config/consumerdb.json"
+  databaseName: mdcrawler_consumer_d
+  connectionUrl: "jdbc:mysql://localhost:3306/mdcrawler_consumer_d?serverTimezone=UTC"

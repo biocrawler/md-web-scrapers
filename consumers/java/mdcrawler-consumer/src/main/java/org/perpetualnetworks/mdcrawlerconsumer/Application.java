@@ -14,13 +14,14 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @Slf4j
-@EntityScan(basePackageClasses = {Application.class, Jsr310JpaConverters.class})
+//@EntityScan(basePackageClasses = {Application.class, Jsr310JpaConverters.class})
+@EntityScan( basePackages = {"org.perpetualnetworks.mdcrawlerconsumer"})
 @SpringBootApplication
 @EnableAsync
 @EnableScheduling
 @Import({JacksonAutoConfiguration.class,
         PropertySourcesPlaceholderConfigurer.class,
-        ThymeleafAutoConfiguration.class})
+                ThymeleafAutoConfiguration.class})
 public class Application {
 
     public static void main(String[] args) {

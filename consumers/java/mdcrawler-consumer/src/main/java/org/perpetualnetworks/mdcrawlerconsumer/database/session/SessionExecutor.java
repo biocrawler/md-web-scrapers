@@ -3,14 +3,15 @@ package org.perpetualnetworks.mdcrawlerconsumer.database.session;
 import org.hibernate.Session;
 import org.perpetualnetworks.mdcrawlerconsumer.database.Database;
 import org.perpetualnetworks.mdcrawlerconsumer.database.session.SessionFactoryStore;
+import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.util.function.Function;
 
+@Component
 public class SessionExecutor {
     private final SessionFactoryStore sessionFactoryStore;
 
-    @Inject
     public SessionExecutor(SessionFactoryStore sessionFactoryStore) {
         this.sessionFactoryStore = sessionFactoryStore;
     }
