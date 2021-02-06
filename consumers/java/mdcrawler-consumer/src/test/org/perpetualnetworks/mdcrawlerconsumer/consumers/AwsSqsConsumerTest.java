@@ -2,6 +2,7 @@ package org.perpetualnetworks.mdcrawlerconsumer.consumers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.perpetualnetworks.mdcrawlerconsumer.config.AwsConfiguration;
 import org.perpetualnetworks.mdcrawlerconsumer.models.Article;
@@ -21,12 +22,14 @@ class AwsSqsConsumerTest {
             .build(), lzwCompressor);
     private final ObjectMapper mapper = new ObjectMapper();
 
+    @Disabled("works with live data")
     @Test
     void bob() {
         final Optional<ReceiveMessageResponse> receiveMessageResponse = consumer.fetchMessages(1);
         System.out.println(receiveMessageResponse);
     }
 
+    @Disabled("works with live data")
     @Test
     @SneakyThrows
     void fetchMessages() {

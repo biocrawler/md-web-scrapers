@@ -1,5 +1,7 @@
 package org.perpetualnetworks.mdcrawlerconsumer.database;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.Disabled;
@@ -47,15 +49,18 @@ public class EntityTests {
     }
 
     @Disabled("works with local db")
+    @SneakyThrows
     @Test
     void repositoryTest() {
         final SessionFactoryStore sessionFactory = buildLocalSessionFactory();
         SessionExecutor se = new SessionExecutor(sessionFactory);
         FileArticleRepository repository = new FileArticleRepository(
-                new FileArticleDao(), se
-        );
+                new FileArticleDao(), se);
         final List<FileArticleEntity> bob = repository.fetchArticleFiles("bob");
-        System.out.println(bob);
+        final List<FileArticleEntity> alice = repository.fetchAllArticleFiles();
+        ObjectMapper mapper = new ObjectMapper();
+        System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(bob));
+        System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(alice));
 
     }
 

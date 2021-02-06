@@ -2,8 +2,10 @@ package org.perpetualnetworks.mdcrawlerconsumer.database.query;
 
 import com.google.common.collect.ImmutableList;
 import org.hibernate.Session;
+import org.hibernate.query.criteria.internal.CriteriaSubqueryImpl;
 
 import javax.persistence.criteria.*;
+import javax.persistence.metamodel.EntityType;
 import java.util.*;
 
 import static java.util.Objects.nonNull;
@@ -14,6 +16,9 @@ public class QueryHelper<T> {
                                            Root<T> root,
                                            DaoQueryField queryField) {
         switch (queryField.getOpMatcher()) {
+            case ANY: {
+                return null;
+            }
             case EQUALS: {
                 return criteriaBuilder.equal(root.get(queryField.getFieldName()), queryField.getValue());
             }

@@ -18,10 +18,16 @@ public class FileArticleRepository {
         this.sessionExecutor = sessionExecutor;
     }
 
-    public List<FileArticleEntity> fetchArticleFiles(String fileName) {
+    public List<FileArticleEntity> fetchArticleFiles(String fileNameLike) {
         return sessionExecutor.executeAndReturn(session -> fileArticleDao.fetch(
                 FileArticleDao.Query.builder()
-                        .withFileNameLike(fileName)
+                        .withFileNameLike(fileNameLike)
+                        .build(),
+                session), Database.CRAWLER_CONSUMER);
+    }
+    public List<FileArticleEntity> fetchAllArticleFiles() {
+        return sessionExecutor.executeAndReturn(session -> fileArticleDao.fetch(
+                FileArticleDao.Query.builder()
                         .build(),
                 session), Database.CRAWLER_CONSUMER);
     }

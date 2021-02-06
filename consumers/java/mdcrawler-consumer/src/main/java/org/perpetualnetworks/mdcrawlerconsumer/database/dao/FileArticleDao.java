@@ -51,6 +51,10 @@ public class FileArticleDao extends BaseDao<FileArticleEntity, FileArticleDao.Qu
                 return this;
             }
 
+            public FileArticleDao.Query.QueryBuilder all() {
+                fields.add(new DaoQueryField(OpMatcher.ANY, null, null));
+                return this;
+            }
             public FileArticleDao.Query build() {
                 return new FileArticleDao.Query(ImmutableList.copyOf(fields), ImmutableList.of());
             }
