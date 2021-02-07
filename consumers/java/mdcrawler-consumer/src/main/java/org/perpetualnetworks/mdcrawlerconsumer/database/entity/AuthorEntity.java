@@ -9,7 +9,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "api_author", schema = Constants.DatabaseSchema.CRAWLER_CONSUMER)
-public class AuthorEntity {
+public class AuthorEntity extends BaseEntity {
     @Id
     Long id;
 

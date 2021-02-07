@@ -3,7 +3,7 @@ package org.perpetualnetworks.mdcrawlerconsumer.database.dao;
 import com.google.common.collect.ImmutableList;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import org.perpetualnetworks.mdcrawlerconsumer.database.entity.FileArticleEntity;
+import org.perpetualnetworks.mdcrawlerconsumer.database.entity.ArticleEntity;
 import org.perpetualnetworks.mdcrawlerconsumer.database.query.BaseQuery;
 import org.perpetualnetworks.mdcrawlerconsumer.database.query.DaoOrderByField;
 import org.perpetualnetworks.mdcrawlerconsumer.database.query.DaoQueryField;
@@ -12,10 +12,10 @@ import org.perpetualnetworks.mdcrawlerconsumer.database.query.OpMatcher;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FileArticleDao extends BaseDao<FileArticleEntity, FileArticleDao.Query> {
+public class ArticleDao extends BaseDao<ArticleEntity, ArticleDao.Query> {
 
-    public FileArticleDao() {
-        super(FileArticleEntity.class);
+    public ArticleDao() {
+        super(ArticleEntity.class);
     }
 
     @Getter
@@ -26,8 +26,8 @@ public class FileArticleDao extends BaseDao<FileArticleEntity, FileArticleDao.Qu
             super(fields, orderBy);
         }
 
-        public static FileArticleDao.Query.QueryBuilder builder() {
-            return new FileArticleDao.Query.QueryBuilder();
+        public static ArticleDao.Query.QueryBuilder builder() {
+            return new ArticleDao.Query.QueryBuilder();
         }
 
         public static class QueryBuilder {
@@ -36,23 +36,23 @@ public class FileArticleDao extends BaseDao<FileArticleEntity, FileArticleDao.Qu
             private QueryBuilder() {
             }
 
-            public FileArticleDao.Query.QueryBuilder withDigitaObjectlIdLike(String digitalObjectId) {
+            public ArticleDao.Query.QueryBuilder withDigitaObjectlIdLike(String digitalObjectId) {
                 fields.add(new DaoQueryField(OpMatcher.CONTAINS, digitalObjectId, "digitalObjectId"));
                 return this;
             }
 
-            public FileArticleDao.Query.QueryBuilder withDigitaObjectlId(String digitalObjectId) {
+            public ArticleDao.Query.QueryBuilder withDigitaObjectlId(String digitalObjectId) {
                 fields.add(new DaoQueryField(OpMatcher.EQUALS, digitalObjectId, "digitalObjectId"));
                 return this;
             }
 
-            public FileArticleDao.Query.QueryBuilder withFileNameLike(String fileName) {
+            public ArticleDao.Query.QueryBuilder withFileNameLike(String fileName) {
                 fields.add(new DaoQueryField(OpMatcher.CONTAINS, fileName, "fileName"));
                 return this;
             }
 
-            public FileArticleDao.Query build() {
-                return new FileArticleDao.Query(ImmutableList.copyOf(fields), ImmutableList.of());
+            public ArticleDao.Query build() {
+                return new ArticleDao.Query(ImmutableList.copyOf(fields), ImmutableList.of());
             }
         }
     }
