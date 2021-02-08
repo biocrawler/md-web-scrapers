@@ -43,6 +43,7 @@ class Article(models.Model):
     upload_date = models.DateTimeField(null=True)
     created_date = models.DateTimeField(auto_now_add=True, null=True)
     modified_date = models.DateTimeField(auto_now=True, null=True)
+    additional_data = models.TextField(default='')
 
     def files(self):
         return self.articlefile_set.all()
