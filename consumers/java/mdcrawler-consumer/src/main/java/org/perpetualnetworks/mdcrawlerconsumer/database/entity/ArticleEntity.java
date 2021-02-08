@@ -43,23 +43,23 @@ public class ArticleEntity extends BaseEntity {
     String description;
     @Column(name = PARSE_DATE, columnDefinition = "datetime", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy'T'HH:mm:ss")
     Date parseDate;
-    //TODO: move to relation entities
+    //TODO: relation entities for below
     //FILES
     //KEYWORDS
-    //@Column(name = AUTHORS)
-    //String authors;
+    //AUTHORS
     @Column(name = UPLOAD_DATE, columnDefinition = "DATETIME(6)", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy'T'HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy'T'HH:mm:ss")
     Date uploadDate;
     @Column(name = CREATED_DATE, columnDefinition = "DATETIME(6)", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy'T'HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy'T'HH:mm:ss")
     Date createdDate;
     @Column(name = MODIFIED_DATE, columnDefinition = "DATETIME(6)", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy'T'HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy'T'HH:mm:ss")
     Date modifiedDate;
     @Column(name = REFERING_URL)
     String referingUrl;
