@@ -7,10 +7,13 @@ import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.perpetualnetworks.mdcrawlerconsumer.config.CrawlerConsumerConfiguration;
+import org.perpetualnetworks.mdcrawlerconsumer.database.dao.ArticleDao;
 import org.perpetualnetworks.mdcrawlerconsumer.database.dao.FileArticleDao;
+import org.perpetualnetworks.mdcrawlerconsumer.database.entity.ArticleEntity;
 import org.perpetualnetworks.mdcrawlerconsumer.database.entity.FileArticleEntity;
 import org.perpetualnetworks.mdcrawlerconsumer.database.factory.DataSourceFactories;
 import org.perpetualnetworks.mdcrawlerconsumer.database.factory.MysqlDataSourceFactory;
+import org.perpetualnetworks.mdcrawlerconsumer.database.repository.ArticleRepository;
 import org.perpetualnetworks.mdcrawlerconsumer.database.repository.FileArticleRepository;
 import org.perpetualnetworks.mdcrawlerconsumer.database.session.SessionExecutor;
 import org.perpetualnetworks.mdcrawlerconsumer.database.session.SessionFactoryStore;
@@ -51,7 +54,7 @@ public class EntityTests {
     @Disabled("works with local db")
     @SneakyThrows
     @Test
-    void repositoryTest() {
+    void repositoryTest_fileArticle() {
         final SessionFactoryStore sessionFactory = buildLocalSessionFactory();
         SessionExecutor se = new SessionExecutor(sessionFactory);
         FileArticleRepository repository = new FileArticleRepository(
@@ -61,6 +64,23 @@ public class EntityTests {
         ObjectMapper mapper = new ObjectMapper();
         System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(bob));
         System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(alice));
+
+    }
+
+    @Disabled("works with local db")
+    @SneakyThrows
+    @Test
+    void repositoryTest_article() {
+        final SessionFactoryStore sessionFactory = buildLocalSessionFactory();
+        SessionExecutor se = new SessionExecutor(sessionFactory);
+        ArticleRepository repository = new ArticleRepository(
+                new ArticleDao(), se);
+        //final List<FileArticleEntity> bob = repository.fetchArticleFiles("bob");
+        final List<ArticleEntity> alice = repository.fetchAllArticles();
+        ObjectMapper mapper = new ObjectMapper();
+        //System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(bob));
+        System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(alice));
+        System.out.println("current articles size: " + alice.size());
 
     }
 

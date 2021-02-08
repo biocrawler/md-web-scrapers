@@ -16,8 +16,8 @@ class Author(models.Model):
 class Keyword(models.Model):
     # must be a word
     word = models.CharField(max_length=128)
-    created_date = models.DateTimeField(auto_now_add=True, null=True)
-    modified_date = models.DateTimeField(auto_now=True, null=True)
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now=True)
 
     def to_json(self):
         return {
@@ -39,10 +39,10 @@ class Article(models.Model):
     parsed = models.BooleanField(default=False)
     enriched = models.BooleanField(default=False)
     published = models.BooleanField(default=False)
-    parse_date = models.DateTimeField(null=True)
-    upload_date = models.DateTimeField(null=True)
-    created_date = models.DateTimeField(auto_now_add=True, null=True)
-    modified_date = models.DateTimeField(auto_now=True, null=True)
+    parse_date = models.DateTimeField(default='1970-01-01 00:00:00.000000')
+    upload_date = models.DateTimeField(default='1970-01-01 00:00:00.000000')
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now=True)
     additional_data = models.TextField(default='')
 
     def files(self):
