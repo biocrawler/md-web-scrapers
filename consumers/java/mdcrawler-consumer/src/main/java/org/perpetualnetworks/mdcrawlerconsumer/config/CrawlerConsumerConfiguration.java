@@ -13,7 +13,7 @@ import java.util.Properties;
 
 @Data
 @Component
-@ConfigurationProperties("crawlerConsumer")
+@ConfigurationProperties("crawler-consumer")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

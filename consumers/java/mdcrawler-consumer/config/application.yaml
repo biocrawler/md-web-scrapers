@@ -8,11 +8,13 @@ spring:
 #    property-naming-strategy: SNAKE_CASE
   #main:
   #  banner-mode: off
+  flyway:
+    enabled: false
 aws:
   sqsUrl: "https://sqs.eu-central-1.amazonaws.com/397254617684/crawler_queue"
   credentialsFile: "config/aws.json"
   region: "eu-central-1"
-crawlerConsumer:
+crawler-consumer:
   dbCredentialsFile: "config/consumerdb.json"
   databaseName: mdcrawler_consumer_d
   connectionUrl: "jdbc:mysql://localhost:3306/mdcrawler_consumer_d?serverTimezone=UTC"
