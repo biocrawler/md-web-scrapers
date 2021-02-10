@@ -21,4 +21,10 @@ public class KeyWordEntity extends BaseEntity {
 
     @Column(name = "modified_date")
     String modifiedDate;
+
+    //@OneToMany(mappedBy = "keyword")
+    //Set<FileKeywordRelationEntity> fileRelations;
+
+    // @ManyToMany(targetEntity = ArticleEntity.class, mappedBy = "keywords", cascade={CascadeType.PERSIST, CascadeType.MERGE})
+    // Set<ArticleEntity> articles;
 }

@@ -1,6 +1,5 @@
 package org.perpetualnetworks.mdcrawlerconsumer.database.dao;
 
-import lombok.Builder;
 import org.hibernate.Session;
 import org.perpetualnetworks.mdcrawlerconsumer.database.entity.BaseEntity;
 import org.perpetualnetworks.mdcrawlerconsumer.database.query.BaseQuery;

@@ -14,7 +14,7 @@ import java.nio.ByteBuffer;
  * @author Saul Johnson, Alex Mullen, Lee Oliver
  */
 @Component
-public class LZWCompressor extends Compressor {
+public class LZwCompressor extends Compressor {
 
     /**
      * Returns the specified integer as a hex string at least two characters long.
@@ -55,8 +55,8 @@ public class LZWCompressor extends Compressor {
      *
      * @return a dictionary initialised with entries for single byte values
      */
-    private LZWDictionary getInitializedDictionary() {
-        final LZWDictionary dictionary = new LZWDictionary();
+    private LZwDictionary getInitializedDictionary() {
+        final LZwDictionary dictionary = new LZwDictionary();
         for (int i = 0; i < 256; i++) {
             dictionary.addData(toHex(i));
         }
@@ -88,13 +88,13 @@ public class LZWCompressor extends Compressor {
         try (ByteArrayInputStream in = new ByteArrayInputStream(data)) {
 
             // Initialise dictionary.
-            final LZWDictionary dictionary = getInitializedDictionary();
+            final LZwDictionary dictionary = getInitializedDictionary();
 
             // Get ouput stream.
             final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
             // Write checksum byte to output.
-            final Checksum checker = new BSDChecksum();
+            final Checksum checker = new BSdChecksum();
             out.write(checker.compute(data));
 
             String sequence = "";
@@ -136,7 +136,7 @@ public class LZWCompressor extends Compressor {
         try (ByteArrayInputStream in = new ByteArrayInputStream(data)) {
 
             // Initialise dictionary.
-            final LZWDictionary dictionary = getInitializedDictionary();
+            final LZwDictionary dictionary = getInitializedDictionary();
 
             // Get checksum.
             final byte[] checksum = new byte[1];
@@ -165,7 +165,7 @@ public class LZWCompressor extends Compressor {
             out.close();
 
             // Make sure our checksum matches.
-            final Checksum checker = new BSDChecksum();
+            final Checksum checker = new BSdChecksum();
             if (checksum[0] != checker.compute(payload)[0]) {
                 throw new IOException("Bad checksum.");
             }
@@ -188,7 +188,7 @@ public class LZWCompressor extends Compressor {
 
     //TODO: replace with builder
     protected Compressor create() {
-        return new LZWCompressor();
+        return new LZwCompressor();
     }
 
 }

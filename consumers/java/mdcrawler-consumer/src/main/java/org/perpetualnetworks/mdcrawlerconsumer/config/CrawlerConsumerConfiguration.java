@@ -1,7 +1,10 @@
 package org.perpetualnetworks.mdcrawlerconsumer.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +17,7 @@ import java.util.Properties;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CrawlerConsumerConfiguration extends AbstractDatabaseConfiguration implements DatabaseConfiguration{
+public class CrawlerConsumerConfiguration extends AbstractDatabaseConfiguration implements DatabaseConfiguration {
     @JsonProperty
     @Nonnull
     private String dbCredentialsFile;

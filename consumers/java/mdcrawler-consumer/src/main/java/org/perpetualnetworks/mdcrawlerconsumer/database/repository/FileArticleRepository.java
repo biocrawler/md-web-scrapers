@@ -13,7 +13,7 @@ public class FileArticleRepository {
     private final SessionExecutor sessionExecutor;
 
     public FileArticleRepository(FileArticleDao fileArticleDao,
-                                  SessionExecutor sessionExecutor) {
+                                 SessionExecutor sessionExecutor) {
         this.fileArticleDao = fileArticleDao;
         this.sessionExecutor = sessionExecutor;
     }
@@ -25,6 +25,7 @@ public class FileArticleRepository {
                         .build(),
                 session), Database.CRAWLER_CONSUMER);
     }
+
     public List<FileArticleEntity> fetchAllArticleFiles() {
         return sessionExecutor.executeAndReturn(session -> fileArticleDao.fetch(
                 FileArticleDao.Query.builder()

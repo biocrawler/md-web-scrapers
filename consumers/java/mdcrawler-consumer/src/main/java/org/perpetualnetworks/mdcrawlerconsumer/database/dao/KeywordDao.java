@@ -40,10 +40,12 @@ public class KeywordDao extends BaseDao<KeyWordEntity, KeywordDao.Query> {
                 fields.add(new DaoQueryField(OpMatcher.EQUALS, word, "word"));
                 return this;
             }
+
             public KeywordDao.Query.QueryBuilder withWordLike(String word) {
                 fields.add(new DaoQueryField(OpMatcher.CONTAINS, word, "word"));
                 return this;
             }
+
             public KeywordDao.Query build() {
                 return new KeywordDao.Query(ImmutableList.copyOf(fields), ImmutableList.of());
             }

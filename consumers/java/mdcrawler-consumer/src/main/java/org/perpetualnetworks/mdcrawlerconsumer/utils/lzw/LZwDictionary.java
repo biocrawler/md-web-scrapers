@@ -7,7 +7,7 @@ import java.util.HashMap;
  *
  * @author Saul Johnson, Alex Mullen, Lee Oliver
  */
-public class LZWDictionary {
+public class LZwDictionary {
 
     /**
      * Maps hexadecimal strings to 16-bit data codes.
@@ -22,7 +22,7 @@ public class LZWDictionary {
     /**
      * Initialises a new instance of an LZW compression dictionary.
      */
-    public LZWDictionary() {
+    public LZwDictionary() {
         dataToCodes = new HashMap<>();
         codesToData = new HashMap<>();
     }

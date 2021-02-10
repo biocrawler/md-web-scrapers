@@ -6,11 +6,17 @@
             %logger{36}.%M - %msg%n
             -->
             <Pattern>
-                %d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n
+                <!--%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n-->
+                %d{dd-MM-yyyy HH:mm:ss.SSS} %magenta([%thread]) %highlight(%-5level) [%blue(%t)]  %yellow(%C{1.}): %msg%n%throwable
             </Pattern>
         </encoder>
     </appender>
 
+
+    <logger name="org.hibernate.type.descriptor.sql" level="TRACE" />
+
+    <logger name="org.hibernate" additivity="true" level="DEBUG"/>
+    <logger name="org.hibernate" additivity="true" level="INFO"/>
     <!-- reflections remove -->
     <Logger name="org.reflections" level="WARN" additivity="false"/>
     <Logger name="org.reflections" level="INFO" additivity="false"/>

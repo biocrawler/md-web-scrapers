@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.perpetualnetworks.mdcrawlerconsumer.config.AwsConfiguration;
 import org.perpetualnetworks.mdcrawlerconsumer.models.Article;
-import org.perpetualnetworks.mdcrawlerconsumer.utils.lzw.LZWCompressor;
+import org.perpetualnetworks.mdcrawlerconsumer.utils.lzw.LZwCompressor;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
 
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.Optional;
 
 class AwsSqsConsumerTest {
 
-    private final LZWCompressor lzwCompressor = new LZWCompressor();
+    private final LZwCompressor lzwCompressor = new LZwCompressor();
     private final AwsSqsConsumer consumer = new AwsSqsConsumer(AwsConfiguration.builder()
             .sqsUrl("https://sqs.eu-central-1.amazonaws.com/397254617684/crawler_queue")
             .credentialsFile("config/aws.json")

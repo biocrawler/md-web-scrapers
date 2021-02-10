@@ -12,7 +12,6 @@ import org.reflections.Reflections;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.persistence.Table;
 import javax.sql.DataSource;

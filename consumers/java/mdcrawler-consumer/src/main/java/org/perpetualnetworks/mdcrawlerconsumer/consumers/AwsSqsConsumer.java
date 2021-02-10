@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.perpetualnetworks.mdcrawlerconsumer.config.AwsConfiguration;
 import org.perpetualnetworks.mdcrawlerconsumer.models.Article;
 import org.perpetualnetworks.mdcrawlerconsumer.utils.ByteOperations;
-import org.perpetualnetworks.mdcrawlerconsumer.utils.lzw.LZWCompressor;
+import org.perpetualnetworks.mdcrawlerconsumer.utils.lzw.LZwCompressor;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.awscore.AwsRequestOverrideConfiguration;
 import software.amazon.awssdk.regions.Region;
@@ -17,23 +17,28 @@ import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
 
+import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
 public class AwsSqsConsumer {
-    private final static ObjectMapper MAPPER = new ObjectMapper()
+    private static final String AWS_SECRET_ACCESS_KEY = "aws_secret_access_key";
+    private static final String AWS_ACCESS_KEY_ID = "aws_access_key_id";
+    private static final ObjectMapper MAPPER = new ObjectMapper()
             .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
-    public static final String AWS_SECRET_ACCESS_KEY = "aws_secret_access_key";
-    public static final String AWS_ACCESS_KEY_ID = "aws_access_key_id";
     private final AwsConfiguration awsConfiguration;
     private final SqsClient sqsClient;
-    private final LZWCompressor compressor;
+    private final LZwCompressor compressor;
     private AwsBasicCredentials awsBasicCredentials;
 
-    public AwsSqsConsumer(AwsConfiguration awsConfiguration, LZWCompressor compressor) {
+    public AwsSqsConsumer(AwsConfiguration awsConfiguration, LZwCompressor compressor) {
         this.awsConfiguration = awsConfiguration;
         parseAwsCredentials(awsConfiguration).ifPresent(c -> this.awsBasicCredentials = c);
         this.sqsClient = SqsClient.builder()
@@ -77,17 +82,21 @@ public class AwsSqsConsumer {
 
     public List<Article> fetchArticles(Integer size) {
         List<Article> articles = new ArrayList<>();
-        fetchMessages(size).ifPresent(
-                response -> articles.addAll(response.messages()
-                        .stream()
-                        .map(this::parseCompressedArticle)
-                        .collect(Collectors.toList()))
-        );
+        fetchMessages(size)
+                .ifPresent(response -> articles.addAll(parseResponseMessages(response)));
         return articles;
     }
 
+    @NotNull
+    private List<Article> parseResponseMessages(ReceiveMessageResponse response) {
+        return response.messages()
+                .stream()
+                .map(this::parseCompressedArticle)
+                .collect(Collectors.toList());
+    }
+
     @SneakyThrows
-    private Article parseCompressedArticle(Message message)  {
+    private Article parseCompressedArticle(Message message) {
         final String processedArticleString = Arrays.stream(
                 message.body().split(","))
                 .filter(Objects::nonNull)

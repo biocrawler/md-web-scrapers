@@ -40,10 +40,12 @@ public class AuthorDao extends BaseDao<AuthorEntity, AuthorDao.Query> {
                 fields.add(new DaoQueryField(OpMatcher.EQUALS, name, "name"));
                 return this;
             }
+
             public AuthorDao.Query.QueryBuilder withNameLike(String name) {
                 fields.add(new DaoQueryField(OpMatcher.CONTAINS, name, "name"));
                 return this;
             }
+
             public AuthorDao.Query build() {
                 return new AuthorDao.Query(ImmutableList.copyOf(fields), ImmutableList.of());
             }

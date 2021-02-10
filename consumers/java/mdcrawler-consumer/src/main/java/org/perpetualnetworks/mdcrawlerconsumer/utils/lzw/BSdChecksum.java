@@ -6,7 +6,7 @@ package org.perpetualnetworks.mdcrawlerconsumer.utils.lzw;
  *
  * @author Saul Johnson, Alex Mullen, Lee Oliver
  */
-public class BSDChecksum implements Checksum {
+public class BSdChecksum implements Checksum {
 
     @Override
     public byte[] compute(byte[] data) {

@@ -1,6 +1,5 @@
 package org.perpetualnetworks.mdcrawlerconsumer.database.factory;
 
-import org.perpetualnetworks.mdcrawlerconsumer.Constants;
 import org.perpetualnetworks.mdcrawlerconsumer.config.DatabaseConfiguration;
 
 import javax.sql.DataSource;
@@ -9,13 +8,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
 import java.util.logging.Logger;
 
 public class MysqlDataSource implements DataSource {
     private final DatabaseConfiguration databaseConfiguration;
+
     public MysqlDataSource(DatabaseConfiguration databaseConfiguration) {
         //TODO: use DI
         this.databaseConfiguration = databaseConfiguration;
@@ -33,7 +30,7 @@ public class MysqlDataSource implements DataSource {
 
     @Override
     public PrintWriter getLogWriter() throws SQLException {
-        return null;
+        return DriverManager.getLogWriter();
     }
 
     @Override
@@ -53,7 +50,7 @@ public class MysqlDataSource implements DataSource {
 
     @Override
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-        return null;
+        return Logger.getLogger("mysqlDataSource");
     }
 
     @Override

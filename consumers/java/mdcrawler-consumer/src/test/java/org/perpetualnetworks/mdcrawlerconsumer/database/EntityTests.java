@@ -3,7 +3,6 @@ package org.perpetualnetworks.mdcrawlerconsumer.database;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.perpetualnetworks.mdcrawlerconsumer.config.CrawlerConsumerConfiguration;

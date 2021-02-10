@@ -2,11 +2,14 @@ package org.perpetualnetworks.mdcrawlerconsumer.database.query;
 
 import com.google.common.collect.ImmutableList;
 import org.hibernate.Session;
-import org.hibernate.query.criteria.internal.CriteriaSubqueryImpl;
 
-import javax.persistence.criteria.*;
-import javax.persistence.metamodel.EntityType;
-import java.util.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.Collections;
+import java.util.List;
 
 import static java.util.Objects.nonNull;
 
