@@ -17,6 +17,13 @@ public class ArticleRepository {
         this.articleDao = articleDao;
         this.sessionExecutor = sessionExecutor;
     }
+    public List<ArticleEntity> fetchArticle(String articleId) {
+        return sessionExecutor.executeAndReturn(session -> articleDao.fetch(
+                ArticleDao.Query.builder()
+                        .withId(articleId)
+                        .build(),
+                session), Database.CRAWLER_CONSUMER);
+    }
 
     public List<ArticleEntity> fetchArticlesByDoi(String digitalObjectId) {
         return sessionExecutor.executeAndReturn(session -> articleDao.fetch(

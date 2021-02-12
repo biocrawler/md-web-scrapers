@@ -35,6 +35,10 @@ public class ArticleDao extends BaseDao<ArticleEntity, ArticleDao.Query> {
 
             private QueryBuilder() {
             }
+            public ArticleDao.Query.QueryBuilder withId(String articleId) {
+                fields.add(new DaoQueryField(OpMatcher.EQUALS, articleId, "id"));
+                return this;
+            }
 
             public ArticleDao.Query.QueryBuilder withDigitaObjectlIdLike(String digitalObjectId) {
                 fields.add(new DaoQueryField(OpMatcher.CONTAINS, digitalObjectId, "digitalObjectId"));
