@@ -27,18 +27,27 @@ import java.util.List;
 @Builder
 @Data
 @Entity
-@Table(name = "api_author", schema = Constants.DatabaseSchema.CRAWLER_CONSUMER)
-public class AuthorEntity extends BaseEntity {
+@Table(name = "api_keyword", schema = Constants.DatabaseSchema.CRAWLER_CONSUMER)
+public class KeywordEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", unique = true, nullable =false)
-    Integer id;
+    Long id;
 
-    @Column(name = "name")
-    String name;
+    @Column(name = "word")
+    String word;
 
-    @OneToMany(mappedBy = "authorEntity", fetch = FetchType.LAZY)
+    @Column(name = "created_date")
+    String createdDate;
+
+    @Column(name = "modified_date")
+    String modifiedDate;
+
+    @OneToMany(mappedBy = "keywordEntity", fetch = FetchType.LAZY)
     @LazyCollection(LazyCollectionOption.FALSE)
-    private List<ArticleAuthorRelationEntity> articleRelations = new ArrayList<>();
+    private List<ArticleKeywordRelationEntity> articleRelations = new ArrayList<>();
 
+    @OneToMany(mappedBy = "keywordEntity", fetch = FetchType.LAZY)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<FileKeywordRelationEntity> fileRelations = new ArrayList<>();
 }

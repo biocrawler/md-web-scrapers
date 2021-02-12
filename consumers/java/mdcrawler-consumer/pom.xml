@@ -42,6 +42,7 @@
         <hibernate.version>5.4.14.Final</hibernate.version>
         <hibernate-jpamodelgen.version>5.4.19.Final</hibernate-jpamodelgen.version>
         <flyway.version>7.5.2</flyway.version>
+        <datasource.proxy.version>1.7</datasource.proxy.version>
         <jaxb.api.version>2.4.0-b180830.0359</jaxb.api.version>
         <checkstyle.version>8.22</checkstyle.version>
         <jedis.version>3.2.0</jedis.version>
@@ -179,6 +180,12 @@
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
             <version>${flyway.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.ttddyy</groupId>
+            <artifactId>datasource-proxy</artifactId>
+            <version>${datasource.proxy.version}</version>
         </dependency>
 
         <dependency>

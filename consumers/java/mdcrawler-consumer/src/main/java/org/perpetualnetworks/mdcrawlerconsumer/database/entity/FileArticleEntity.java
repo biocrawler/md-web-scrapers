@@ -4,21 +4,30 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.perpetualnetworks.mdcrawlerconsumer.Constants;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 @AllArgsConstructor
 @Builder
 @Data
-@IdClass(FileArticleEntity.class)
+//@IdClass(FileArticleEntity.class)
 @Entity
 @Table(name = "api_articlefile", schema = Constants.DatabaseSchema.CRAWLER_CONSUMER)
 public class FileArticleEntity extends BaseEntity {
@@ -31,7 +40,8 @@ public class FileArticleEntity extends BaseEntity {
     public static final String SIZE = "size";
     public static final String ARTICLE_ID = "article_id";
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", unique = true, nullable =false)
     Integer id;
     @Column(name = FILE_NAME)
     String fileName;
@@ -47,14 +57,14 @@ public class FileArticleEntity extends BaseEntity {
     String referingUrl;
     @Column(name = SIZE)
     Double size;
-    //@Column(name = ARTICLE_ID)
-    //Integer articleId;
-    // @ManyToOne(fetch = FetchType.LAZY)
-    // @JoinColumn(name = "asset_id", nullable = false)
-    // ArticleEntity article;
 
-    //@OneToMany(mappedBy = "articleFileId")
-    //Set<FileKeywordRelationEntity> keywordRelations;
+    @ManyToOne
+    @JoinColumn(name = ARTICLE_ID)
+    private ArticleEntity articleEntity;
+
+    @OneToMany(mappedBy = "keywordEntity", fetch = FetchType.LAZY)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<FileKeywordRelationEntity> keywordRelations;
 
 
 }

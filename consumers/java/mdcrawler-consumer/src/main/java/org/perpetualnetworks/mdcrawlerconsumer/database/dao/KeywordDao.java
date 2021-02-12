@@ -3,7 +3,7 @@ package org.perpetualnetworks.mdcrawlerconsumer.database.dao;
 import com.google.common.collect.ImmutableList;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import org.perpetualnetworks.mdcrawlerconsumer.database.entity.KeyWordEntity;
+import org.perpetualnetworks.mdcrawlerconsumer.database.entity.KeywordEntity;
 import org.perpetualnetworks.mdcrawlerconsumer.database.query.BaseQuery;
 import org.perpetualnetworks.mdcrawlerconsumer.database.query.DaoOrderByField;
 import org.perpetualnetworks.mdcrawlerconsumer.database.query.DaoQueryField;
@@ -12,10 +12,10 @@ import org.perpetualnetworks.mdcrawlerconsumer.database.query.OpMatcher;
 import java.util.ArrayList;
 import java.util.List;
 
-public class KeywordDao extends BaseDao<KeyWordEntity, KeywordDao.Query> {
+public class KeywordDao extends BaseDao<KeywordEntity, KeywordDao.Query> {
 
     public KeywordDao() {
-        super(KeyWordEntity.class);
+        super(KeywordEntity.class);
     }
 
     @Getter
