@@ -33,10 +33,6 @@ public class ArticleKeywordRelationEntity extends BaseEntity implements Relation
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", unique = true, nullable = false)
     Integer id;
-    //@Column(name = KEYWORD_ID)
-    //String keywordId;
-    //@Column(name = ARTICLE_ID)
-    //Integer articleId;
     @ManyToOne
     @JoinColumn(name = KEYWORD_ID)
     private KeywordEntity keywordEntity;

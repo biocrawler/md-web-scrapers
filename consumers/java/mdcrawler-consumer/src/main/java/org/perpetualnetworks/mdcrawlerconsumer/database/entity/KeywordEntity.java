@@ -1,5 +1,6 @@
 package org.perpetualnetworks.mdcrawlerconsumer.database.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -45,9 +46,11 @@ public class KeywordEntity extends BaseEntity {
 
     @OneToMany(mappedBy = "keywordEntity", fetch = FetchType.LAZY)
     @LazyCollection(LazyCollectionOption.FALSE)
+    @JsonIgnore
     private List<ArticleKeywordRelationEntity> articleRelations = new ArrayList<>();
 
     @OneToMany(mappedBy = "keywordEntity", fetch = FetchType.LAZY)
     @LazyCollection(LazyCollectionOption.FALSE)
+    @JsonIgnore
     private List<FileKeywordRelationEntity> fileRelations = new ArrayList<>();
 }

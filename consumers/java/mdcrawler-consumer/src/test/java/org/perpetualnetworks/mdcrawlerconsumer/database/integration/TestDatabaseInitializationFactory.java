@@ -50,8 +50,8 @@ public class TestDatabaseInitializationFactory {
         properties.put(AvailableSettings.DATASOURCE, dataSource);
         properties.put(AvailableSettings.CURRENT_SESSION_CONTEXT_CLASS, "managed");
         properties.put(AvailableSettings.GENERATE_STATISTICS, "false");
-        properties.put(AvailableSettings.SHOW_SQL, "true");
-        properties.put(AvailableSettings.FORMAT_SQL, "true");
+        properties.put(AvailableSettings.SHOW_SQL, "false");
+        properties.put(AvailableSettings.FORMAT_SQL, "false");
         properties.put(AvailableSettings.USE_SQL_COMMENTS, "true");
         properties.put("jadira.usertype.autoRegisterUserTypes", "true");
         properties.put(AvailableSettings.DIALECT, "org.hibernate.dialect.H2Dialect");

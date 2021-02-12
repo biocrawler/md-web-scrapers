@@ -1,5 +1,6 @@
 package org.perpetualnetworks.mdcrawlerconsumer.database.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -60,6 +61,7 @@ public class FileArticleEntity extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = ARTICLE_ID)
+    @JsonIgnore
     private ArticleEntity articleEntity;
 
     @OneToMany(mappedBy = "keywordEntity", fetch = FetchType.LAZY)
