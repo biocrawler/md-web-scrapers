@@ -32,9 +32,12 @@ public class Converter {
                 .description(article.getDescription())
                 .parseDate(parseTime(article.getParseDate()))
                 .uploadDate(parseTime(article.getUploadDate()))
+                .createdDate(parseTime(article.getCreatedDate()))
+                .modifiedDate(parseTime(article.getModifiedDate()))
                 .referingUrl(article.getReferingUrl())
                 .enriched(article.getEnriched())
                 .published(article.getPublished())
+                .parsed(article.getParsed())
                 .additionalData(article.getAdditionalData())
                 //related items
                 //TODO: convert related entities

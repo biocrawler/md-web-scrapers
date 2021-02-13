@@ -55,6 +55,7 @@ public class TestDatabaseInitializationFactory {
         properties.put(AvailableSettings.USE_SQL_COMMENTS, "true");
         properties.put("jadira.usertype.autoRegisterUserTypes", "true");
         properties.put(AvailableSettings.DIALECT, "org.hibernate.dialect.H2Dialect");
+        //properties.put("hibernate.hbm2ddl.auto","create");
         // TODO: it should be uncommented but it does not work with Json type
         // properties.put("hibernate.hbm2ddl.auto", "validate");
         //properties.put(AvailableSettings.DEFAULT_SCHEMA, configuration.getDatabaseName());

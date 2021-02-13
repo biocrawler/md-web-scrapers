@@ -10,6 +10,7 @@ import org.perpetualnetworks.mdcrawlerconsumer.models.Article;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ArticleRepository {
 
@@ -57,8 +58,8 @@ public class ArticleRepository {
     }
 
     //Save or update from the Article object
-    public void saveOrUpdate(Article article) {
-
+    public Integer saveOrUpdate(Article article) {
+        AtomicInteger articleId = new AtomicInteger();
         Optional<ArticleEntity> existingEntity = getExistingEntity(article);
 
         ArticleEntity entity = sessionExecutor.executeAndReturn(session -> {
@@ -68,11 +69,12 @@ public class ArticleRepository {
                 //entityToSave.setCreatedAt(existingAsset.getCreatedAt());
                 session.evict(existingAsset);
             });
-            articleDao.saveOrUpdate(entityToSave, session);
+            articleId.set(articleDao.saveOrUpdate(entityToSave, session));
             return entityToSave;
         }, DEFAULT_DATABASE);
 
         updateAllDependantsAndUpdateCache(article, entity);
+        return articleId.get();
     }
 
     // TODO: check if needed
@@ -86,8 +88,8 @@ public class ArticleRepository {
                 .withDigitaObjectlId(article.getDigitalObjectId())
                 .withTitle(article.getTitle())
                 .build());
-        Preconditions.checkArgument(fetchResult.size() == 1,
-                "fetch returned non-single result");
+        Preconditions.checkArgument(fetchResult.size() < 2,
+                "fetch entity returned greater than non-single result");
         return fetchResult.stream().findFirst();
     }
 

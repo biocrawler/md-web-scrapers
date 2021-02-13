@@ -26,6 +26,10 @@ public class Article {
     private String parseDate;
     @JsonProperty("upload_date")
     private String uploadDate;
+    @JsonProperty("created_date")
+    private String createdDate;
+    @JsonProperty("modified_date")
+    private String modifiedDate;
     @JsonProperty
     private Set<FileArticle> files;
     @JsonProperty
@@ -34,6 +38,8 @@ public class Article {
     private String referingUrl;  //was parent request url
     @JsonProperty
     private Boolean enriched;
+    @JsonProperty
+    private Boolean parsed;
     @JsonProperty
     private Boolean published;
     @JsonProperty("additional_data")
