@@ -35,8 +35,14 @@ public class ArticleDao extends BaseDao<ArticleEntity, ArticleDao.Query> {
 
             private QueryBuilder() {
             }
+
             public ArticleDao.Query.QueryBuilder withId(String articleId) {
                 fields.add(new DaoQueryField(OpMatcher.EQUALS, articleId, "id"));
+                return this;
+            }
+
+            public ArticleDao.Query.QueryBuilder withTitle(String title) {
+                fields.add(new DaoQueryField(OpMatcher.EQUALS, title, "title"));
                 return this;
             }
 
@@ -47,11 +53,6 @@ public class ArticleDao extends BaseDao<ArticleEntity, ArticleDao.Query> {
 
             public ArticleDao.Query.QueryBuilder withDigitaObjectlId(String digitalObjectId) {
                 fields.add(new DaoQueryField(OpMatcher.EQUALS, digitalObjectId, "digitalObjectId"));
-                return this;
-            }
-
-            public ArticleDao.Query.QueryBuilder withFileNameLike(String fileName) {
-                fields.add(new DaoQueryField(OpMatcher.CONTAINS, fileName, "fileName"));
                 return this;
             }
 

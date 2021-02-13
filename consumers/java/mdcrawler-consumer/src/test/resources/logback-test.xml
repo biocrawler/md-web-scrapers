@@ -14,9 +14,9 @@
 
     <!-- hibernate debugging
     <logger name="org.hibernate.type" additivity="true" level="ALL" />
-    -->
     <logger name="org.hibernate" additivity="true" level="DEBUG"/>
     <logger name="net.ttddyy.dsproxy" additivity="true" level="ALL" />
+    -->
     <logger name="org.hibernate" additivity="true" level="INFO"/>
     <!-- reflections remove -->
     <Logger name="org.reflections" level="WARN" additivity="false"/>

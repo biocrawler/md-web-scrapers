@@ -14,9 +14,6 @@ import org.perpetualnetworks.mdcrawlerconsumer.Constants;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.ArrayList;
@@ -30,10 +27,6 @@ import java.util.List;
 @Entity
 @Table(name = "api_keyword", schema = Constants.DatabaseSchema.CRAWLER_CONSUMER)
 public class KeywordEntity extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", unique = true, nullable =false)
-    Long id;
 
     @Column(name = "word")
     String word;

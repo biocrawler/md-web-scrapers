@@ -14,9 +14,6 @@ import org.perpetualnetworks.mdcrawlerconsumer.Constants;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -40,10 +37,7 @@ public class FileArticleEntity extends BaseEntity {
     public static final String REFERING_URL = "refering_url";
     public static final String SIZE = "size";
     public static final String ARTICLE_ID = "article_id";
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", unique = true, nullable =false)
-    Integer id;
+
     @Column(name = FILE_NAME)
     String fileName;
     @Column(name = URL)

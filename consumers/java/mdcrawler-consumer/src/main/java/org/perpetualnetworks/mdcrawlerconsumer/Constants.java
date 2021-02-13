@@ -26,4 +26,8 @@ public interface Constants {
         Reflections reflections = new Reflections(TOP_LEVEL_ENTITY_PATH);
         Set<Class<?>> DEFAULT = reflections.getTypesAnnotatedWith(Table.class);
     }
+
+    interface Time {
+        String IsoPattern = "dd-MM-yyyy'T'HH:mm:ss";
+    }
 }
