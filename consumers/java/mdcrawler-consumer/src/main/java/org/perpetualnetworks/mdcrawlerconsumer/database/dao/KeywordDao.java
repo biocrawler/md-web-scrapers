@@ -36,6 +36,11 @@ public class KeywordDao extends BaseDao<KeywordEntity, KeywordDao.Query> {
             private QueryBuilder() {
             }
 
+            public KeywordDao.Query.QueryBuilder withId(Integer id) {
+                fields.add(new DaoQueryField(OpMatcher.EQUALS, id, "id"));
+                return this;
+            }
+
             public KeywordDao.Query.QueryBuilder withWord(String word) {
                 fields.add(new DaoQueryField(OpMatcher.EQUALS, word, "word"));
                 return this;

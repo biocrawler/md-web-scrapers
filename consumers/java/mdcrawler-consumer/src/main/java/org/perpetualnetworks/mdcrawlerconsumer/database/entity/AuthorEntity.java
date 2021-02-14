@@ -22,7 +22,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 @AllArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 @Data
 @Entity
 @Table(name = "api_author", schema = Constants.DatabaseSchema.CRAWLER_CONSUMER)

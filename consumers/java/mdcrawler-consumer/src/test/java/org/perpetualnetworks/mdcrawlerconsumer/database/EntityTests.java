@@ -10,12 +10,12 @@ import org.perpetualnetworks.mdcrawlerconsumer.Constants;
 import org.perpetualnetworks.mdcrawlerconsumer.config.CrawlerConsumerConfiguration;
 import org.perpetualnetworks.mdcrawlerconsumer.database.converter.Converter;
 import org.perpetualnetworks.mdcrawlerconsumer.database.dao.ArticleDao;
-import org.perpetualnetworks.mdcrawlerconsumer.database.dao.FileArticleDao;
+import org.perpetualnetworks.mdcrawlerconsumer.database.dao.ArticleFileDao;
 import org.perpetualnetworks.mdcrawlerconsumer.database.entity.ArticleEntity;
-import org.perpetualnetworks.mdcrawlerconsumer.database.entity.FileArticleEntity;
+import org.perpetualnetworks.mdcrawlerconsumer.database.entity.ArticleFileEntity;
 import org.perpetualnetworks.mdcrawlerconsumer.database.integration.TestDatabaseInitializer;
 import org.perpetualnetworks.mdcrawlerconsumer.database.repository.ArticleRepository;
-import org.perpetualnetworks.mdcrawlerconsumer.database.repository.FileArticleRepository;
+import org.perpetualnetworks.mdcrawlerconsumer.database.repository.ArticleFileRepository;
 import org.perpetualnetworks.mdcrawlerconsumer.database.session.SessionExecutor;
 import org.perpetualnetworks.mdcrawlerconsumer.database.session.SessionFactoryStoreImpl;
 
@@ -43,12 +43,12 @@ public class EntityTests {
         final Session session = sessionFactory.getSessionFactory(Database.CRAWLER_CONSUMER)
                 .openSession();
         CriteriaBuilder cb = session.getCriteriaBuilder();
-        CriteriaQuery<FileArticleEntity> cq = cb.createQuery(FileArticleEntity.class);
-        Root<FileArticleEntity> rootEntry = cq.from(FileArticleEntity.class);
-        CriteriaQuery<FileArticleEntity> all = cq.select(rootEntry);
+        CriteriaQuery<ArticleFileEntity> cq = cb.createQuery(ArticleFileEntity.class);
+        Root<ArticleFileEntity> rootEntry = cq.from(ArticleFileEntity.class);
+        CriteriaQuery<ArticleFileEntity> all = cq.select(rootEntry);
 
-        TypedQuery<FileArticleEntity> allQuery = session.createQuery(all);
-        final List<FileArticleEntity> resultList = allQuery.getResultList();
+        TypedQuery<ArticleFileEntity> allQuery = session.createQuery(all);
+        final List<ArticleFileEntity> resultList = allQuery.getResultList();
         System.out.println(resultList);
 
     }
@@ -60,10 +60,10 @@ public class EntityTests {
         //TODO: fix infinite recursion
         final SessionFactoryStoreImpl sessionFactory = buildLocalSessionFactoryStore();
         SessionExecutor se = new SessionExecutor(sessionFactory);
-        FileArticleRepository repository = new FileArticleRepository(
-                new FileArticleDao(), se);
-        final List<FileArticleEntity> bob = repository.fetchArticleFiles("bob");
-        final List<FileArticleEntity> alice = repository.fetchAllArticleFiles();
+        ArticleFileRepository repository = new ArticleFileRepository(
+                new ArticleFileDao(), se);
+        final List<ArticleFileEntity> bob = repository.fetchArticleFiles("bob");
+        final List<ArticleFileEntity> alice = repository.fetchAllArticleFiles();
         ObjectMapper mapper = new ObjectMapper();
         System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(bob));
         System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(alice));

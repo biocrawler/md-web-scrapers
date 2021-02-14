@@ -16,6 +16,7 @@ public class Article {
     private String title;
     @JsonProperty("source_url")
     private String sourceUrl;
+    // relation
     @JsonProperty
     private Set<String> keywords;
     @JsonProperty("digital_object_id")
@@ -30,8 +31,10 @@ public class Article {
     private String createdDate;
     @JsonProperty("modified_date")
     private String modifiedDate;
+    // relation
     @JsonProperty
-    private Set<FileArticle> files;
+    private Set<ArticleFile> files;
+    // relation
     @JsonProperty
     private Set<Author> authors;
     @JsonProperty("refering_url")

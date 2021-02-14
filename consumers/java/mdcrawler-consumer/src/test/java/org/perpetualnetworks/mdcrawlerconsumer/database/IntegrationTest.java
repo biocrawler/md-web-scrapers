@@ -31,7 +31,6 @@ public class IntegrationTest {
         final SessionFactory sessionFactory = tdbStore.getSessionFactory();
         final Session session = sessionFactory.openSession();
         session.close();
-        log.info("session closed");
     }
 
     @Test

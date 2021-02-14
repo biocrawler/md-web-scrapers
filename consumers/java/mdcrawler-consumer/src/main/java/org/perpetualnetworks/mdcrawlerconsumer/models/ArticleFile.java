@@ -9,8 +9,8 @@ import java.util.Set;
 
 @Data
 @Builder
-@JsonDeserialize(builder = FileArticle.FileArticleBuilder.class)
-public class FileArticle {
+@JsonDeserialize(builder = ArticleFile.ArticleFileBuilder.class)
+public class ArticleFile {
     @JsonProperty("file_name")
     private String fileName;
     @JsonProperty
@@ -25,6 +25,7 @@ public class FileArticle {
     private String fileDescription;
     @JsonProperty("refering_url")
     private String referingUrl;
+    //relation
     @JsonProperty
     private Set<String> keywords;
 }

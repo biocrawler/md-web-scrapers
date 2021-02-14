@@ -3,13 +3,22 @@ package org.perpetualnetworks.mdcrawlerconsumer.database.repository;
 import com.google.common.base.Preconditions;
 import org.perpetualnetworks.mdcrawlerconsumer.database.Database;
 import org.perpetualnetworks.mdcrawlerconsumer.database.converter.Converter;
+import org.perpetualnetworks.mdcrawlerconsumer.database.dao.ArticleAuthorRelationDao;
 import org.perpetualnetworks.mdcrawlerconsumer.database.dao.ArticleDao;
+import org.perpetualnetworks.mdcrawlerconsumer.database.dao.ArticleFileDao;
+import org.perpetualnetworks.mdcrawlerconsumer.database.dao.ArticleKeywordRelationDao;
 import org.perpetualnetworks.mdcrawlerconsumer.database.entity.ArticleEntity;
+import org.perpetualnetworks.mdcrawlerconsumer.database.repository.relations.ArticleAuthorRelationRepository;
+import org.perpetualnetworks.mdcrawlerconsumer.database.repository.relations.ArticleKeywordRelationRepository;
 import org.perpetualnetworks.mdcrawlerconsumer.database.session.SessionExecutor;
 import org.perpetualnetworks.mdcrawlerconsumer.models.Article;
+import org.perpetualnetworks.mdcrawlerconsumer.models.ArticleFile;
+import org.perpetualnetworks.mdcrawlerconsumer.models.Author;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ArticleRepository {
@@ -34,7 +43,7 @@ public class ArticleRepository {
                 session), DEFAULT_DATABASE);
     }
 
-    public List<ArticleEntity> fetchArticlesByDoi(String digitalObjectId) {
+    public List<ArticleEntity> fetchArticlesEqualTo(String digitalObjectId) {
         return sessionExecutor.executeAndReturn(session -> articleDao.fetch(
                 ArticleDao.Query.builder()
                         .withDigitaObjectlId(digitalObjectId)
@@ -42,7 +51,7 @@ public class ArticleRepository {
                 session), DEFAULT_DATABASE);
     }
 
-    public List<ArticleEntity> fetchArticlesLikeDoi(String digitalObjectId) {
+    public List<ArticleEntity> fetchArticlesLike(String digitalObjectId) {
         return sessionExecutor.executeAndReturn(session -> articleDao.fetch(
                 ArticleDao.Query.builder()
                         .withDigitaObjectlIdLike(digitalObjectId)
@@ -69,11 +78,13 @@ public class ArticleRepository {
                 //entityToSave.setCreatedAt(existingAsset.getCreatedAt());
                 session.evict(existingAsset);
             });
-            articleId.set(articleDao.saveOrUpdate(entityToSave, session));
+            final ArticleEntity newValue = articleDao.saveOrUpdate(entityToSave, session);
+            System.out.println("new value for saved article: " + newValue);
+            articleId.set(newValue.getId());
             return entityToSave;
         }, DEFAULT_DATABASE);
 
-        updateAllDependantsAndUpdateCache(article, entity);
+        updateAllDependants(article, entity);
         return articleId.get();
     }
 
@@ -93,11 +104,37 @@ public class ArticleRepository {
         return fetchResult.stream().findFirst();
     }
 
-    void updateAllDependantsAndUpdateCache(Article article, ArticleEntity articleEntity) {
+    void updateAllDependants(Article article, ArticleEntity articleEntity) {
         //TODO: implement these
-        //articleFileRepository.saveOrUpdate(articleEntity.getId(), article.getFiles());
-        //articleAuthorRepository.saveOrUpdate(articleEntity.getId(), article.getAuthors());
-        //articleKeywordRepository.saveOrUpdate(articleEntity.getId(), article.getKeywords());
+        updateArticleFiles(articleEntity, article.getFiles());
+        updateAuthorRelations(articleEntity, article.getAuthors());
+        updateKeywordRelations(articleEntity, article.getKeywords());
+    }
+
+    private void updateArticleFiles(ArticleEntity articleEntity, Set<ArticleFile> files) {
+        if (CollectionUtils.isEmpty(files)) {
+            return;
+        }
+        ArticleFileRepository articleFileRepository = new ArticleFileRepository(new ArticleFileDao(), sessionExecutor);
+        articleFileRepository.saveOrUpdate(articleEntity, files);
+    }
+
+    private void updateAuthorRelations(ArticleEntity articleEntity, Set<Author> authors) {
+        if (CollectionUtils.isEmpty(authors)) {
+            return;
+        }
+        ArticleAuthorRelationRepository articleAuthorRelationRepository = new ArticleAuthorRelationRepository(
+                new ArticleAuthorRelationDao(), sessionExecutor);
+        articleAuthorRelationRepository.saveOrUpdate(articleEntity, authors);
+    }
+
+    private void updateKeywordRelations(ArticleEntity articleEntity, Set<String> keywords) {
+        if (CollectionUtils.isEmpty(keywords)) {
+            return;
+        }
+        ArticleKeywordRelationRepository articleKeywordRelationRepository = new ArticleKeywordRelationRepository(
+                new ArticleKeywordRelationDao(), sessionExecutor);
+        articleKeywordRelationRepository.saveOrUpdate(articleEntity, keywords);
     }
 
     List<ArticleEntity> fetchEntity(ArticleDao.Query query) {

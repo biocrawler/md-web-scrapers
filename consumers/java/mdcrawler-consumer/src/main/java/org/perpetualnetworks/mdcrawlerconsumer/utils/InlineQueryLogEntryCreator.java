@@ -47,6 +47,7 @@ public class InlineQueryLogEntryCreator extends DefaultQueryLogEntryCreator {
         sqlFormatter.setLineLength(30);
         return "\n" + sqlFormatter.prettyPrint(super.formatQuery(query)
                 .replace("select ", " SELECT ")
+                .replace("insert ", " INSERT ")
                 .replace(" join ", " JOIN ")
                 .replace(" as ", " AS "));
     }

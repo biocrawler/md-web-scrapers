@@ -17,6 +17,9 @@ import org.perpetualnetworks.mdcrawlerconsumer.models.Article;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -48,6 +51,11 @@ public class ArticleEntity extends BaseEntity {
     public static final String ENRICHED = "enriched";
     public static final String PUBLISHED = "published";
     public static final String ADDITIONAL_DATA = "additional_data";
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", unique = true, nullable = false)
+    Integer id;
 
     @Column(name = TITLE, columnDefinition = "text")
     String title;
@@ -96,9 +104,6 @@ public class ArticleEntity extends BaseEntity {
 
     @OneToMany(mappedBy = "articleEntity", fetch = FetchType.LAZY)
     @LazyCollection(LazyCollectionOption.FALSE)
-    private List<FileArticleEntity> files = new ArrayList<>();
-
-    //KEYWORDS
-    //AUTHORS
+    private List<ArticleFileEntity> files = new ArrayList<>();
 
 }

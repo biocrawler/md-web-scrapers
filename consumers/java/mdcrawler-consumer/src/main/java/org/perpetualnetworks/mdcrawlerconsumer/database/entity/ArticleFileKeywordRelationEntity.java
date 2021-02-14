@@ -19,16 +19,16 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @Builder
 @Data
-@IdClass(FileKeywordRelationEntity.class)
+@IdClass(ArticleFileKeywordRelationEntity.class)
 @Entity
 @Table(name = "api_articlefile_keywords", schema = Constants.DatabaseSchema.CRAWLER_CONSUMER)
-public class FileKeywordRelationEntity extends BaseEntity {
+public class ArticleFileKeywordRelationEntity extends BaseEntity {
     public static final String ARTICLEFILE_ID = "articlefile_id";
     public static final String KEYWORD_ID = "keyword_id";
 
     @ManyToOne
     @JoinColumn(name = ARTICLEFILE_ID)
-    private FileArticleEntity articleFileEntity;
+    private ArticleFileEntity articleFileEntity;
 
     @ManyToOne
     @JoinColumn(name = KEYWORD_ID)

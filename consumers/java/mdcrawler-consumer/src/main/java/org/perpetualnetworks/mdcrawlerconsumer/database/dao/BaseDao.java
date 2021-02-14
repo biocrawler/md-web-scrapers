@@ -42,9 +42,9 @@ public class BaseDao<EntityT extends BaseEntity, QueryT extends BaseQuery> {
                 .collect(Collectors.toList());
     }
 
-    public Integer saveOrUpdate(EntityT entity, Session session) {
+    public EntityT saveOrUpdate(EntityT entity, Session session) {
         instrumentedSaveOrUpdate(entity, session);
-        return entity.getId();
+        return entity;
     }
 
     public void add(Collection<EntityT> entities, Session session) {

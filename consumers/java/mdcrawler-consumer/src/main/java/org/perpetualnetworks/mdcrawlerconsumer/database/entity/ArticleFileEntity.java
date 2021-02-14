@@ -14,6 +14,9 @@ import org.perpetualnetworks.mdcrawlerconsumer.Constants;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -28,7 +31,7 @@ import java.util.List;
 //@IdClass(FileArticleEntity.class)
 @Entity
 @Table(name = "api_articlefile", schema = Constants.DatabaseSchema.CRAWLER_CONSUMER)
-public class FileArticleEntity extends BaseEntity {
+public class ArticleFileEntity extends BaseEntity {
     public static final String FILE_NAME = "file_name";
     public static final String DOWNLOAD_URL = "download_url";
     public static final String URL = "url";
@@ -37,6 +40,12 @@ public class FileArticleEntity extends BaseEntity {
     public static final String REFERING_URL = "refering_url";
     public static final String SIZE = "size";
     public static final String ARTICLE_ID = "article_id";
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", unique = true, nullable = false)
+    Integer id;
+
 
     @Column(name = FILE_NAME)
     String fileName;
@@ -60,7 +69,7 @@ public class FileArticleEntity extends BaseEntity {
 
     @OneToMany(mappedBy = "keywordEntity", fetch = FetchType.LAZY)
     @LazyCollection(LazyCollectionOption.FALSE)
-    private List<FileKeywordRelationEntity> keywordRelations;
+    private List<ArticleFileKeywordRelationEntity> keywordRelations;
 
 
 }
