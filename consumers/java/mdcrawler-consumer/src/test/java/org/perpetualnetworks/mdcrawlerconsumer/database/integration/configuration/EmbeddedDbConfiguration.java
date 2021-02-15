@@ -17,7 +17,7 @@ public class EmbeddedDbConfiguration implements DatabaseConfiguration {
     Properties properites = getProperites();
 
     @JsonProperty
-    String databaseName;
+    String databaseName = Constants.DatabaseName.CRAWLER_CONSUMER;
 
     @JsonProperty
     String driverClass = "org.h2.Driver";

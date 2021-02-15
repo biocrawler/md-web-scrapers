@@ -1,7 +1,7 @@
 CREATE SCHEMA mdcrawler_consumer_d;
 
 CREATE TABLE mdcrawler_consumer_d.api_article (
-  id int NOT NULL AUTO_INCREMENT,
+  id int(11) NOT NULL AUTO_INCREMENT,
   title text NOT NULL,
   source_url text NOT NULL,
   digital_object_id varchar(128) DEFAULT NULL,

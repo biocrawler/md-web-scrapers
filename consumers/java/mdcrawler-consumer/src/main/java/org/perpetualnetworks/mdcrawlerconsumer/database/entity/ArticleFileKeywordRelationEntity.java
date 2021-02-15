@@ -3,39 +3,35 @@ package org.perpetualnetworks.mdcrawlerconsumer.database.entity;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.perpetualnetworks.mdcrawlerconsumer.Constants;
-import org.perpetualnetworks.mdcrawlerconsumer.models.Article;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 @AllArgsConstructor
 @Builder
-@Data
-@IdClass(FileKeywordRelationEntity.class)
+@IdClass(ArticleFileKeywordRelationEntity.class)
 @Entity
 @Table(name = "api_articlefile_keywords", schema = Constants.DatabaseSchema.CRAWLER_CONSUMER)
-public class FileKeywordRelationEntity extends BaseEntity implements RelationEntity<Article> {
+public class ArticleFileKeywordRelationEntity extends BaseEntity {
     public static final String ARTICLEFILE_ID = "articlefile_id";
     public static final String KEYWORD_ID = "keyword_id";
-    @Id
-    @GeneratedValue
-    Integer id;
-    // @ManyToOne
-    // @JoinColumn(name = KEYWORD_ID)
-    // KeyWordEntity keyword;
-    // @ManyToOne
-    // @JoinColumn(name = ARTICLEFILE_ID)
-    // FileArticleEntity fileArticle;
 
-    @Override
-    public Integer getForeignKeyId() {
-        return null;//getFileArticle().getId();
-    }
+    @ManyToOne
+    @JoinColumn(name = ARTICLEFILE_ID)
+    private ArticleFileEntity articleFileEntity;
+
+    @Getter
+    @ManyToOne
+    @JoinColumn(name = KEYWORD_ID)
+    private KeywordEntity keywordEntity;
+
 }

@@ -5,26 +5,35 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.Type;
 import org.perpetualnetworks.mdcrawlerconsumer.Constants;
 import org.perpetualnetworks.mdcrawlerconsumer.models.Article;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 @AllArgsConstructor
 @Builder
 @Data
-@IdClass(ArticleEntity.class)
+//@IdClass(ArticleEntity.class)
 @Entity
 @Table(name = "api_article", schema = Constants.DatabaseSchema.CRAWLER_CONSUMER)
 public class ArticleEntity extends BaseEntity {
@@ -42,8 +51,12 @@ public class ArticleEntity extends BaseEntity {
     public static final String ENRICHED = "enriched";
     public static final String PUBLISHED = "published";
     public static final String ADDITIONAL_DATA = "additional_data";
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", unique = true, nullable = false)
     Integer id;
+
     @Column(name = TITLE, columnDefinition = "text")
     String title;
     @Column(name = SOURCE_URL, columnDefinition = "text")
@@ -56,11 +69,11 @@ public class ArticleEntity extends BaseEntity {
     String description;
     @Column(name = PARSE_DATE, columnDefinition = "datetime", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy'T'HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.Time.IsoPattern)
     Date parseDate;
     @Column(name = UPLOAD_DATE, columnDefinition = "DATETIME(6)", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy'T'HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.Time.IsoPattern)
     Date uploadDate;
     @Column(name = PARSED)
     Boolean parsed;
@@ -70,27 +83,27 @@ public class ArticleEntity extends BaseEntity {
     Boolean published;
     @Column(name = CREATED_DATE, columnDefinition = "DATETIME(6)", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy'T'HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.Time.IsoPattern)
     Date createdDate;
     @Column(name = MODIFIED_DATE, columnDefinition = "DATETIME(6)", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy'T'HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.Time.IsoPattern)
     Date modifiedDate;
     @Column(name = ADDITIONAL_DATA, columnDefinition = "text")
     @Type(type = "json")
     @ColumnDefault("{}")
     Article.AdditionalData additionalData;
 
-    //TODO: relation entities for below
-    //FILES
-    //@OneToMany(mappedBy = "article")
-    //Set<FileArticleEntity> files = new HashSet<>();
+    @OneToMany(mappedBy = "articleEntity", fetch = FetchType.LAZY)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<ArticleKeywordRelationEntity> keywordRelations = new ArrayList<>();
 
-    // @ManyToMany(targetEntity = KeyWordEntity.class, cascade={CascadeType.PERSIST, CascadeType.MERGE})
-    // @JoinTable(name ="api_article_keywords", joinColumns = @JoinColumn(name = "article_id"), inverseJoinColumns = @JoinColumn(name ="keyword_id"))
-    //@JoinColumn(name ="article_id")
-    //Set<KeyWordEntity> keywords;
-    //KEYWORDS
-    //AUTHORS
+    @OneToMany(mappedBy = "articleEntity", fetch = FetchType.LAZY)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<ArticleAuthorRelationEntity> authorRelations = new ArrayList<>();
+
+    @OneToMany(mappedBy = "articleEntity", fetch = FetchType.LAZY)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<ArticleFileEntity> files = new ArrayList<>();
 
 }

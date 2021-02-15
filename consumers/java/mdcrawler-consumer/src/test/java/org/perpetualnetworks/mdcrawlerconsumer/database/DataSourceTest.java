@@ -8,13 +8,16 @@ import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.perpetualnetworks.mdcrawlerconsumer.config.CrawlerConsumerConfiguration;
-import org.perpetualnetworks.mdcrawlerconsumer.database.entity.KeyWordEntity;
+import org.perpetualnetworks.mdcrawlerconsumer.database.entity.KeywordEntity;
 import org.perpetualnetworks.mdcrawlerconsumer.database.factory.DataSourceFactories;
 import org.perpetualnetworks.mdcrawlerconsumer.database.factory.MysqlDataSourceFactory;
-import org.perpetualnetworks.mdcrawlerconsumer.database.session.SessionFactoryStore;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.perpetualnetworks.mdcrawlerconsumer.database.session.SessionFactoryStoreImpl;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Collections;
 
 @Slf4j
@@ -30,12 +33,12 @@ public class DataSourceTest {
     @Disabled("works with local db")
     @Test
     void queryBySql() {
-        String sqlSelectAllPersons = "SELECT * FROM api_keyword";
+        String selectAll = "SELECT * FROM api_keyword";
 
 
         try (
                 Connection conn = DriverManager.getConnection(config.getConnectionUrl(), config.getProperties());
-                PreparedStatement ps = conn.prepareStatement(sqlSelectAllPersons);
+                PreparedStatement ps = conn.prepareStatement(selectAll);
                 ResultSet rs = ps.executeQuery()) {
 
             System.out.println("result set: " + rs);
@@ -52,13 +55,13 @@ public class DataSourceTest {
     @Test
     @SneakyThrows
     void queryByEntity() {
-        SessionFactoryStore factoryStore = new SessionFactoryStore(new DataSourceFactories(
+        SessionFactoryStoreImpl factoryStore = new SessionFactoryStoreImpl(new DataSourceFactories(
                 new MysqlDataSourceFactory(Collections.singletonList(config))));
 
         long testId = 8092;
         final SessionFactory sessionFactory = factoryStore.getSessionFactory(Database.CRAWLER_CONSUMER);
         final Session session = sessionFactory.openSession();
-        final KeyWordEntity keyWordEntity = session.get(KeyWordEntity.class, testId);
+        final KeywordEntity keyWordEntity = session.get(KeywordEntity.class, testId);
         ObjectMapper mapper = new ObjectMapper();
         System.out.println("keyword: " + mapper.writeValueAsString(keyWordEntity));
     }

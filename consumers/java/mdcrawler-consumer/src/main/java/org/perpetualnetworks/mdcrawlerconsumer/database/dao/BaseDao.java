@@ -7,6 +7,7 @@ import org.perpetualnetworks.mdcrawlerconsumer.database.query.QueryHelper;
 
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -39,6 +40,40 @@ public class BaseDao<EntityT extends BaseEntity, QueryT extends BaseQuery> {
         return typedQuery.getResultList().stream()
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+    }
+
+    public EntityT saveOrUpdate(EntityT entity, Session session) {
+        instrumentedSaveOrUpdate(entity, session);
+        return entity;
+    }
+
+    public void add(Collection<EntityT> entities, Session session) {
+        for (EntityT entity : entities) {
+            instrumentedSaveOrUpdate(entity, session);
+        }
+    }
+
+    public void delete(Collection<Integer> entityIds, Session session) {
+        for (Integer entityId : entityIds) {
+            EntityT entity;
+            entity = session.load(this.tyClass, entityId);
+            session.delete(entity);
+        }
+    }
+
+
+    private void instrumentedSaveOrUpdate(EntityT entity, Session session) {
+        //TODO: add metrics
+        //WallClock wallClockSaveOrUpdate = metricsService.createAndStartWallClockSaveOrUpdate();
+        //metricsService.prepareCountSaveOrUpdate();
+
+        // if (nonNull(entity.getId())) {
+        //     metricsService.prepareCountUpdate();
+        // } else {
+        //     metricsService.prepareCountSave();
+        // }
+        session.saveOrUpdate(entity);
+        //wallClockSaveOrUpdate.stopAndSend();
     }
 }
 

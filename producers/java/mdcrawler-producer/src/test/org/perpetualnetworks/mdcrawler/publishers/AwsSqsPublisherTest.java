@@ -11,7 +11,7 @@ import software.amazon.awssdk.services.sqs.model.SendMessageResponse;
 
 import java.util.Optional;
 
-class AwsSnsPublisherTest {
+class AwsSqsPublisherTest {
 
     private final LZWCompressor lzwCompressor = new LZWCompressor();
 
@@ -19,7 +19,7 @@ class AwsSnsPublisherTest {
     @Test
     @SneakyThrows
     void sendMessage() {
-        AwsSnsPublisher publisher = new AwsSnsPublisher(AwsConfiguration.builder()
+        AwsSqsPublisher publisher = new AwsSqsPublisher(AwsConfiguration.builder()
                 .sqsUrl("https://sqs.eu-central-1.amazonaws.com/397254617684/crawler_queue")
                 .credentialsFile("config/aws.json")
                 .region("eu-central-1")

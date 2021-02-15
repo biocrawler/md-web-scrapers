@@ -8,6 +8,7 @@ __pycache__/
 *vscode*
 *.DS*
 *testData*.txt
+*consumers/django/consumer/static*
 
 # C extensions
 *.so

@@ -17,14 +17,19 @@ import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
 
+import javax.annotation.Nonnull;
 import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -105,9 +110,21 @@ public class AwsSqsConsumer {
                 .map(bytes -> new String(bytes, StandardCharsets.UTF_8))
                 .collect(Collectors.joining(" "));
         final Article article = MAPPER.readValue(processedArticleString, Article.class);
-        return article.toBuilder().keywords(article.getKeywords()
-                .stream()
-                .map(ByteOperations::convertStringBytesToString)
-                .collect(Collectors.toSet())).build();
+        return article.toBuilder().keywords(decodeKeywords(article.getKeywords())).build();
+    }
+
+    @Nonnull
+    private Set<String> decodeKeywords(Set<String> articleKeywords) {
+        Set<String> keywords = new HashSet<>();
+        articleKeywords.forEach(word -> {
+            Pattern p = Pattern.compile("^[0-9]");
+            Matcher m = p.matcher(word);
+            if (m.matches()) {
+                keywords.add(ByteOperations.convertStringBytesToString(word));
+                return;
+            }
+            keywords.add(word);
+        });
+        return keywords;
     }
 }

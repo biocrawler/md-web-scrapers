@@ -7,7 +7,7 @@ import org.perpetualnetworks.mdcrawler.config.FigshareConfiguration;
 import org.perpetualnetworks.mdcrawler.converters.FigshareArticleConverter;
 import org.perpetualnetworks.mdcrawler.models.Article;
 import org.perpetualnetworks.mdcrawler.parsers.WebParser;
-import org.perpetualnetworks.mdcrawler.publishers.AwsSnsPublisher;
+import org.perpetualnetworks.mdcrawler.publishers.AwsSqsPublisher;
 import org.perpetualnetworks.mdcrawler.services.BrowserAutomatorImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,13 +25,13 @@ public class FigshareScraper {
     private final FigshareConfiguration figshareConfiguration;
     private final BrowserAutomatorImpl browserAutomator;
     private final FigshareArticleConverter figshareArticleConverter;
-    private final AwsSnsPublisher publisher;
+    private final AwsSqsPublisher publisher;
 
     @Autowired
     public FigshareScraper(FigshareConfiguration figshareConfiguration,
                            BrowserAutomatorImpl browserAutomator,
                            FigshareArticleConverter figshareArticleConverter,
-                           AwsSnsPublisher publisher) {
+                           AwsSqsPublisher publisher) {
         this.figshareConfiguration = figshareConfiguration;
         this.browserAutomator = browserAutomator;
         this.figshareArticleConverter = figshareArticleConverter;

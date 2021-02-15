@@ -36,6 +36,11 @@ public class AuthorDao extends BaseDao<AuthorEntity, AuthorDao.Query> {
             private QueryBuilder() {
             }
 
+            public AuthorDao.Query.QueryBuilder withId(Integer id) {
+                fields.add(new DaoQueryField(OpMatcher.EQUALS, id, "id"));
+                return this;
+            }
+
             public AuthorDao.Query.QueryBuilder withName(String name) {
                 fields.add(new DaoQueryField(OpMatcher.EQUALS, name, "name"));
                 return this;

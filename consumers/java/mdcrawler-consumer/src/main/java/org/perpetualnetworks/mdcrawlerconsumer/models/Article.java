@@ -16,6 +16,7 @@ public class Article {
     private String title;
     @JsonProperty("source_url")
     private String sourceUrl;
+    // relation
     @JsonProperty
     private Set<String> keywords;
     @JsonProperty("digital_object_id")
@@ -26,14 +27,22 @@ public class Article {
     private String parseDate;
     @JsonProperty("upload_date")
     private String uploadDate;
+    @JsonProperty("created_date")
+    private String createdDate;
+    @JsonProperty("modified_date")
+    private String modifiedDate;
+    // relation
     @JsonProperty
-    private Set<FileArticle> files;
+    private Set<ArticleFile> files;
+    // relation
     @JsonProperty
     private Set<Author> authors;
     @JsonProperty("refering_url")
     private String referingUrl;  //was parent request url
     @JsonProperty
     private Boolean enriched;
+    @JsonProperty
+    private Boolean parsed;
     @JsonProperty
     private Boolean published;
     @JsonProperty("additional_data")
