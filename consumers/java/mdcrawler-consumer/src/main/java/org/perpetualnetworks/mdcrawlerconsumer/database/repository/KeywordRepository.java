@@ -1,6 +1,7 @@
 package org.perpetualnetworks.mdcrawlerconsumer.database.repository;
 
 import com.google.common.base.Preconditions;
+import lombok.extern.slf4j.Slf4j;
 import org.perpetualnetworks.mdcrawlerconsumer.database.Database;
 import org.perpetualnetworks.mdcrawlerconsumer.database.converter.Converter;
 import org.perpetualnetworks.mdcrawlerconsumer.database.dao.KeywordDao;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Slf4j
 public class KeywordRepository {
 
     public static final Database DEFAULT_DATABASE = Database.CRAWLER_CONSUMER;
@@ -84,9 +86,14 @@ public class KeywordRepository {
         final List<KeywordEntity> fetchResult = fetchEntity(KeywordDao.Query.builder()
                 .withWord(keyword)
                 .build());
-        Preconditions.checkArgument(fetchResult.size() < 2,
-                "fetch entity returned greater than non-single result");
-        return fetchResult.stream().findFirst();
+        if (fetchResult.size() == 1 || fetchResult.size() == 0) {
+            log.error("fetch entity returned greater than non-single result: " + fetchResult);
+        }
+        final Optional<KeywordEntity> first = fetchResult.stream().findFirst();
+        if (fetchResult.size() >= 2) {
+            log.info("returning first result");
+        }
+        return first;
     }
 
 

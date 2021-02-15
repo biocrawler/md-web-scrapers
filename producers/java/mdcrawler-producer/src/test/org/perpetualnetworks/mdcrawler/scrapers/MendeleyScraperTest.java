@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.perpetualnetworks.mdcrawler.config.AwsConfiguration;
 import org.perpetualnetworks.mdcrawler.config.MendeleyConfiguration;
 import org.perpetualnetworks.mdcrawler.converters.MendeleyArticleConverter;
-import org.perpetualnetworks.mdcrawler.publishers.AwsSnsPublisher;
+import org.perpetualnetworks.mdcrawler.publishers.AwsSqsPublisher;
 import org.perpetualnetworks.mdcrawler.scrapers.dto.MendeleyResponse;
 import org.perpetualnetworks.mdcrawler.utils.lzw.LZWCompressor;
 
@@ -30,7 +30,7 @@ class MendeleyScraperTest {
 
     private static final LZWCompressor lzwCompressor = new LZWCompressor();
 
-    private static final AwsSnsPublisher publisher = new AwsSnsPublisher(AWS_CONFIG, lzwCompressor);
+    private static final AwsSqsPublisher publisher = new AwsSqsPublisher(AWS_CONFIG, lzwCompressor);
 
     private static final MendeleyConfiguration CONFIG = MendeleyConfiguration.builder()
             .host("data.mendeley.com")

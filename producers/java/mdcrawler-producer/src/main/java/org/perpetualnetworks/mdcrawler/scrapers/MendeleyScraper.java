@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.perpetualnetworks.mdcrawler.config.MendeleyConfiguration;
 import org.perpetualnetworks.mdcrawler.converters.MendeleyArticleConverter;
-import org.perpetualnetworks.mdcrawler.publishers.AwsSnsPublisher;
+import org.perpetualnetworks.mdcrawler.publishers.AwsSqsPublisher;
 import org.perpetualnetworks.mdcrawler.scrapers.dto.MendeleyResponse;
 import org.perpetualnetworks.mdcrawler.utils.ParallelService;
 import org.springframework.stereotype.Component;
@@ -27,13 +27,13 @@ public class MendeleyScraper {
     private final OkHttpClient client;
     private final MendeleyConfiguration mendeleyConfiguration;
     private final MendeleyArticleConverter mendeleyArticleConverter;
-    private final AwsSnsPublisher publisher;
+    private final AwsSqsPublisher publisher;
     private final ParallelService parallelService;
     private final ObjectMapper mapper;
 
     public MendeleyScraper(MendeleyConfiguration mendeleyConfiguration,
                            MendeleyArticleConverter mendeleyArticleConverter,
-                           AwsSnsPublisher publisher) {
+                           AwsSqsPublisher publisher) {
         this.client = new OkHttpClient.Builder()
                 .connectTimeout(mendeleyConfiguration.getConnectTimeoutMinutes(), TimeUnit.MINUTES)
                 .writeTimeout(mendeleyConfiguration.getWriteTimeoutMinutes(), TimeUnit.MINUTES)

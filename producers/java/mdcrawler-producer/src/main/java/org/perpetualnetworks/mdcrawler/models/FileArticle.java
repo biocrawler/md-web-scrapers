@@ -16,6 +16,8 @@ public class FileArticle {
     private String fileName;
     @JsonProperty
     private String url;
+    @JsonProperty
+    private String size;
     @JsonProperty("download_url")
     private String downloadUrl;
     @JsonProperty("digital_object_id")
@@ -24,6 +26,7 @@ public class FileArticle {
     private String fileDescription;
     @JsonProperty("refering_url")
     private String referingUrl;
+    //relation
     @JsonProperty
     private Set<String> keywords;
 }

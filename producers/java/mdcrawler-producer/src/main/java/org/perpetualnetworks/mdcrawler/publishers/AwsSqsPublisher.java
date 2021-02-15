@@ -27,7 +27,7 @@ import java.util.Optional;
 
 @Component
 @Slf4j
-public class AwsSnsPublisher {
+public class AwsSqsPublisher {
     private final static ObjectMapper MAPPER = new ObjectMapper()
             .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
     public static final String AWS_SECRET_ACCESS_KEY = "aws_secret_access_key";
@@ -39,7 +39,7 @@ public class AwsSnsPublisher {
 
 
     @Autowired
-    public AwsSnsPublisher(AwsConfiguration awsConfiguration, LZWCompressor compressor) {
+    public AwsSqsPublisher(AwsConfiguration awsConfiguration, LZWCompressor compressor) {
         this.awsConfiguration = awsConfiguration;
         parseAwsCredentials(awsConfiguration).ifPresent(c -> this.awsBasicCredentials = c);
         this.sqsClient = SqsClient.builder()
