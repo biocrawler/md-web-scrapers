@@ -1,8 +1,8 @@
 #!/usr/bin/bash
 
-class=org.perpetualnetworks.mdcrawlerconsumerconsumer.Application
+class=org.perpetualnetworks.mdcrawlerconsumer.Application
 
-JAVA_OPTS="-Djavax.net.ssl.sessionCacheSize=10000 -server"
+JAVA_OPTS="-Djava.net.preferIPv4Stack=true -Djavax.net.ssl.sessionCacheSize=10000 -server"
 
 # Setting Max Heap memory based on pod's available memory
 JAVA_OPTS="${JAVA_OPTS} -XX:MaxRAMPercentage=80.0"

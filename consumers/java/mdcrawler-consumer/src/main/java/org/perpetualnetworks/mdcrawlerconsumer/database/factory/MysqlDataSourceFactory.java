@@ -2,13 +2,14 @@ package org.perpetualnetworks.mdcrawlerconsumer.database.factory;
 
 import lombok.extern.slf4j.Slf4j;
 import org.perpetualnetworks.mdcrawlerconsumer.config.DatabaseConfiguration;
+import org.springframework.stereotype.Component;
 
 import javax.inject.Singleton;
 import javax.sql.DataSource;
 import java.util.List;
 import java.util.Optional;
 
-
+@Component
 @Singleton
 @Slf4j
 public class MysqlDataSourceFactory extends AbstractDataSourceFactory {

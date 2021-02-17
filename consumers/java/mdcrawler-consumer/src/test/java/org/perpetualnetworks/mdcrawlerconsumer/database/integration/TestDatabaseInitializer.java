@@ -14,8 +14,7 @@ public class TestDatabaseInitializer {
     private final TestDatabaseInitializationFactory testDatabaseInitializationFactory;
     //private final Environment environment;
 
-    public TestDatabaseInitializer(DatabaseConfiguration databaseConfiguration, Set<Class<?>> entities ){//final Class<?> entity, final Class<?>... entities) {
-        //this.entityClass = entity;
+    public TestDatabaseInitializer(DatabaseConfiguration databaseConfiguration, Set<Class<?>> entities ){
         this.entitiesClass = entities;
         //TODO: add some metrics
         //this.environment = new Environment("hibernate-test-util", new ObjectMapper(), null, null, //new MetricRegistry(),
