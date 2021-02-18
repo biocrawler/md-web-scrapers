@@ -8,7 +8,7 @@ from api.filters import *
 
 
 class ArticleFileSerialView(generics.ListAPIView):
-    queryset = ArticleFile.objects.all().prefetch_related("keyword_set")
+    queryset = ArticleFile.objects.all()
     serializer_class = ArticleFileSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = ArticleFileFilter
