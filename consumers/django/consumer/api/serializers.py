@@ -19,7 +19,8 @@ class KeywordSerializer(serializers.ModelSerializer):
    #     return instance
     class Meta:
         model = Keyword
-        fields = []
+        fields = '__all__'
+        #fields = []
 
 class ArticleFileSerializer(serializers.ModelSerializer):
     keywords = KeywordSerializer(many=True)
@@ -29,8 +30,9 @@ class ArticleFileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ArticleFile
-        fields = ("keywords", "file_name", "url", "download_url", "digital_object_id",
-                  "description", "refering_url", "size")
+        fields = '__all__'
+        #fields = ("keywords", "file_name", "url", "download_url", "digital_object_id",
+        #          "description", "refering_url", "size")
 
 class ArticleSerializer(serializers.ModelSerializer):
     keywords = KeywordSerializer(many=True)
@@ -43,10 +45,11 @@ class ArticleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Article
-        fields = ("title", "source_url", "authors", "keywords", "files",
-                  "digital_object_id", "refering_url", "description",
-                  "parsed", "enriched", "published",
-                  "parse_date",) #"upload_date","created_date", "modified_date")
+        fields = '__all__'
+        #fields = ("title", "source_url", "authors", "keywords", "files",
+        #          "digital_object_id", "refering_url", "description",
+        #          "parsed", "enriched", "published",
+        #          "parse_date",) #"upload_date","created_date", "modified_date")
 
     def create(self, validated_data):
         keywords_data = validated_data.pop('keywords')

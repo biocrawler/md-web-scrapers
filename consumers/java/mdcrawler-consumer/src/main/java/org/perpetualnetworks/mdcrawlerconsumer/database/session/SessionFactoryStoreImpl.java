@@ -62,6 +62,10 @@ public class SessionFactoryStoreImpl implements SessionFactoryStore {
 
     private StandardServiceRegistry buildServiceRegistry(Database db, DataSource dataSource) {
         return new StandardServiceRegistryBuilder()
+                .configure()
+                .applySetting("jadira.usertype.autoRegisterUserTypes", "true")
+                .applySetting(AvailableSettings.SHOW_SQL, "false")
+                .applySetting(AvailableSettings.FORMAT_SQL, "false")
                 .applySetting(AvailableSettings.DATASOURCE, dataSource)
                 .build();
     }

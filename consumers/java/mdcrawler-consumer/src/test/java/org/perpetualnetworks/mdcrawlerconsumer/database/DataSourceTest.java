@@ -58,7 +58,7 @@ public class DataSourceTest {
         SessionFactoryStoreImpl factoryStore = new SessionFactoryStoreImpl(new DataSourceFactories(
                 new MysqlDataSourceFactory(Collections.singletonList(config))));
 
-        long testId = 8092;
+        int testId = 8092;
         final SessionFactory sessionFactory = factoryStore.getSessionFactory(Database.CRAWLER_CONSUMER);
         final Session session = sessionFactory.openSession();
         final KeywordEntity keyWordEntity = session.get(KeywordEntity.class, testId);
