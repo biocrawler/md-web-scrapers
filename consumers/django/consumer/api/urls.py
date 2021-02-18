@@ -25,13 +25,13 @@ schema_view = get_schema_view(
 urlpatterns = [
    #serialized views:
    url(r'^swagger/articles/?$', serial_views.ArticleSerialView.as_view(), name="List Articles"),
-   url(r'^swagger/articles/(?P<article_id>\d+)$', serial_views.ArticleSerialViewSingle.as_view(), name="Article"),
+   url(r'^swagger/articles/(?P<pk>\d+)$', serial_views.ArticleSerialViewSingle.as_view(), name="Article"),
    url(r'^swagger/article-files/?$', serial_views.ArticleFileSerialView.as_view(), name="List Article Files"),
-   url(r'^swagger/article-files/(?P<article_file_id>\d+)$', serial_views.ArticleFileSerialViewSingle.as_view(), name="Article File"),
+   url(r'^swagger/article-files/(?P<pk>\d+)$', serial_views.ArticleFileSerialViewSingle.as_view(), name="Article File"),
    url(r'^swagger/keywords/?$', serial_views.KeywordSerialView.as_view(), name="List Keywords"),
-   url(r'^swagger/keywords/(?P<keyword_id>\d+)$', serial_views.KeywordSerialViewSingle.as_view(), name="Keyword"),
+   url(r'^swagger/keywords/(?P<pk>\d+)$', serial_views.KeywordSerialViewSingle.as_view(), name="Keyword"),
    url(r'^swagger/authors/?$', serial_views.AuthorSerialView.as_view(), name="List Authors"),
-   url(r'^swagger/authors/(?P<author_id>\d+)$', serial_views.AuthorSerialViewSingle.as_view(), name="Author"),
+   url(r'^swagger/authors/(?P<pk>\d+)$', serial_views.AuthorSerialViewSingle.as_view(), name="Author"),
    #base views:
    url(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
    url(r'^swagger/redoc/?', schema_view.with_ui('redoc', cache_timeout=0), name="schema-redoc"),
