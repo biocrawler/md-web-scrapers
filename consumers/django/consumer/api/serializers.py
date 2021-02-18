@@ -13,7 +13,7 @@ class AuthorSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class KeywordSerializer(serializers.ModelSerializer):
-    #word = serializers.CharField()
+    word = serializers.CharField()
    # def to_internal_value(self, validated_data):
    #     instance, _ = Keyword.objects.get_or_create(**validated_data)
    #     return instance
