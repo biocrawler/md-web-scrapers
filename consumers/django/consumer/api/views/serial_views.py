@@ -3,8 +3,8 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import generics, mixins
 from rest_framework.settings import api_settings
 
-from api.serializers import *
 from api.filters import *
+from api.serializers import *
 
 
 class ArticleFileSerialView(generics.ListAPIView):
@@ -20,8 +20,9 @@ class ArticleFileSerialView(generics.ListAPIView):
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
+
 class ArticleFileSerialViewSingle(mixins.RetrieveModelMixin,
-                          generics.GenericAPIView):
+                                  generics.GenericAPIView):
     queryset = ArticleFile.objects.all()
     serializer_class = ArticleFileSerializer
     filter_backends = [DjangoFilterBackend]
@@ -30,9 +31,8 @@ class ArticleFileSerialViewSingle(mixins.RetrieveModelMixin,
     @swagger_auto_schema(operation_description="Article File",
                          responses={200: serializer_class},
                          )
-
-    def get(self, request, *args, **kwargs):                                     
-        return self.retrieve(request, *args, **kwargs)   
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
 
 
 class ArticleSerialView(generics.ListAPIView):
@@ -46,12 +46,21 @@ class ArticleSerialView(generics.ListAPIView):
                          responses={200: serializer_class},
                          tags=["articles"],
                          )
+   # def get_queryset(self):
+   #     keyword = self.request.query_params.get('keywords__icontains', None)
+   #     if keyword:
+   #         print('fetching articles with keyword:', keyword)
+   #         filtered_articles = self.queryset.filter(keywords__word__icontains=keyword)
+   #         print("filtered article count: " + str(filtered_articles.count()))
+   #         return filtered_articles
+   #     return self.queryset
+
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
 
 class ArticleSerialViewSingle(mixins.RetrieveModelMixin,
-                          generics.GenericAPIView):
+                              generics.GenericAPIView):
     queryset = Article.objects.all().prefetch_related("keywords", "authors", "articlefile_set")
     serializer_class = ArticleSerializer
     filter_backends = [DjangoFilterBackend]
@@ -78,9 +87,10 @@ class KeywordSerialView(generics.ListAPIView):
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
+
 class KeywordSerialViewSingle(mixins.RetrieveModelMixin,
-                          mixins.UpdateModelMixin,
-                          generics.GenericAPIView):
+                              mixins.UpdateModelMixin,
+                              generics.GenericAPIView):
     queryset = Keyword.objects.all()
     serializer_class = KeywordSerializer
     filter_backends = [DjangoFilterBackend]
@@ -91,6 +101,7 @@ class KeywordSerialViewSingle(mixins.RetrieveModelMixin,
                          )
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
+
 
 class AuthorSerialView(generics.ListAPIView):
     queryset = Author.objects.all()
@@ -105,9 +116,10 @@ class AuthorSerialView(generics.ListAPIView):
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
+
 class AuthorSerialViewSingle(mixins.RetrieveModelMixin,
-                          mixins.UpdateModelMixin,
-                          generics.GenericAPIView):
+                             mixins.UpdateModelMixin,
+                             generics.GenericAPIView):
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
     filter_backends = [DjangoFilterBackend]
