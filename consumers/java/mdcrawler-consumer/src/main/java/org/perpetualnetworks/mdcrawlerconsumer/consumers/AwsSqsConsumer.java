@@ -117,12 +117,19 @@ public class AwsSqsConsumer {
     private Set<String> decodeKeywords(Set<String> articleKeywords) {
         Set<String> keywords = new HashSet<>();
         articleKeywords.forEach(word -> {
-            Pattern p = Pattern.compile("^[0-9]");
+            Pattern normalPattern = Pattern.compile("^[a-zA-Z]+");
+            Matcher normalMatcher = normalPattern.matcher(word);
+            if (normalMatcher.matches()) {
+                keywords.add(word);
+                return;
+            }
+            Pattern p = Pattern.compile("^[\\[\\]0-9]");
             Matcher m = p.matcher(word);
             if (m.matches()) {
                 keywords.add(ByteOperations.convertStringBytesToString(word));
                 return;
             }
+            log.warn("no matching pattern for keyword string: " + word + " adding by default");
             keywords.add(word);
         });
         return keywords;
