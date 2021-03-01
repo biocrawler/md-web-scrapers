@@ -70,10 +70,6 @@ public class KeywordRepository {
             return keywordDao.saveOrUpdate(entityToSave, session);
         }, DEFAULT_DATABASE);
 
-        //TODO: fix keywordEntities return multiple from one id
-       // final List<KeywordEntity> keywordEntities = fetchKeyword(keywordId.get());
-       // Preconditions.checkArgument(keywordEntities.size() < 2);
-       // return keywordEntities.get(0);
         return entity;
     }
 
@@ -84,15 +80,11 @@ public class KeywordRepository {
             return keywordDao.saveOrUpdate(entityToSave, session);
         }, DEFAULT_DATABASE);
 
-       // //TODO: fix keywordEntities return multiple from one id
-       // final List<KeywordEntity> keywordEntities = fetchKeyword(keywordId.get());
-       // Preconditions.checkArgument(keywordEntities.size() < 2);
-       // return keywordEntities.get(0);
         return entity;
     }
 
 
-        Optional<KeywordEntity> getExistingEntity(String keyword) {
+    Optional<KeywordEntity> getExistingEntity(String keyword) {
         final List<KeywordEntity> fetchResult = fetchEntity(KeywordDao.Query.builder()
                 .withWord(keyword)
                 .build());
