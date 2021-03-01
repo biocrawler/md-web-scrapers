@@ -71,7 +71,7 @@ public class ArticleRepository {
         AtomicInteger articleId = new AtomicInteger();
         Optional<ArticleEntity> existingEntity = getExistingEntity(article);
 
-        ArticleEntity entity = sessionExecutor.executeAndReturn(session -> {
+        ArticleEntity entity = sessionExecutor.executeAndReturnTransactionalRW(session -> {
             ArticleEntity entityToSave = converter.convert(article);
             existingEntity.ifPresent(existingAsset -> {
                 entityToSave.setId(existingAsset.getId());

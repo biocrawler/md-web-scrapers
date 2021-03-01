@@ -79,7 +79,7 @@ public class ArticleFileRepository {
     public ArticleFileEntity saveOrUpdate(ArticleEntity articleEntity, ArticleFile articleFile) {
         Optional<ArticleFileEntity> existingEntity = getExistingEntity(articleFile);
 
-        ArticleFileEntity articleFileEntity = sessionExecutor.executeAndReturn(session -> {
+        ArticleFileEntity articleFileEntity = sessionExecutor.executeAndReturnTransactionalRW(session -> {
             ArticleFileEntity entityToSave = converter.convert(articleFile);
             entityToSave.setArticleEntity(articleEntity);
             existingEntity.ifPresent(existingItem -> {

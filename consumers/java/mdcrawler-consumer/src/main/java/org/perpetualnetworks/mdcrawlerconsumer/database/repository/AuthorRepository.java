@@ -60,7 +60,7 @@ public class AuthorRepository {
     public AuthorEntity saveOrUpdate(Author author) {
         Optional<AuthorEntity> existingEntity = getExistingEntity(author);
 
-        AuthorEntity entity = sessionExecutor.executeAndReturn(session -> {
+        AuthorEntity entity = sessionExecutor.executeAndReturnTransactionalRW(session -> {
             AuthorEntity entityToSave = converter.convert(author);
             existingEntity.ifPresent(existingItem -> {
                 entityToSave.setId(existingItem.getId());

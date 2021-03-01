@@ -123,7 +123,7 @@ public class AwsSqsConsumer {
                 keywords.add(word);
                 return;
             }
-            Pattern p = Pattern.compile("^[\\[\\]0-9]");
+            Pattern p = Pattern.compile("^[\\[]");
             Matcher m = p.matcher(word);
             if (m.matches()) {
                 keywords.add(ByteOperations.convertStringBytesToString(word));

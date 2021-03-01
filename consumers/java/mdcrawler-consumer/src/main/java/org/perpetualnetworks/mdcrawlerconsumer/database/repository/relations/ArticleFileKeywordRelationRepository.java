@@ -27,7 +27,7 @@ public class ArticleFileKeywordRelationRepository {
     public ArticleFileKeywordRelationEntity saveOrUpdate(ArticleFileEntity articleFileEntity, KeywordEntity keywordEntity) {
         Optional<ArticleFileKeywordRelationEntity> existingEntity = getExistingEntity(articleFileEntity, keywordEntity);
 
-        return sessionExecutor.executeAndReturn(session -> {
+        return sessionExecutor.executeAndReturnTransactionalRW(session -> {
             ArticleFileKeywordRelationEntity entityToSave = ArticleFileKeywordRelationEntity.builder()
                     .articleFileEntity(articleFileEntity)
                     .keywordEntity(keywordEntity)

@@ -1,6 +1,5 @@
 package org.perpetualnetworks.mdcrawlerconsumer.database.repository;
 
-import com.google.common.base.Preconditions;
 import lombok.extern.slf4j.Slf4j;
 import org.perpetualnetworks.mdcrawlerconsumer.database.Database;
 import org.perpetualnetworks.mdcrawlerconsumer.database.converter.Converter;
@@ -10,7 +9,6 @@ import org.perpetualnetworks.mdcrawlerconsumer.database.session.SessionExecutor;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 public class KeywordRepository {
@@ -60,29 +58,41 @@ public class KeywordRepository {
 
     //Save or update from the Keyword object
     public KeywordEntity saveOrUpdate(String keyword) {
-        AtomicInteger keywordId = new AtomicInteger();
         Optional<KeywordEntity> existingEntity = getExistingEntity(keyword);
 
-        KeywordEntity entity = sessionExecutor.executeAndReturn(session -> {
+        KeywordEntity entity = sessionExecutor.executeAndReturnTransactionalRW(session -> {
             KeywordEntity entityToSave = converter.convert(keyword);
             existingEntity.ifPresent(existingItem -> {
                 entityToSave.setId(existingItem.getId());
                 entityToSave.setCreatedDate(existingItem.getCreatedDate());
                 session.evict(existingItem);
             });
-            final KeywordEntity keywordEntity = keywordDao.saveOrUpdate(entityToSave, session);
-            keywordId.set(keywordEntity.getId());
-            return entityToSave;
+            return keywordDao.saveOrUpdate(entityToSave, session);
         }, DEFAULT_DATABASE);
 
         //TODO: fix keywordEntities return multiple from one id
-        final List<KeywordEntity> keywordEntities = fetchKeyword(keywordId.get());
-        Preconditions.checkArgument(keywordEntities.size() < 2);
-        return keywordEntities.get(0);
+       // final List<KeywordEntity> keywordEntities = fetchKeyword(keywordId.get());
+       // Preconditions.checkArgument(keywordEntities.size() < 2);
+       // return keywordEntities.get(0);
+        return entity;
+    }
+
+    public KeywordEntity updateWord(KeywordEntity keyword, String word) {
+        KeywordEntity entity = sessionExecutor.executeAndReturnTransactionalRW(session -> {
+            KeywordEntity entityToSave = keyword.toBuilder().word(word).build();
+            session.evict(keyword);
+            return keywordDao.saveOrUpdate(entityToSave, session);
+        }, DEFAULT_DATABASE);
+
+       // //TODO: fix keywordEntities return multiple from one id
+       // final List<KeywordEntity> keywordEntities = fetchKeyword(keywordId.get());
+       // Preconditions.checkArgument(keywordEntities.size() < 2);
+       // return keywordEntities.get(0);
+        return entity;
     }
 
 
-    Optional<KeywordEntity> getExistingEntity(String keyword) {
+        Optional<KeywordEntity> getExistingEntity(String keyword) {
         final List<KeywordEntity> fetchResult = fetchEntity(KeywordDao.Query.builder()
                 .withWord(keyword)
                 .build());
