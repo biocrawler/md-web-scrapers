@@ -11,6 +11,11 @@ import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AwsSqsConsumerTest {
 
@@ -35,5 +40,18 @@ class AwsSqsConsumerTest {
     void fetchMessages() {
         final List<Article> articles = consumer.fetchArticles(1);
         System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(articles));
+    }
+
+    @Test
+    void decodeKeywords() {
+        String testString = "[76, 105, 98, 114, 97, 114, 121, 32, 97, 110, 100, 32, 73, 110, 102, 111, 114, 109, 97, 116, 105, 111, 110, 32, 83, 99, 105, 101, 110, 99, 101]";
+        Pattern normalPattern = Pattern.compile("^[a-zA-Z]+");
+        Matcher normalMatcher = normalPattern.matcher(testString);
+        assertFalse(normalMatcher.matches());
+        Pattern byteCodePattern = Pattern.compile("^[\\[0-9,\\s]{2,}+]$");
+        Matcher byteCodeMatcher = byteCodePattern.matcher(testString);
+        assertTrue(byteCodeMatcher.matches());
+        System.out.println(byteCodeMatcher.groupCount());
+        System.out.println(byteCodeMatcher.group());
     }
 }

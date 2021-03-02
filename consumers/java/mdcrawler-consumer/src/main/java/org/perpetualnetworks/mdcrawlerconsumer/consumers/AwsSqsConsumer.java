@@ -123,9 +123,9 @@ public class AwsSqsConsumer {
                 keywords.add(word);
                 return;
             }
-            Pattern p = Pattern.compile("^[\\[]");
-            Matcher m = p.matcher(word);
-            if (m.matches()) {
+            Pattern byteCodePattern = Pattern.compile("^[\\[0-9,\\s]{2,}+]$");
+            Matcher byteCodeMatcher = byteCodePattern.matcher(word);
+            if (byteCodeMatcher.matches()) {
                 keywords.add(ByteOperations.convertStringBytesToString(word));
                 return;
             }
