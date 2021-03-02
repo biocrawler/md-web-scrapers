@@ -18,4 +18,4 @@ crawler-consumer:
   dbCredentialsFile: "config/consumerdb.json"
   databaseName: mdcrawler_consumer_d
   #be careful about docker networking here
-  connectionUrl: "jdbc:mysql://localhost:3306/mdcrawler_consumer_d?serverTimezone=UTC"
+  connectionUrl: "jdbc:mysql://192.168.5.159:3306/mdcrawler_consumer_d?serverTimezone=UTC"
