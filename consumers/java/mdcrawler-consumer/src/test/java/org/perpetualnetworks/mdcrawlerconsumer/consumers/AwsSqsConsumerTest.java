@@ -54,4 +54,5 @@ class AwsSqsConsumerTest {
         System.out.println(byteCodeMatcher.groupCount());
         System.out.println(byteCodeMatcher.group());
     }
+
 }
