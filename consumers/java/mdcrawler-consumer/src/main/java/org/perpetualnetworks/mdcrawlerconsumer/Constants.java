@@ -30,5 +30,6 @@ public interface Constants {
     interface Time {
         String IsoPattern = "dd-MM-yyyy'T'HH:mm:ss";
         String AlternatePattern = "yyyy-MM-dd'T'HH:mm:ss.sss";
+        String dateStringsPattern = "EEE MMM dd hh:mm:ss ZZZ yyyy";
     }
 }

@@ -1,8 +1,10 @@
 package org.perpetualnetworks.mdcrawlerconsumer.config;
 
 import org.flywaydb.core.Flyway;
+import org.perpetualnetworks.mdcrawlerconsumer.consumers.AwsSqsConsumer;
 import org.perpetualnetworks.mdcrawlerconsumer.database.factory.DataSourceFactories;
 import org.perpetualnetworks.mdcrawlerconsumer.database.factory.MysqlDataSourceFactory;
+import org.perpetualnetworks.mdcrawlerconsumer.utils.lzw.LZwCompressor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.flyway.FlywayMigrationInitializer;
 import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
@@ -16,6 +18,9 @@ public class AppConfiguration {
 
     @Autowired
     CrawlerConsumerConfiguration crawlerConsumerConfiguration;
+
+    @Autowired
+    AwsConfiguration awsConfiguration;
 
     @Bean
     public DataSourceFactories getDataSourceFactories() {
@@ -46,5 +51,10 @@ public class AppConfiguration {
     @Bean
     FlywayMigrationInitializer delayedFlywayInitializer(Flyway flyway) {
         return getFlywayInitializer(flyway);
+    }
+
+    @Bean
+    AwsSqsConsumer getAwsSqsConsumer() {
+        return new AwsSqsConsumer(awsConfiguration, new LZwCompressor());
     }
 }

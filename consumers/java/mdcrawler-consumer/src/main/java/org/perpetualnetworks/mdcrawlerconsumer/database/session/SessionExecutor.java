@@ -23,7 +23,7 @@ public class SessionExecutor {
         }
     }
 
-    <T> T executeAndReturnTransactionalRW(Function<Session, T> query, Database database) {
+    public <T> T executeAndReturnTransactionalRW(Function<Session, T> query, Database database) {
         Transaction transaction = null;
         try (Session session = sessionFactoryStore.getSessionFactory(database).openSession()) {
             transaction = session.beginTransaction();

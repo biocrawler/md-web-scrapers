@@ -91,6 +91,12 @@ public class DtoToEntityConverter {
         if (dateString == null) {
             return new Date();
         }
+
+        try {
+            return new SimpleDateFormat(Constants.Time.dateStringsPattern).parse(dateString);
+        } catch (ParseException ignored) {
+            // ignored
+        }
         try {
             return new SimpleDateFormat(Constants.Time.IsoPattern).parse(dateString);
         } catch (ParseException ignored) {
