@@ -1,7 +1,7 @@
 language: java
 
-mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 
 script:
   - cd producers/java/mdcrawler-producer
+  - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
   - mvn -B test
