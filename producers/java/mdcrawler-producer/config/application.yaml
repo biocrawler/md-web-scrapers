@@ -8,6 +8,14 @@ spring:
 #    property-naming-strategy: SNAKE_CASE
   #main:
   #  banner-mode: off
+
+graphite:
+  host: mdcrawler-api.perpetualnetworks.org
+  port: 2003
+metrics:
+  nameSpace: mdcrawler
+  componentType: producer
+
 selenium:
   chrome-driver-location: "/usr/src/app/chromedriver"
   testUrl: "https://google.com"

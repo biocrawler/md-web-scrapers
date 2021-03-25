@@ -24,7 +24,7 @@ import static java.util.Objects.nonNull;
 @Slf4j
 public class FigshareArticleConverter {
 
-    private WebParser webParser;
+    private final WebParser webParser;
 
     @Autowired
     public FigshareArticleConverter(WebParser webParser) {
