@@ -2,6 +2,9 @@
 
 This is the home repository of team BioCrawCraw's contributions in Copenhagen BioHackathon 2020.
 
+[![Build Status](https://travis-ci.com/biocrawler/md-web-scrapers.svg?branch=master)](https://travis-ci.com/biocrawler/md-web-scrapers.svg?branch=master)
+
+
 Web Scraper initial design:
 ===============
 ___
