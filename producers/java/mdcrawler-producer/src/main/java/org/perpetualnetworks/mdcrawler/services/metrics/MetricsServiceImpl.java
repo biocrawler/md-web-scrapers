@@ -12,7 +12,6 @@ public class MetricsServiceImpl implements MetricsService {
     @Autowired
     GraphiteConfiguration graphiteConfiguration;
 
-    private final Counter articleSumCounter;
     private final Counter mendeleyArticleSendSumCounter;
     private final Counter figshareArticleSendSumCounter;
     private final Counter articleSendErrorCounter;
@@ -41,7 +40,6 @@ public class MetricsServiceImpl implements MetricsService {
         Metrics.addRegistry(graphiteMeterRegistry);
         articleSendSuccessCounter = Metrics.counter(MetricPaths.PRODUCER_ARTICLE_SEND_SUCCESS.getPath());
         articleSendErrorCounter = Metrics.counter(MetricPaths.PRODUCER_ATICLE_SEND_ERROR.getPath());
-        articleSumCounter = Metrics.counter(MetricPaths.PRODUCER_ARTICLE_SEND_SUM.getPath());
         mendeleyArticleSendSumCounter = Metrics.counter(MetricPaths.MENDELEY_ARTICLE_SEND_SUM.getPath());
         figshareArticleSendSumCounter = Metrics.counter(MetricPaths.FIGSHARE_ARTICLE_SEND_SUM.getPath());
         figshareConversionSuccessCounter = Metrics.counter(MetricPaths.FIGSHARE_ARTICLE_CONVERSION_SUCCESS.getPath());
