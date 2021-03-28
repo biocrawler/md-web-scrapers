@@ -1,6 +1,5 @@
 package org.perpetualnetworks.mdcrawler.converters;
 
-import com.google.common.collect.ImmutableList;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.openqa.selenium.WebDriver;
@@ -10,6 +9,7 @@ import org.perpetualnetworks.mdcrawler.models.Author;
 import org.perpetualnetworks.mdcrawler.models.FileArticle;
 import org.perpetualnetworks.mdcrawler.parsers.WebParser;
 import org.perpetualnetworks.mdcrawler.services.BrowserAutomatorImpl;
+import org.perpetualnetworks.mdcrawler.services.metrics.MetricsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,29 +25,33 @@ import static java.util.Objects.nonNull;
 public class FigshareArticleConverter {
 
     private final WebParser webParser;
+    private final MetricsService metricsService;
 
     @Autowired
-    public FigshareArticleConverter(WebParser webParser) {
+    public FigshareArticleConverter(WebParser webParser, MetricsService metricsService) {
         this.webParser = webParser;
+        this.metricsService = metricsService;
     }
 
 
     public Optional<Article> buildArticleFromElement(WebElement webElement) {
         try {
             List<String> textElements = webParser.parseAllTextElements(webElement);
-            Article.ArticleBuilder builder = buildArticle(textElements);
+            Article.ArticleBuilder builder = buildArticleBuilder(textElements);
             List<String> urls = webParser.parseAllLinks(webElement);
             List<String> sourceUrls = urls.stream().filter(url -> url.startsWith("http")).collect(Collectors.toList());
             sourceUrls.stream().findFirst().ifPresent(builder::sourceUrl);
             Article article = builder.build();
             //log.info("returning article from build: " + article);
+            metricsService.incrementFigshareArticleConversionSuccessCount();
             return Optional.of(article);
         } catch (Exception e) {
             log.error("error: " + e.getMessage());
+            metricsService.incrementFigshareArticleConversionErrorCount();
         }
         return Optional.empty();
     }
-    public Article.ArticleBuilder buildArticle(List<String> textElements) {
+    public Article.ArticleBuilder buildArticleBuilder(List<String> textElements) {
         Article.ArticleBuilder builder = Article.builder();
         Optional<Author> author = webParser.parseAuthor(textElements);
         Optional<String> title = webParser.parseTitle(textElements);
@@ -89,6 +93,7 @@ public class FigshareArticleConverter {
         Set<FileArticle> fileArticles = webParser.parseArticleFiles(browserAutomator.fetchAllFSArticleFiles(driver));
         builder.files(fileArticles);
         log.info("files not empty: " + CollectionUtils.isNotEmpty(fileArticles) + " size: " + fileArticles.size());
+        metricsService.incrementFigshareArticleWithFilesCount();
         if (fileArticles.size() == 0 && nonNull(article.getAdditionalData()) && !article.getAdditionalData().getFigshareType().equals("COLLECTION")) {
             log.warn("zero files collected from article: " + article);
         }

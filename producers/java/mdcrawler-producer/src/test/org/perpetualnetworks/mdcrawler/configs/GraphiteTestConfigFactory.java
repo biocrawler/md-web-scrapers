@@ -14,6 +14,8 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class GraphiteTestConfigFactory {
     private static final String GRAPHITE_HOST = "192.168.5.213";
+    //For debugging
+    //private static final String GRAPHITE_HOST_REMOTE = "mdcrawler-api.perpetualnetworks.org";
     private static final int GRAPHITE_PORT = 2003;
     private static final int randomPort = findAvailableUdpPort();
 

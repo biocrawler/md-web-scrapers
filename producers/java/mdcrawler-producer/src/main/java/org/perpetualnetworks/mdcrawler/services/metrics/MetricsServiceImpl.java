@@ -13,8 +13,16 @@ public class MetricsServiceImpl implements MetricsService {
     GraphiteConfiguration graphiteConfiguration;
 
     private final Counter articleSumCounter;
+    private final Counter mendeleyArticleSendSumCounter;
+    private final Counter figshareArticleSendSumCounter;
     private final Counter articleSendErrorCounter;
     private final Counter articleSendSuccessCounter;
+    private final Counter figshareConversionSuccessCounter;
+    private final Counter figshareConversionErrorCounter;
+    private final Counter figshareArticlesWithFilesCounter;
+
+    private final Counter mendeleyResponseSuccessCounter;
+    private final Counter mendeleyResponseErrorCounter;
     private final PerpetualGraphiteMeterRegistry graphiteMeterRegistry;
 
     public MetricsServiceImpl(GraphiteConfiguration graphiteConfiguration) {
@@ -34,6 +42,13 @@ public class MetricsServiceImpl implements MetricsService {
         articleSendSuccessCounter = Metrics.counter(MetricPaths.PRODUCER_ARTICLE_SEND_SUCCESS.getPath());
         articleSendErrorCounter = Metrics.counter(MetricPaths.PRODUCER_ATICLE_SEND_ERROR.getPath());
         articleSumCounter = Metrics.counter(MetricPaths.PRODUCER_ARTICLE_SEND_SUM.getPath());
+        mendeleyArticleSendSumCounter = Metrics.counter(MetricPaths.MENDELEY_ARTICLE_SEND_SUM.getPath());
+        figshareArticleSendSumCounter = Metrics.counter(MetricPaths.FIGSHARE_ARTICLE_SEND_SUM.getPath());
+        figshareConversionSuccessCounter = Metrics.counter(MetricPaths.FIGSHARE_ARTICLE_CONVERSION_SUCCESS.getPath());
+        figshareConversionErrorCounter = Metrics.counter(MetricPaths.FIGSHARE_ARTICLE_CONVERSION_ERROR.getPath());
+        figshareArticlesWithFilesCounter = Metrics.counter(MetricPaths.FIGSHARE_ARTICLE_WITH_FILES.getPath());
+        mendeleyResponseSuccessCounter = Metrics.counter(MetricPaths.MENDELEY_RESPONSE_SUCCESS.getPath());
+        mendeleyResponseErrorCounter = Metrics.counter(MetricPaths.MENDELEY_RESPONSE_SUCCESS.getPath());
 
     }
 
@@ -48,10 +63,41 @@ public class MetricsServiceImpl implements MetricsService {
     }
 
     @Override
-    public void sendArticleSendSum(double sum) {
-        articleSumCounter.increment(sum);
+    public void sumMendeleyArticleSendSum(double sum) {
+         mendeleyArticleSendSumCounter.increment(sum);
     }
 
+    @Override
+    public void sumFigshareArticleSendSum(double sum) {
+         figshareArticleSendSumCounter.increment(sum);
+    }
+
+    @Override
+    public void incrementFigshareArticleConversionErrorCount() {
+        figshareConversionErrorCounter.increment();
+    }
+
+    @Override
+    public void incrementFigshareArticleConversionSuccessCount() {
+        figshareConversionSuccessCounter.increment();
+    }
+
+    @Override
+    public void incrementFigshareArticleWithFilesCount() {
+        figshareArticlesWithFilesCounter.increment();
+    }
+
+    @Override
+    public void incrementMendeleyResponseSuccess() {
+        mendeleyResponseSuccessCounter.increment();
+    }
+
+    @Override
+    public void incrementMendeleyResponseError() {
+        mendeleyResponseErrorCounter.increment();
+    }
+
+    //TODO: check where needed
     public void close() {
         graphiteMeterRegistry.close();
         graphiteMeterRegistry.stop();

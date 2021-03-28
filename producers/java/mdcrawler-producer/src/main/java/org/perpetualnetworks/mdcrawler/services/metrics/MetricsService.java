@@ -6,5 +6,17 @@ public interface MetricsService {
 
     void incrementArticleSendErrorCount();
 
-    void sendArticleSendSum(double Sum);
+    void sumMendeleyArticleSendSum(double sum);
+
+    void sumFigshareArticleSendSum(double sum);
+
+    void incrementFigshareArticleConversionErrorCount();
+
+    void incrementFigshareArticleConversionSuccessCount();
+
+    void incrementFigshareArticleWithFilesCount();
+
+    void incrementMendeleyResponseSuccess();
+
+    void incrementMendeleyResponseError();
 }

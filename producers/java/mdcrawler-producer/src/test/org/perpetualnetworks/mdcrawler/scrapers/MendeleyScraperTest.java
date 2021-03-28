@@ -55,7 +55,8 @@ class MendeleyScraperTest {
     @SneakyThrows
     @Test
     void queryresult() {
-        MendeleyScraper scraper = new MendeleyScraper(CONFIG, MENDELEY_ARTICLE_CONVERTER, publisher);
+        MendeleyScraper scraper = new MendeleyScraper(CONFIG, MENDELEY_ARTICLE_CONVERTER, publisher,
+                metricsService);
         Response fetch = scraper.fetch(scraper.buildHttpUrl(1));
         assert fetch.body() != null;
         InputStream src = fetch.body().byteStream();
@@ -69,7 +70,8 @@ class MendeleyScraperTest {
     @SneakyThrows
     @Test
     void queryresultAll() {
-        MendeleyScraper scraper = new MendeleyScraper(CONFIG, MENDELEY_ARTICLE_CONVERTER, publisher);
+        MendeleyScraper scraper = new MendeleyScraper(CONFIG, MENDELEY_ARTICLE_CONVERTER, publisher,
+                metricsService);
         System.out.println("starting fetchall");
         List<MendeleyResponse> responses = scraper.fetchAll();
         System.out.println("ending fetchall, size: " + responses.size());
@@ -83,7 +85,8 @@ class MendeleyScraperTest {
     @SneakyThrows
     @Test
     void runScraper_OK() {
-        MendeleyScraper scraper = new MendeleyScraper(CONFIG, MENDELEY_ARTICLE_CONVERTER, publisher);
+        MendeleyScraper scraper = new MendeleyScraper(CONFIG, MENDELEY_ARTICLE_CONVERTER, publisher,
+                metricsService);
         scraper.runScraper();
     }
 }
