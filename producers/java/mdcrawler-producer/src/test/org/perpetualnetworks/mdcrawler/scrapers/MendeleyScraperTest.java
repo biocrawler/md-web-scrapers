@@ -7,16 +7,20 @@ import okhttp3.OkHttpClient;
 import okhttp3.Response;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.perpetualnetworks.mdcrawler.config.AwsConfiguration;
 import org.perpetualnetworks.mdcrawler.config.MendeleyConfiguration;
 import org.perpetualnetworks.mdcrawler.converters.MendeleyArticleConverter;
 import org.perpetualnetworks.mdcrawler.publishers.AwsSqsPublisher;
 import org.perpetualnetworks.mdcrawler.scrapers.dto.MendeleyResponse;
+import org.perpetualnetworks.mdcrawler.services.metrics.MetricsService;
 import org.perpetualnetworks.mdcrawler.utils.lzw.LZWCompressor;
 
 import java.io.InputStream;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.mockito.Mockito.mock;
 
 class MendeleyScraperTest {
 
@@ -28,9 +32,11 @@ class MendeleyScraperTest {
             .region("eu-central-1")
             .build();
 
+    private static final MetricsService metricsService = mock(MetricsService.class);
+
     private static final LZWCompressor lzwCompressor = new LZWCompressor();
 
-    private static final AwsSqsPublisher publisher = new AwsSqsPublisher(AWS_CONFIG, lzwCompressor);
+    private static final AwsSqsPublisher publisher = new AwsSqsPublisher(AWS_CONFIG, lzwCompressor, metricsService);
 
     private static final MendeleyConfiguration CONFIG = MendeleyConfiguration.builder()
             .host("data.mendeley.com")

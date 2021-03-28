@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micrometer.core.instrument.config.validate.Validated;
 import io.micrometer.graphite.GraphiteConfig;
 import io.micrometer.graphite.GraphiteProtocol;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +19,8 @@ import java.util.concurrent.TimeUnit;
 @ConfigurationProperties("graphite")
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class GraphiteConfiguration {
     @JsonProperty
     String host;

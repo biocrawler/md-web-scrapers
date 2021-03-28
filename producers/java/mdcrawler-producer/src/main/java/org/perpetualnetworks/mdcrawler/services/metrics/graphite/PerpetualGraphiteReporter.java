@@ -33,7 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class PerpetualGraphiteReporter extends ScheduledReporter {
-    private final Map<String, Long> reportedCounters = new ConcurrentHashMap();
+    private final Map<String, Long> reportedCounters = new ConcurrentHashMap<>();
     private volatile double countFactor = 1.0D;
     private final GraphiteSender graphite;
     private final Clock clock;
@@ -55,8 +55,9 @@ public class PerpetualGraphiteReporter extends ScheduledReporter {
                        SortedMap<String, Histogram> histograms,
                        SortedMap<String, Meter> meters,
                        SortedMap<String, Timer> timers) {
-        log.info("starting report with \n gauges: " + gauges + "\n counters: " + counters + "\n meters: " + meters
-                + "\n timers: " + timers);
+        //FOR DEBUGGING:
+        //log.info("starting report with \n gauges: " + gauges + "\n counters: " + counters + "\n meters: " + meters
+        //      + "\n timers: " + timers);
 
         long timestamp = this.clock.getTime() / 1000L;
 
@@ -88,8 +89,8 @@ public class PerpetualGraphiteReporter extends ScheduledReporter {
 
             while(var8.hasNext()) {
                 entry = (Entry)var8.next();
-                log.info("reporting meter entry: " + entry.getKey() + " " + entry.getValue().toString());
-                log.info("timestamp was: " + timestamp);
+                //log.info("reporting meter entry: " + entry.getKey() + " " + entry.getValue().toString());
+                //log.info("timestamp was: " + timestamp);
                 this.reportMetered((String)entry.getKey(), (Metered)entry.getValue(), timestamp);
             }
 
@@ -97,7 +98,7 @@ public class PerpetualGraphiteReporter extends ScheduledReporter {
 
             while(var8.hasNext()) {
                 entry = (Entry)var8.next();
-                log.info("reporting timer entry: " + entry.getKey() + " " + entry.getValue());
+                //log.info("reporting timer entry: " + entry.getKey() + " " + entry.getValue());
                 this.reportTimer((String)entry.getKey(), (Timer)entry.getValue(), timestamp);
             }
 
@@ -180,7 +181,8 @@ public class PerpetualGraphiteReporter extends ScheduledReporter {
     }
 
     private void sendIfEnabled(MetricAttribute type, String name, long value, long timestamp) throws IOException {
-        log.info("evaluating send if enabled with disabled attributes: " + this.getDisabledMetricAttributes());
+        //FOR DEBUGGING:
+        //log.info("evaluating send if enabled with disabled attributes: " + this.getDisabledMetricAttributes());
         if (!this.getDisabledMetricAttributes().contains(type)) {
             final String prefix = this.prefix(name, type.getCode());
             final String format = this.format(value);
