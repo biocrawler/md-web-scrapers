@@ -1,0 +1,25 @@
+<configuration>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <Pattern>
+                %black(%d{ISO8601}) %highlight(%-5level) [%blue(%t)] %yellow(%C{1.}): %msg%n%throwable
+            </Pattern>
+        </encoder>
+    </appender>
+    <!--
+    <logger name="org.perpetualnetworks" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    -->
+
+    <logger name="io.netty.util" additivity="true" level="DEBUG"/>
+    <logger name="io.netty.util" additivity="true" level="INFO"/>
+    <logger name="reactor.netty" additivity="true" level="DEBUG"/>
+    <logger name="reactor.netty" additivity="true" level="INFO"/>
+    <logger name="org.perpetualnetworks.mdcrawler.services.metrics.graphite" additivity="false" level="INFO"/>
+    <root level="error">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+</configuration>

@@ -38,6 +38,8 @@
         <mockito.version>2.28.2</mockito.version>
         <okhttp.version>3.14.2</okhttp.version>
         <h2.version>1.4.200</h2.version>
+        <elasticsearch.version>7.6.2</elasticsearch.version>
+        <micrometer.registry.version>1.6.4</micrometer.registry.version>
         <hibernate.version>5.4.14.Final</hibernate.version>
         <jaxb.api.version>2.4.0-b180830.0359</jaxb.api.version>
         <checkstyle.version>8.22</checkstyle.version>
@@ -122,6 +124,26 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-actuator</artifactId>
+            <version>${spring.boot.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-graphite</artifactId>
+            <version>${micrometer.registry.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.projectreactor.netty</groupId>
+            <artifactId>reactor-netty</artifactId>
+            <version>1.0.4</version>
+            <scope>test</scope>
+        </dependency>
+
+
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <version>${spring.framework.support.version}</version>
@@ -176,6 +198,12 @@
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>sqs</artifactId>
             <version>${aws.sdk.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+            <version>${elasticsearch.version}</version>
         </dependency>
 
 
@@ -320,5 +348,6 @@
             </plugin>
         </plugins>
     </build>
+
 
 </project>

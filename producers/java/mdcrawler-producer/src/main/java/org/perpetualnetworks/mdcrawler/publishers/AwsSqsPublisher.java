@@ -7,6 +7,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.perpetualnetworks.mdcrawler.config.AwsConfiguration;
 import org.perpetualnetworks.mdcrawler.models.Article;
+import org.perpetualnetworks.mdcrawler.services.metrics.MetricsService;
 import org.perpetualnetworks.mdcrawler.utils.lzw.LZWCompressor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -37,9 +38,11 @@ public class AwsSqsPublisher {
     private final LZWCompressor compressor;
     private AwsBasicCredentials awsBasicCredentials;
 
+    @Autowired
+    MetricsService metricsService;
 
     @Autowired
-    public AwsSqsPublisher(AwsConfiguration awsConfiguration, LZWCompressor compressor) {
+    public AwsSqsPublisher(AwsConfiguration awsConfiguration, LZWCompressor compressor, MetricsService metricsService) {
         this.awsConfiguration = awsConfiguration;
         parseAwsCredentials(awsConfiguration).ifPresent(c -> this.awsBasicCredentials = c);
         this.sqsClient = SqsClient.builder()
@@ -69,9 +72,12 @@ public class AwsSqsPublisher {
         try {
             AwsBasicCredentials credentials = AwsBasicCredentials.create(awsBasicCredentials.accessKeyId(), awsBasicCredentials.secretAccessKey());
             SendMessageRequest request = buildSqsRequest(credentials, message);
-            return Optional.of(sqsClient.sendMessage(request));
+            final Optional<SendMessageResponse> sendMessageResponse = Optional.of(sqsClient.sendMessage(request));
+            metricsService.incrementArticleSendSuccessCount();
+            return sendMessageResponse;
         } catch (Exception e) {
             log.error("error sending message: ", e.getCause());
+            metricsService.incrementArticleSendErrorCount();
         }
         return Optional.empty();
     }

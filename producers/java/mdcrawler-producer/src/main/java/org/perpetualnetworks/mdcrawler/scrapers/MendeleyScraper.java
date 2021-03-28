@@ -10,7 +10,9 @@ import org.perpetualnetworks.mdcrawler.config.MendeleyConfiguration;
 import org.perpetualnetworks.mdcrawler.converters.MendeleyArticleConverter;
 import org.perpetualnetworks.mdcrawler.publishers.AwsSqsPublisher;
 import org.perpetualnetworks.mdcrawler.scrapers.dto.MendeleyResponse;
+import org.perpetualnetworks.mdcrawler.services.metrics.MetricsService;
 import org.perpetualnetworks.mdcrawler.utils.ParallelService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.InputStream;
@@ -30,10 +32,13 @@ public class MendeleyScraper {
     private final AwsSqsPublisher publisher;
     private final ParallelService parallelService;
     private final ObjectMapper mapper;
+    private final MetricsService metricsService;
 
+    @Autowired
     public MendeleyScraper(MendeleyConfiguration mendeleyConfiguration,
                            MendeleyArticleConverter mendeleyArticleConverter,
-                           AwsSqsPublisher publisher) {
+                           AwsSqsPublisher publisher,
+                           MetricsService metricsService) {
         this.client = new OkHttpClient.Builder()
                 .connectTimeout(mendeleyConfiguration.getConnectTimeoutMinutes(), TimeUnit.MINUTES)
                 .writeTimeout(mendeleyConfiguration.getWriteTimeoutMinutes(), TimeUnit.MINUTES)
@@ -43,6 +48,7 @@ public class MendeleyScraper {
         this.mendeleyArticleConverter = mendeleyArticleConverter;
         this.parallelService = new ParallelService(4);
         this.publisher = publisher;
+        this.metricsService = metricsService;
         this.mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
@@ -73,11 +79,13 @@ public class MendeleyScraper {
                 //log.info("attempting to convert stream of: \n" + srcNode);
                 MendeleyResponse mendeleyResponse = mapper
                         .convertValue(srcNode, MendeleyResponse.class);
+                metricsService.incrementMendeleyResponseSuccess();
                 return Optional.of(mendeleyResponse);
             }
         } catch (Exception e) {
             log.error("exception during response conversion, status code: " + response.code(), e.getCause());
             if (response.code() == 200) {
+                metricsService.incrementMendeleyResponseError();
                 log.info("error from 200 response: " + e.getCause(), e);
             }
         }
@@ -87,7 +95,10 @@ public class MendeleyScraper {
     public List<MendeleyResponse> fetchAll() {
         List<MendeleyResponse> responses = new ArrayList<>();
         convertResponse(fetch(buildHttpUrl(1)))
-                .ifPresent(response -> responses.addAll(fetchRemaining(response)));
+                .ifPresent(response -> {
+                    responses.addAll(fetchRemaining(response));});
+        metricsService.sumMendeleyArticleSendSum(responses.size());
+
         return responses;
     }
 
@@ -117,7 +128,14 @@ public class MendeleyScraper {
                 .filter(Objects::nonNull)
                 .flatMap(List::stream)
                 .map(mendeleyArticleConverter::convert)
-                .flatMap(Optional::stream)
+                .flatMap(conversion -> {
+                    if (conversion.isEmpty()) {
+                      metricsService.incrementMendeleyResponseError();
+                    }
+                    else {
+                        metricsService.incrementMendeleyResponseSuccess();
+                    }
+                    return conversion.stream();})
                 .forEach(publisher::sendArticle);
     }
 

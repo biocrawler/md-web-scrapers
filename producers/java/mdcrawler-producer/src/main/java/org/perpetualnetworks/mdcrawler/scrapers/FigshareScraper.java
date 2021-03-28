@@ -9,6 +9,7 @@ import org.perpetualnetworks.mdcrawler.models.Article;
 import org.perpetualnetworks.mdcrawler.parsers.WebParser;
 import org.perpetualnetworks.mdcrawler.publishers.AwsSqsPublisher;
 import org.perpetualnetworks.mdcrawler.services.BrowserAutomatorImpl;
+import org.perpetualnetworks.mdcrawler.services.metrics.MetricsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.sqs.model.SendMessageResponse;
@@ -26,16 +27,20 @@ public class FigshareScraper {
     private final BrowserAutomatorImpl browserAutomator;
     private final FigshareArticleConverter figshareArticleConverter;
     private final AwsSqsPublisher publisher;
+    private final MetricsService metricsService;
 
     @Autowired
     public FigshareScraper(FigshareConfiguration figshareConfiguration,
                            BrowserAutomatorImpl browserAutomator,
                            FigshareArticleConverter figshareArticleConverter,
-                           AwsSqsPublisher publisher) {
+                           AwsSqsPublisher publisher,
+                           MetricsService metricsService) {
         this.figshareConfiguration = figshareConfiguration;
         this.browserAutomator = browserAutomator;
         this.figshareArticleConverter = figshareArticleConverter;
         this.publisher = publisher;
+        this.metricsService = metricsService;
+
     }
 
     public void runScraper() {
@@ -64,6 +69,7 @@ public class FigshareScraper {
         //TODO: assert all messages sent successfully, alert/log if not
         //TODO: add monitoring for messages sent
         log.info("send message responses: " + sendResponses);
+        metricsService.sumFigshareArticleSendSum(sendResponses.size());
     }
 
     private Set<Article> fetchNewArticlesByBatch(BrowserAutomatorImpl browserAutomator, Set<WebElement> existingList, Set<Article> articles) {
