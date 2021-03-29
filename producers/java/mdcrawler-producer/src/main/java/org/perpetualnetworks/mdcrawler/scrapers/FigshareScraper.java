@@ -47,36 +47,43 @@ public class FigshareScraper {
         //Debugging
         log.info("finished waiting, going to page: " + figshareConfiguration.getQueryUrl());
         log.info("starting get");
-        browserAutomator.getWebDriver().get(figshareConfiguration.getQueryUrl());
-        log.info("waiting for article divs");
-        String selector = "div[role=article]";
-        browserAutomator.waitByCssSelector(browserAutomator.getWebDriver(), selector);
-        log.info("agreeing to cookies");
-        browserAutomator.agreeToCookies(browserAutomator.getWebDriver());
+        startQuery();
+        waitForArticles();
+        agreeToCookies();
+
         log.info("fetching initial webelements");
         List<WebElement> initialWebElements = browserAutomator.buildPageArticleElements();
         log.info("starting batching for new articles");
-        //TODO: parallelize secondary fetching
-        Set<Article> articles = fetchNewArticlesByBatch(browserAutomator, ImmutableSet.copyOf(initialWebElements), new HashSet<>());
+
+
+        fetchAndSendArticlesByBatch(browserAutomator, ImmutableSet.copyOf(initialWebElements),
+                new HashSet<>());
+
         log.info("finished batching for articles");
         log.info("closing webdriver");
         browserAutomator.closeWebDriver();
-        log.info("starting publish");
-        List<SendMessageResponse> sendResponses = articles.stream()
-                .map(publisher::sendArticle)
-                .flatMap(Optional::stream)
-                .collect(Collectors.toList());
-        //TODO: assert all messages sent successfully, alert/log if not
-        //TODO: add monitoring for messages sent
-        log.info("send message responses: " + sendResponses);
-        metricsService.sumFigshareArticleSendSum(sendResponses.size());
     }
 
-    private Set<Article> fetchNewArticlesByBatch(BrowserAutomatorImpl browserAutomator, Set<WebElement> existingList, Set<Article> articles) {
-        //TODO: change fetch limit to parse all results from initial
+    private void agreeToCookies() {
+        log.info("agreeing to cookies");
+        browserAutomator.agreeToCookies(browserAutomator.getWebDriver());
+    }
+
+    private void waitForArticles() {
+        log.info("waiting for article divs");
+        String articleSelector = "div[role=article]";
+        browserAutomator.waitByCssSelector(browserAutomator.getWebDriver(), articleSelector);
+    }
+
+    private void startQuery() {
+        browserAutomator.getWebDriver().get(figshareConfiguration.getQueryUrl());
+    }
+
+    private void fetchAndSendArticlesByBatch(BrowserAutomatorImpl browserAutomator,
+                                             Set<WebElement> existingList, Set<Article> articles) {
         if (articles.size() > figshareConfiguration.getFetchLimit()) {
             log.info("fetch limit exceeded");
-            return articles;
+            return;
         }
         log.info("starting new batch article fetch");
         int initArticleSize = articles.size();
@@ -98,9 +105,21 @@ public class FigshareScraper {
         }
         log.info("exiting loop, begining batch fetch");
         if (articles.size() != initArticleSize) {
-            fetchNewArticlesByBatch(browserAutomator, existingList, articles);
+            log.info("starting publish");
+            publishArticles(articles);
+            metricsService.incrementFigshareArticleBatchCount();
+            fetchAndSendArticlesByBatch(browserAutomator, existingList, articles);
         }
-        return articles;
+    }
+
+    private void publishArticles(Set<Article> articles) {
+        List<SendMessageResponse> sendResponses = articles.stream()
+                .map(publisher::sendArticle)
+                .flatMap(Optional::stream)
+                .collect(Collectors.toList());
+        log.info("send message responses: " + sendResponses);
+
+        metricsService.sumFigshareArticleSendSum(sendResponses.size());
     }
 
     private Boolean checkAllElementsAreSame(Set<WebElement> newElementList, Set<WebElement> existingElementList) {
