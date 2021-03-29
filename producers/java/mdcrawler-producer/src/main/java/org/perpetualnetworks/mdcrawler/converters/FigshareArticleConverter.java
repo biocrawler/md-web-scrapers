@@ -13,6 +13,7 @@ import org.perpetualnetworks.mdcrawler.services.metrics.MetricsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.*;
@@ -71,9 +72,8 @@ public class FigshareArticleConverter {
     public Article updateArticleBySecondaryLink(Article article, BrowserAutomatorImpl browserAutomator, WebParser parser) {
         log.info("starting secondary parse");
         Article.ArticleBuilder builder = article.toBuilder();
-        WebDriver driver = browserAutomator.createWebDriver();
-        driver.get(article.getSourceUrl());
-        browserAutomator.waitImplicity(driver, 5);
+        WebDriver driver = buildWebDriverAndWait(article, browserAutomator);
+
         if (article.getAdditionalData() != null) {
             log.info("parsing article type: " + article.getAdditionalData().getFigshareType());
         }
@@ -100,5 +100,13 @@ public class FigshareArticleConverter {
         //log.info("returning article from secondary: " + builder.build());
         driver.close();
         return builder.build();
+    }
+
+    @NotNull
+    private WebDriver buildWebDriverAndWait(Article article, BrowserAutomatorImpl browserAutomator) {
+        WebDriver driver = browserAutomator.createWebDriver();
+        driver.get(article.getSourceUrl());
+        browserAutomator.waitImplicity(driver, 5);
+        return driver;
     }
 }

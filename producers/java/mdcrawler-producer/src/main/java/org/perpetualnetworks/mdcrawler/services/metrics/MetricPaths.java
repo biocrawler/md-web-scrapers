@@ -5,7 +5,6 @@ import lombok.Getter;
 public enum MetricPaths {
     PRODUCER_ARTICLE_SEND_SUCCESS("mdcrawler.fosshost.producer.send.article.success"),
     PRODUCER_ATICLE_SEND_ERROR("mdcrawler.fosshost.producer.send.article.fail"),
-    PRODUCER_ARTICLE_SEND_SUM("mdcrawler.fosshost.producer.send.article.sum"),
 
     FIGSHARE_ARTICLE_CONVERSION_ERROR("mdcrawler.fosshost.figshare.converter.article.error"),
     FIGSHARE_ARTICLE_CONVERSION_SUCCESS("mdcrawler.fosshost.figshare.converter.article.success"),

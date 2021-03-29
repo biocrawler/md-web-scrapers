@@ -108,7 +108,7 @@ public class BrowserAutomatorImpl implements BrowserAutomator {
 
     public WebDriver createWebDriver() {
         ChromeOptions chromeOptions = new ChromeOptions()
-                .addArguments("--no-sandbox", "--disable-dev-shm-usage", "--silent-output=true");
+                .addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage", "--silent-output=true");
         System.setProperty(ChromeDriverService.CHROME_DRIVER_SILENT_OUTPUT_PROPERTY, "true");
         return new ChromeDriver(chromeOptions);
     }
