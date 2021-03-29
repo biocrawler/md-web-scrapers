@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.sqs.model.SendMessageResponse;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -94,19 +95,11 @@ public class FigshareScraper {
         // if so, then scroll down until the existing element list is not the same
         // then publish the converted articles
 
+        log.info("building existing element list");
         final Set<String> existingElementListText = existingWebElementList.stream()
                 .map(WebElement::getText).collect(Collectors.toSet());
 
-        boolean isSame = true;
-        List<WebElement> elements = new ArrayList<>();
-        while (isSame) {
-            elements = browserAutomator.buildPageArticleElements();
-            if (elements.stream().map(WebElement::getText).collect(Collectors.toSet()).equals(existingElementListText)) {
-                log.info("same check: " + isSame + " executing manual scroll");
-                browserAutomator.executeManualScrollDown();
-            }
-            isSame = false;
-        }
+        List<WebElement> elements = scrollDownByElementTextCheck(browserAutomator, existingElementListText);
         log.info("elements no longer the same exiting loop, collecting articles");
 
         Set<Article> currentArticles = buildArticles(browserAutomator, elements);
@@ -119,10 +112,25 @@ public class FigshareScraper {
         fetchAndSendArticlesByBatch(browserAutomator, elements, articleCount);
     }
 
+    @NotNull
+    private List<WebElement> scrollDownByElementTextCheck(BrowserAutomatorImpl browserAutomator, Set<String> existingElementListText) {
+        log.info("starting same check");
+        boolean isSame = true;
+        List<WebElement> elements = new ArrayList<>();
+        while (isSame) {
+            elements = browserAutomator.buildPageArticleElements();
+            if (elements.stream().map(WebElement::getText).collect(Collectors.toSet()).equals(existingElementListText)) {
+                log.info("same check: " + isSame + " executing manual scroll");
+                browserAutomator.executeManualScrollDown();
+            }
+            isSame = false;
+            log.info("ending same check");
+        }
+        return elements;
+    }
+
     private Set<Article> buildArticles(BrowserAutomatorImpl browserAutomator, List<WebElement> existingList) {
         Set<Article> articles = new HashSet<>();
-        final WebDriver webDriver = browserAutomator.getWebDriver();
-        browserAutomator.waitImplicity(webDriver, 5);
 
         existingList.forEach(element -> {
             Optional<Article> article = figshareArticleConverter.buildArticleFromElement(element);
@@ -131,8 +139,6 @@ public class FigshareScraper {
                     figshareArticleConverter.updateArticleBySecondaryLink(value, browserAutomator, webParser)));
         });
 
-        browserAutomator.waitImplicity(webDriver, 5);
-        webDriver.close();
         return articles;
     }
 

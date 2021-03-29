@@ -69,36 +69,37 @@ public class FigshareArticleConverter {
         return builder;
     }
 
+    //TODO: clean up
     public Article updateArticleBySecondaryLink(Article article, BrowserAutomatorImpl browserAutomator, WebParser parser) {
         log.info("starting secondary parse");
+        WebDriver webDriver = buildWebDriverAndWait(article, browserAutomator);
+
         Article.ArticleBuilder builder = article.toBuilder();
-        WebDriver driver = buildWebDriverAndWait(article, browserAutomator);
 
         if (article.getAdditionalData() != null) {
             log.info("parsing article type: " + article.getAdditionalData().getFigshareType());
         }
-        Set<String> keywords = parser.parseAllKeywords(browserAutomator.fetchAllFSArticleKeywordElements(driver));
+        Set<String> keywords = parser.parseAllKeywords(browserAutomator.fetchAllFSArticleKeywordElements(webDriver));
         log.info("keyword set not empty: " + CollectionUtils.isNotEmpty(keywords));
         builder.keywords(keywords);
-        Set<String> dois = parser.parseArticleDoi(browserAutomator.fetchAllFSArticleDoiElements(driver));
+        Set<String> dois = parser.parseArticleDoi(browserAutomator.fetchAllFSArticleDoiElements(webDriver));
         log.info("secondary dois not empty: " + CollectionUtils.isNotEmpty(dois));
         dois.stream().filter(Objects::nonNull).findFirst().ifPresent(builder::digitalObjectId);
         Timestamp ts = new Timestamp(Instant.now().toEpochMilli());
         builder.parseDate(ts.toLocalDateTime().toString());
-        List<String> abstracts = webParser.parseArticleAbstract(browserAutomator.fetchAllFSArticleAbstracts(driver));
+        List<String> abstracts = webParser.parseArticleAbstract(browserAutomator.fetchAllFSArticleAbstracts(webDriver));
         log.info("abstracts not empty: " + CollectionUtils.isNotEmpty(abstracts));
         if (CollectionUtils.isNotEmpty(abstracts)) {
             builder.description(String.join(" ", abstracts));
         }
-        Set<FileArticle> fileArticles = webParser.parseArticleFiles(browserAutomator.fetchAllFSArticleFiles(driver));
+        Set<FileArticle> fileArticles = webParser.parseArticleFiles(browserAutomator.fetchAllFSArticleFiles(webDriver));
         builder.files(fileArticles);
         log.info("files not empty: " + CollectionUtils.isNotEmpty(fileArticles) + " size: " + fileArticles.size());
         metricsService.incrementFigshareArticleWithFilesCount();
         if (fileArticles.size() == 0 && nonNull(article.getAdditionalData()) && !article.getAdditionalData().getFigshareType().equals("COLLECTION")) {
             log.warn("zero files collected from article: " + article);
         }
-        //log.info("returning article from secondary: " + builder.build());
-        driver.close();
+        webDriver.close();
         return builder.build();
     }
 
