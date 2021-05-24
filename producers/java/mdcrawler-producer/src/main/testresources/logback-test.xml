@@ -17,6 +17,7 @@
     <logger name="io.netty.util" additivity="true" level="INFO"/>
     <logger name="reactor.netty" additivity="true" level="DEBUG"/>
     <logger name="reactor.netty" additivity="true" level="INFO"/>
+    <logger name="org.perpetualnetworks.mdcrawler" additivity="true" level="INFO"/>
     <logger name="org.perpetualnetworks.mdcrawler.services.metrics.graphite" additivity="false" level="INFO"/>
     <root level="error">
         <appender-ref ref="CONSOLE"/>
