@@ -21,4 +21,7 @@ public interface MetricsService {
     void incrementMendeleyResponseSuccess();
 
     void incrementMendeleyResponseError();
+
+    void sumFigshareApiArticleSendSum(double sum);
+
 }

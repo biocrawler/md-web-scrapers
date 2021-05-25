@@ -6,11 +6,15 @@ import org.perpetualnetworks.mdcrawler.client.dto.figshare.ArticleFileResponse;
 import org.perpetualnetworks.mdcrawler.client.dto.figshare.ArticleResponse;
 import org.perpetualnetworks.mdcrawler.models.Article;
 import org.perpetualnetworks.mdcrawler.models.FileArticle;
+import org.perpetualnetworks.mdcrawler.publishers.AwsSqsPublisher;
+import org.perpetualnetworks.mdcrawler.services.metrics.MetricsService;
+import software.amazon.awssdk.services.sqs.model.SendMessageResponse;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -20,14 +24,39 @@ import static java.util.Objects.nonNull;
 public class FigshareApiScraper {
 
     public static final String DEFAULT_SEARCH_TERMS = "xtc,dcd,ntraj,netcdf,trr,lammpstrj,xyz,binpos,hdf5,dtr,arc,tng,mdcrd,crd,dms,trj,ent,ncdf";
-    public static final SimpleDateFormat DEFAULT_DATE_FORMAT = new SimpleDateFormat("YYYY-mm-dd'T'hh:mm:ss'Z'");
+    public static final SimpleDateFormat DEFAULT_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
 
-    private FigshareApiClient figshareApiClient;
+    private final FigshareApiClient figshareApiClient;
+    private final AwsSqsPublisher publisher;
+    private final MetricsService metricsService;
 
-    FigshareApiScraper(FigshareApiClient figshareApiClient) {
+    FigshareApiScraper(FigshareApiClient figshareApiClient,
+                       AwsSqsPublisher publisher,
+                       MetricsService metricsService
+                       ) {
         this.figshareApiClient = figshareApiClient;
+        this.publisher = publisher;
+        this.metricsService = metricsService;
     }
 
+    public void runScraper() {
+        log.info("starting build all articles");
+        Set<Article> currentArticles = buildArticles();
+
+        log.info("starting article publish");
+        publishArticles(currentArticles);
+    }
+
+
+    private void publishArticles(Set<Article> articles) {
+        List<SendMessageResponse> sendResponses = articles.stream()
+                .map(publisher::sendArticle)
+                .flatMap(Optional::stream)
+                .collect(Collectors.toList());
+        log.info("send message responses: " + sendResponses);
+
+        metricsService.sumFigshareArticleSendSum(sendResponses.size());
+    }
 
     public Set<ArticleResponse> fetchArticlesForDefaultTerms() {
         Set<ArticleResponse> allResponses = new HashSet<>();
@@ -37,7 +66,7 @@ public class FigshareApiScraper {
         return allResponses;
     }
 
-    public Set<Article> fetchAllUpdatedArticlesForDefaultTerms() {
+    public Set<Article> buildArticles() {
         Set<ArticleResponse> articleResponses = fetchArticlesForDefaultTerms();
         return articleResponses.stream().map(ar -> {
             Article.ArticleBuilder builder = Article.builder()

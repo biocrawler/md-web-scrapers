@@ -48,15 +48,14 @@ public class FigshareApiClient {
     }
 
     public Set<ArticleResponse> fetchAllArticles(String searchTerm) {
-        Set<ArticleResponse> responses = new HashSet<>();
-        int previousResponseSize = -1;
         int currentPage = 1;
+        List<ArticleResponse> responseArticles = fetchArticles(currentPage, searchTerm);
+        Set<ArticleResponse> responses = new HashSet<>(responseArticles);
         log.info("starting fetch all for term: " + searchTerm);
-        while (responses.size() != previousResponseSize) {
-            List<ArticleResponse> responseArticles = fetchArticles(currentPage, searchTerm);
+        while (responseArticles.size() != 0) {
+            responseArticles = fetchArticles(currentPage, searchTerm);
             responses.addAll(responseArticles);
             currentPage++;
-            previousResponseSize = responses.size();
             log.info(String.format("added %s articles for search term %s, current responseListSize: %s",
                     responseArticles.size(), searchTerm, responses.size()));
         }
@@ -66,7 +65,7 @@ public class FigshareApiClient {
     @SneakyThrows
     List<ArticleResponse> fetchArticles(Integer pageNumber, String searchTerm) {
         final Request.Builder reqBuilder = buildArticlesRequest(searchTerm);
-        reqBuilder.url(buildUrl(pageNumber, DEFAULT_PAGE_SIZE));
+        reqBuilder.url(buildUrl(pageNumber));
         final Call call = client.newCall(reqBuilder.build());
         return fetch(call.execute(), new TypeReference<List<ArticleResponse>>() {
         }).orElseGet(Collections::emptyList);
@@ -96,9 +95,9 @@ public class FigshareApiClient {
         return Optional.empty();
     }
 
-    private String buildUrl(Integer pageNumber, Integer pageSize) {
+    private String buildUrl(Integer pageNumber) {
         //example: https://api.figshare.com/v2/articles/search?page=1&page_size=100&order=published_date&order_direction=desc
-        return baseUrl + articleSearchEndpoint + "?" + "page=" + pageNumber + "&page_size=" + pageSize
+        return baseUrl + articleSearchEndpoint + "?" + "page=" + pageNumber + "&page_size=" + FigshareApiClient.DEFAULT_PAGE_SIZE
                 + "&order=" + DEFAULT_ORDER + "&order_direction=" + DEFAULT_SORT;
     }
 

@@ -20,6 +20,8 @@ public class MetricsServiceImpl implements MetricsService {
 
     private final Counter mendeleyResponseSuccessCounter;
     private final Counter mendeleyResponseErrorCounter;
+
+    private final Counter figshareApiArticleSendSumCounter;
     private final PerpetualGraphiteMeterRegistry graphiteMeterRegistry;
 
     @Autowired
@@ -47,6 +49,7 @@ public class MetricsServiceImpl implements MetricsService {
         figshareArticleBatchCounter = Metrics.counter(MetricPaths.FIGSHARE_ARTICLE_BATCH_COUNT.getPath());
         mendeleyResponseSuccessCounter = Metrics.counter(MetricPaths.MENDELEY_RESPONSE_SUCCESS.getPath());
         mendeleyResponseErrorCounter = Metrics.counter(MetricPaths.MENDELEY_RESPONSE_SUCCESS.getPath());
+        figshareApiArticleSendSumCounter = Metrics.counter(MetricPaths.FIGSHARE_API_ARTICLE_SEND_SUM.getPath());
 
     }
 
@@ -98,6 +101,11 @@ public class MetricsServiceImpl implements MetricsService {
     @Override
     public void incrementMendeleyResponseError() {
         mendeleyResponseErrorCounter.increment();
+    }
+
+    @Override
+    public void sumFigshareApiArticleSendSum(double sum) {
+        figshareApiArticleSendSumCounter.increment();
     }
 
     //TODO: check where needed

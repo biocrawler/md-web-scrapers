@@ -3,6 +3,7 @@ package org.perpetualnetworks.mdcrawler.client;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.OkHttpClient;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.perpetualnetworks.mdcrawler.client.dto.figshare.ArticleFileResponse;
 import org.perpetualnetworks.mdcrawler.client.dto.figshare.ArticleResponse;
@@ -11,6 +12,7 @@ import java.util.List;
 
 class FigshareApiClientTest {
 
+    @Disabled("works with live data")
     @Test
     void fetchFilesForArticle() {
         Integer testArticleId = 14588315;
@@ -24,6 +26,7 @@ class FigshareApiClientTest {
         }
     }
 
+    @Disabled("works with live data")
     @Test
     void fetchForArticles() {
         String testTerm = "xtc";

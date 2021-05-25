@@ -16,6 +16,8 @@ public enum MetricPaths {
     FIGSHARE_ARTICLE_SEND_SUM("mdcrawler.fosshost.figshare.send.article.sum"),
 
     MENDELEY_RESPONSE_SUCCESS("mdcrawler.fosshost.mendeley.response.success"),
+
+    FIGSHARE_API_ARTICLE_SEND_SUM("mdcrawler.fosshost.figshare-api.send.article.sum"),
     ;
 
     @Getter
