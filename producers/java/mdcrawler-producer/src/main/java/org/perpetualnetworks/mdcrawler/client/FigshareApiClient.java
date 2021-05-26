@@ -13,6 +13,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import org.perpetualnetworks.mdcrawler.client.dto.figshare.ArticleFileResponse;
 import org.perpetualnetworks.mdcrawler.client.dto.figshare.ArticleResponse;
+import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+@Component
 @Slf4j
 public class FigshareApiClient {
 

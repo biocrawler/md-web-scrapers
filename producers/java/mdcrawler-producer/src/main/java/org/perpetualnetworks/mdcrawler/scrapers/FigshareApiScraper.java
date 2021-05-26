@@ -8,6 +8,8 @@ import org.perpetualnetworks.mdcrawler.models.Article;
 import org.perpetualnetworks.mdcrawler.models.FileArticle;
 import org.perpetualnetworks.mdcrawler.publishers.AwsSqsPublisher;
 import org.perpetualnetworks.mdcrawler.services.metrics.MetricsService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.sqs.model.SendMessageResponse;
 
 import java.text.SimpleDateFormat;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
 
+@Component
 @Slf4j
 public class FigshareApiScraper {
 
@@ -30,6 +33,7 @@ public class FigshareApiScraper {
     private final AwsSqsPublisher publisher;
     private final MetricsService metricsService;
 
+    @Autowired
     FigshareApiScraper(FigshareApiClient figshareApiClient,
                        AwsSqsPublisher publisher,
                        MetricsService metricsService
