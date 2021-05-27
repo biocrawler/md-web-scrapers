@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.perpetualnetworks.mdcrawler.client.FigshareApiClient;
 import org.perpetualnetworks.mdcrawler.client.dto.figshare.ArticleFileResponse;
 import org.perpetualnetworks.mdcrawler.client.dto.figshare.ArticleResponse;
+import org.perpetualnetworks.mdcrawler.config.FigshareApiConfiguration;
 import org.perpetualnetworks.mdcrawler.models.Article;
 import org.perpetualnetworks.mdcrawler.models.FileArticle;
 import org.perpetualnetworks.mdcrawler.publishers.AwsSqsPublisher;
@@ -26,8 +27,8 @@ import static java.util.Objects.nonNull;
 @Slf4j
 public class FigshareApiScraper {
 
-    public static final String DEFAULT_SEARCH_TERMS = "xtc,dcd,ntraj,netcdf,trr,lammpstrj,xyz,binpos,hdf5,dtr,arc,tng,mdcrd,crd,dms,trj,ent,ncdf";
-    public static final SimpleDateFormat DEFAULT_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
+    private final String defaultSearchTerms;
+    private final SimpleDateFormat defaultDateFormat;
 
     private final FigshareApiClient figshareApiClient;
     private final AwsSqsPublisher publisher;
@@ -35,12 +36,15 @@ public class FigshareApiScraper {
 
     @Autowired
     FigshareApiScraper(FigshareApiClient figshareApiClient,
+                       FigshareApiConfiguration figshareApiConfiguration,
                        AwsSqsPublisher publisher,
                        MetricsService metricsService
                        ) {
         this.figshareApiClient = figshareApiClient;
         this.publisher = publisher;
         this.metricsService = metricsService;
+        this.defaultSearchTerms = figshareApiConfiguration.getDefaultSearchTerms();
+        this.defaultDateFormat = new SimpleDateFormat(figshareApiConfiguration.getDefaultDateFormat());
     }
 
     public void runScraper() {
@@ -64,7 +68,7 @@ public class FigshareApiScraper {
 
     public Set<ArticleResponse> fetchArticlesForDefaultTerms() {
         Set<ArticleResponse> allResponses = new HashSet<>();
-        for (String term : DEFAULT_SEARCH_TERMS.split(",")) {
+        for (String term : defaultSearchTerms.split(",")) {
             allResponses.addAll(figshareApiClient.fetchAllArticles(term));
         }
         return allResponses;
@@ -79,7 +83,7 @@ public class FigshareApiScraper {
                     //TODO: add keywords .keywords()
                     .digitalObjectId(ar.getDoi())
                     .parsed(true)
-                    .parseDate(DEFAULT_DATE_FORMAT.format(new Date()))
+                    .parseDate(defaultDateFormat.format(new Date()))
                     .referingUrl(ar.getUrlPrivateHtml());
             addAdditionalData(ar, builder);
             fetchArticleFiles(ar, builder);

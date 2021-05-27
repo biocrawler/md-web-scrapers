@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.perpetualnetworks.mdcrawler.client.FigshareApiClient;
 import org.perpetualnetworks.mdcrawler.client.dto.figshare.ArticleResponse;
+import org.perpetualnetworks.mdcrawler.config.FigshareApiConfiguration;
 import org.perpetualnetworks.mdcrawler.publishers.AwsSqsPublisher;
 import org.perpetualnetworks.mdcrawler.services.metrics.MetricsService;
 
@@ -18,8 +19,12 @@ class FigshareApiScraperTest {
     MetricsService metricsService;
     @Mock
     AwsSqsPublisher publisher;
+    @Mock
+    FigshareApiConfiguration figshareApiConfiguration;
 
-    FigshareApiScraper figshareApiScraper = new FigshareApiScraper(new FigshareApiClient(new OkHttpClient()),
+    FigshareApiScraper figshareApiScraper = new FigshareApiScraper(
+            new FigshareApiClient(new OkHttpClient()),
+            figshareApiConfiguration,
             publisher, metricsService);
 
     @Disabled
