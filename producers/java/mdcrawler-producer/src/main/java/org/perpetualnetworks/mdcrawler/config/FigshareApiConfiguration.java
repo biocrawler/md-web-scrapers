@@ -10,13 +10,13 @@ import org.springframework.stereotype.Component;
 
 @Data
 @Component
-@ConfigurationProperties("figshareApi")
+@ConfigurationProperties("figshareapi")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class FigshareApiConfiguration {
-    @JsonProperty("searchTerms")
-    String DefaultSearchTerms;
-    @JsonProperty("dateFormat")
-    String DefaultDateFormat;
+    @JsonProperty
+    String searchTerms;
+    @JsonProperty
+    String dateFormat;
 }

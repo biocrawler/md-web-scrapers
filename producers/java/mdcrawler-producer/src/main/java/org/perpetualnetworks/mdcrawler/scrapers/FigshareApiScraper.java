@@ -28,7 +28,7 @@ import static java.util.Objects.nonNull;
 public class FigshareApiScraper {
 
     private final String defaultSearchTerms;
-    private final SimpleDateFormat defaultDateFormat;
+    private final String defaultDateFormat;
 
     private final FigshareApiClient figshareApiClient;
     private final AwsSqsPublisher publisher;
@@ -39,12 +39,12 @@ public class FigshareApiScraper {
                        FigshareApiConfiguration figshareApiConfiguration,
                        AwsSqsPublisher publisher,
                        MetricsService metricsService
-                       ) {
+    ) {
         this.figshareApiClient = figshareApiClient;
         this.publisher = publisher;
         this.metricsService = metricsService;
-        this.defaultSearchTerms = figshareApiConfiguration.getDefaultSearchTerms();
-        this.defaultDateFormat = new SimpleDateFormat(figshareApiConfiguration.getDefaultDateFormat());
+        this.defaultSearchTerms = figshareApiConfiguration.getSearchTerms();
+        this.defaultDateFormat = figshareApiConfiguration.getDateFormat();
     }
 
     public void runScraper() {
@@ -83,12 +83,16 @@ public class FigshareApiScraper {
                     //TODO: add keywords .keywords()
                     .digitalObjectId(ar.getDoi())
                     .parsed(true)
-                    .parseDate(defaultDateFormat.format(new Date()))
+                    .parseDate(getFormattedDate())
                     .referingUrl(ar.getUrlPrivateHtml());
             addAdditionalData(ar, builder);
             fetchArticleFiles(ar, builder);
             return builder.build();
         }).collect(Collectors.toSet());
+    }
+
+    private String getFormattedDate() {
+        return new SimpleDateFormat(defaultDateFormat).format(new Date());
     }
 
     private void fetchArticleFiles(ArticleResponse ar, Article.ArticleBuilder builder) {
