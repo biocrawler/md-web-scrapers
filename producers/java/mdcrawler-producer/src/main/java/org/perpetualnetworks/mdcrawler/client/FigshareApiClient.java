@@ -41,7 +41,7 @@ public class FigshareApiClient {
     }
 
     @SneakyThrows
-    public List<ArticleFileResponse> fetchFilesForArticle(Integer articleId) {
+    public List<ArticleFileResponse> fetchFilesForArticle(Long articleId) {
         Request.Builder reqBuilder = new Request.Builder();
         reqBuilder.url(buildFileUrl(articleId));
         final Call call = client.newCall(reqBuilder.build());
@@ -103,7 +103,7 @@ public class FigshareApiClient {
                 + "&order=" + DEFAULT_ORDER + "&order_direction=" + DEFAULT_SORT;
     }
 
-    private String buildFileUrl(Integer articleId) {
+    private String buildFileUrl(Long articleId) {
         return baseUrl + articlesEndpoint + "/" + articleId + "/" + "files";
     }
 }

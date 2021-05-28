@@ -15,7 +15,7 @@ class FigshareApiClientTest {
     @Disabled("works with live data")
     @Test
     void fetchFilesForArticle() {
-        Integer testArticleId = 14588315;
+        Long testArticleId = 14588315L;
         FigshareApiClient figshareApiClient = new FigshareApiClient(new OkHttpClient());
         final List<ArticleFileResponse> fetch = figshareApiClient.fetchFilesForArticle(testArticleId);
         ObjectMapper mapper = new ObjectMapper();

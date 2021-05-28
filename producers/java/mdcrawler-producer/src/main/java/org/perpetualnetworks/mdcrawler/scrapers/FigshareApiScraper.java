@@ -53,6 +53,7 @@ public class FigshareApiScraper {
 
         log.info("starting article publish");
         publishArticles(currentArticles);
+        log.info("finished article publish");
     }
 
 
@@ -61,7 +62,7 @@ public class FigshareApiScraper {
                 .map(publisher::sendArticle)
                 .flatMap(Optional::stream)
                 .collect(Collectors.toList());
-        log.info("send message responses: " + sendResponses);
+        log.info("sent message with responses size: " + sendResponses.size());
 
         metricsService.sumFigshareArticleSendSum(sendResponses.size());
     }
@@ -98,14 +99,16 @@ public class FigshareApiScraper {
     private void fetchArticleFiles(ArticleResponse ar, Article.ArticleBuilder builder) {
         try {
             final List<ArticleFileResponse> articleFileResponses = figshareApiClient
-                    .fetchFilesForArticle(ar.getId());
-            builder.files(articleFileResponses.stream().map(af -> FileArticle.builder()
+                    .fetchFilesForArticle(Long.parseLong(String.valueOf(ar.getId())));
+            final Set<FileArticle> files = articleFileResponses.stream().map(af -> FileArticle.builder()
                     .downloadUrl(af.getDownloadUrl())
                     .size(af.getSize().toString())
                     .fileName(af.getFileName())
-                    .build()).collect(Collectors.toSet()));
+                    .build()).collect(Collectors.toSet());
+            builder.files(files);
+            log.info("added " + files.size() + " to article with doi: " + ar.getDoi());
         } catch (Exception e) {
-            log.error("could not add article files: " + e.getMessage());
+            log.error("could not add article files: ", e);
         }
     }
 

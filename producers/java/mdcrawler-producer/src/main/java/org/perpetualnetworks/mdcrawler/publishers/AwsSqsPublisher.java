@@ -62,9 +62,13 @@ public class AwsSqsPublisher {
 
     @SneakyThrows
     public Optional<SendMessageResponse> sendArticle(Article article) {
-        String serialized = MAPPER.writeValueAsString(article);
-        return sendMessage(serialized);
-
+        try {
+            String serialized = MAPPER.writeValueAsString(article);
+            return sendMessage(serialized);
+        } catch (Exception e) {
+            log.info("could not serialize article: " + article);
+        }
+        return  Optional.empty();
     }
 
     //TODO: setup message download for very large messages from s3
@@ -76,7 +80,7 @@ public class AwsSqsPublisher {
             metricsService.incrementArticleSendSuccessCount();
             return sendMessageResponse;
         } catch (Exception e) {
-            log.error("error sending message: ", e.getCause());
+            log.error("error sending message: " + e.getMessage());
             metricsService.incrementArticleSendErrorCount();
         }
         return Optional.empty();

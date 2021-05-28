@@ -22,5 +22,5 @@ public class ArticleFileResponse {
     @JsonProperty("download_url")
     String downloadUrl;
     @JsonProperty
-    Integer size;
+    Long size;
 }

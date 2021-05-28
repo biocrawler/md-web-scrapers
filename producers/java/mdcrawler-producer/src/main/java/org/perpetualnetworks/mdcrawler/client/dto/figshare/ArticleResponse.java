@@ -20,7 +20,7 @@ public class ArticleResponse {
     @JsonProperty
     String handle;
     @JsonProperty
-    Integer id;
+    Long id;
     @JsonProperty("published_date")
     String publishedDate;
     @JsonProperty("resource_doi")

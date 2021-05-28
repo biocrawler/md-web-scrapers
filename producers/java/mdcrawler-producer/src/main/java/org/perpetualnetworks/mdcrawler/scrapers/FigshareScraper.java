@@ -151,11 +151,12 @@ public class FigshareScraper {
     }
 
     private void publishArticles(Set<Article> articles) {
+        log.info("attempting to send " + articles.size());
         List<SendMessageResponse> sendResponses = articles.stream()
                 .map(publisher::sendArticle)
                 .flatMap(Optional::stream)
                 .collect(Collectors.toList());
-        log.info("send message responses: " + sendResponses);
+        log.info("sent message responses size: " + sendResponses.size());
 
         metricsService.sumFigshareArticleSendSum(sendResponses.size());
     }
