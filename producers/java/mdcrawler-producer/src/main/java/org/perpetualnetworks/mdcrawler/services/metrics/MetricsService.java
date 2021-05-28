@@ -16,7 +16,12 @@ public interface MetricsService {
 
     void incrementFigshareArticleWithFilesCount();
 
+    void incrementFigshareArticleBatchCount();
+
     void incrementMendeleyResponseSuccess();
 
     void incrementMendeleyResponseError();
+
+    void sumFigshareApiArticleSendSum(double sum);
+
 }

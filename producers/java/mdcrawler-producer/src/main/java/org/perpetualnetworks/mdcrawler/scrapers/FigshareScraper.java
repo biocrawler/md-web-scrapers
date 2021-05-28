@@ -1,7 +1,7 @@
 package org.perpetualnetworks.mdcrawler.scrapers;
 
-import com.google.common.collect.ImmutableSet;
 import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.perpetualnetworks.mdcrawler.config.FigshareConfiguration;
 import org.perpetualnetworks.mdcrawler.converters.FigshareArticleConverter;
@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.sqs.model.SendMessageResponse;
 
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +30,7 @@ public class FigshareScraper {
     private final FigshareArticleConverter figshareArticleConverter;
     private final AwsSqsPublisher publisher;
     private final MetricsService metricsService;
+    private final WebParser webParser;
 
     @Autowired
     public FigshareScraper(FigshareConfiguration figshareConfiguration,
@@ -39,6 +42,7 @@ public class FigshareScraper {
         this.browserAutomator = browserAutomator;
         this.figshareArticleConverter = figshareArticleConverter;
         this.publisher = publisher;
+        this.webParser = new WebParser();
         this.metricsService = metricsService;
 
     }
@@ -47,64 +51,114 @@ public class FigshareScraper {
         //Debugging
         log.info("finished waiting, going to page: " + figshareConfiguration.getQueryUrl());
         log.info("starting get");
-        browserAutomator.getWebDriver().get(figshareConfiguration.getQueryUrl());
-        log.info("waiting for article divs");
-        String selector = "div[role=article]";
-        browserAutomator.waitByCssSelector(browserAutomator.getWebDriver(), selector);
-        log.info("agreeing to cookies");
-        browserAutomator.agreeToCookies(browserAutomator.getWebDriver());
+        startQuery();
+        waitForArticles();
+        agreeToCookies();
+
         log.info("fetching initial webelements");
         List<WebElement> initialWebElements = browserAutomator.buildPageArticleElements();
         log.info("starting batching for new articles");
-        //TODO: parallelize secondary fetching
-        Set<Article> articles = fetchNewArticlesByBatch(browserAutomator, ImmutableSet.copyOf(initialWebElements), new HashSet<>());
+
+
+        final int initialArticleCount = 0;
+        fetchAndSendArticlesByBatch(browserAutomator, initialWebElements, initialArticleCount);
+
         log.info("finished batching for articles");
         log.info("closing webdriver");
         browserAutomator.closeWebDriver();
-        log.info("starting publish");
+    }
+
+    private void agreeToCookies() {
+        log.info("agreeing to cookies");
+        browserAutomator.agreeToCookies(browserAutomator.getWebDriver());
+    }
+
+    private void waitForArticles() {
+        log.info("waiting for article divs");
+        String articleSelector = "div[role=article]";
+        browserAutomator.waitByCssSelector(browserAutomator.getWebDriver(), articleSelector);
+    }
+
+    private void startQuery() {
+        browserAutomator.getWebDriver().get(figshareConfiguration.getQueryUrl());
+    }
+
+    private void fetchAndSendArticlesByBatch(BrowserAutomatorImpl browserAutomator,
+                                             List<WebElement> existingWebElementList, int articleCount) {
+        if (isFetchLimitHit(articleCount)) {
+            return;
+        }
+        log.info("starting new batch article fetch, article count: " + articleCount);
+
+        // TODO: build pattern around logic:
+        // is the existing element list the same as the what is seen on the page?
+        // if so, then scroll down until the existing element list is not the same
+        // then publish the converted articles
+
+        log.info("building existing element list");
+        final Set<String> existingElementListText = existingWebElementList.stream()
+                .map(WebElement::getText).collect(Collectors.toSet());
+
+        List<WebElement> elements = scrollDownByElementTextCheck(browserAutomator, existingElementListText);
+        log.info("elements no longer the same exiting loop, collecting articles");
+
+        Set<Article> currentArticles = buildArticles(browserAutomator, elements);
+
+        log.info("starting article publish");
+        publishArticles(currentArticles);
+        metricsService.incrementFigshareArticleBatchCount();
+
+        articleCount += currentArticles.size();
+        fetchAndSendArticlesByBatch(browserAutomator, elements, articleCount);
+    }
+
+    @NotNull
+    private List<WebElement> scrollDownByElementTextCheck(BrowserAutomatorImpl browserAutomator, Set<String> existingElementListText) {
+        log.info("starting same check");
+        boolean isSame = true;
+        List<WebElement> elements = new ArrayList<>();
+        while (isSame) {
+            elements = browserAutomator.buildPageArticleElements();
+            if (elements.stream().map(WebElement::getText).collect(Collectors.toSet()).equals(existingElementListText)) {
+                log.info("same check: " + isSame + " executing manual scroll");
+                browserAutomator.executeManualScrollDown();
+            }
+            isSame = false;
+            log.info("ending same check");
+        }
+        return elements;
+    }
+
+    private Set<Article> buildArticles(BrowserAutomatorImpl browserAutomator, List<WebElement> existingList) {
+        Set<Article> articles = new HashSet<>();
+
+        existingList.forEach(element -> {
+            Optional<Article> article = figshareArticleConverter.buildArticleFromElement(element);
+
+            article.ifPresent(value -> articles.add(
+                    figshareArticleConverter.updateArticleBySecondaryLink(value, browserAutomator, webParser)));
+        });
+
+        return articles;
+    }
+
+    private boolean isFetchLimitHit(int articleCount) {
+        if (articleCount > figshareConfiguration.getFetchLimit()) {
+            log.info("fetch limit exceeded");
+            return true;
+        }
+        return false;
+    }
+
+    private void publishArticles(Set<Article> articles) {
+        log.info("attempting to send " + articles.size());
         List<SendMessageResponse> sendResponses = articles.stream()
                 .map(publisher::sendArticle)
                 .flatMap(Optional::stream)
                 .collect(Collectors.toList());
-        //TODO: assert all messages sent successfully, alert/log if not
-        //TODO: add monitoring for messages sent
-        log.info("send message responses: " + sendResponses);
+        log.info("sent message responses size: " + sendResponses.size());
+
         metricsService.sumFigshareArticleSendSum(sendResponses.size());
-    }
-
-    private Set<Article> fetchNewArticlesByBatch(BrowserAutomatorImpl browserAutomator, Set<WebElement> existingList, Set<Article> articles) {
-        //TODO: change fetch limit to parse all results from initial
-        if (articles.size() > figshareConfiguration.getFetchLimit()) {
-            log.info("fetch limit exceeded");
-            return articles;
-        }
-        log.info("starting new batch article fetch");
-        int initArticleSize = articles.size();
-        boolean isSame = true;
-        WebParser webParser = new WebParser();
-        browserAutomator.waitImplicity(browserAutomator.getWebDriver(), 5);
-        existingList.forEach(element -> {
-            Optional<Article> article = figshareArticleConverter.buildArticleFromElement(element);
-            article.ifPresent(value -> articles.add(
-                    figshareArticleConverter.updateArticleBySecondaryLink(value, browserAutomator, webParser)));
-        });
-        browserAutomator.waitImplicity(browserAutomator.getWebDriver(), 5);
-        Set<WebElement> elementList = new HashSet<>();
-        while (isSame) {
-            elementList.addAll(browserAutomator.buildPageArticleElements());
-            isSame = checkAllElementsAreSame(elementList, existingList);
-            log.info("same check: " + isSame + " executing manual scroll");
-            browserAutomator.executeManualScrollDown();
-        }
-        log.info("exiting loop, begining batch fetch");
-        if (articles.size() != initArticleSize) {
-            fetchNewArticlesByBatch(browserAutomator, existingList, articles);
-        }
-        return articles;
-    }
-
-    private Boolean checkAllElementsAreSame(Set<WebElement> newElementList, Set<WebElement> existingElementList) {
-        return newElementList.containsAll(existingElementList) && existingElementList.containsAll(newElementList);
     }
 
 }

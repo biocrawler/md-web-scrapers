@@ -9,9 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class MetricsServiceImpl implements MetricsService {
 
-    @Autowired
-    GraphiteConfiguration graphiteConfiguration;
-
     private final Counter mendeleyArticleSendSumCounter;
     private final Counter figshareArticleSendSumCounter;
     private final Counter articleSendErrorCounter;
@@ -19,11 +16,15 @@ public class MetricsServiceImpl implements MetricsService {
     private final Counter figshareConversionSuccessCounter;
     private final Counter figshareConversionErrorCounter;
     private final Counter figshareArticlesWithFilesCounter;
+    private final Counter figshareArticleBatchCounter;
 
     private final Counter mendeleyResponseSuccessCounter;
     private final Counter mendeleyResponseErrorCounter;
+
+    private final Counter figshareApiArticleSendSumCounter;
     private final PerpetualGraphiteMeterRegistry graphiteMeterRegistry;
 
+    @Autowired
     public MetricsServiceImpl(GraphiteConfiguration graphiteConfiguration) {
         Clock clock = new Clock() {
             @Override
@@ -45,8 +46,10 @@ public class MetricsServiceImpl implements MetricsService {
         figshareConversionSuccessCounter = Metrics.counter(MetricPaths.FIGSHARE_ARTICLE_CONVERSION_SUCCESS.getPath());
         figshareConversionErrorCounter = Metrics.counter(MetricPaths.FIGSHARE_ARTICLE_CONVERSION_ERROR.getPath());
         figshareArticlesWithFilesCounter = Metrics.counter(MetricPaths.FIGSHARE_ARTICLE_WITH_FILES.getPath());
+        figshareArticleBatchCounter = Metrics.counter(MetricPaths.FIGSHARE_ARTICLE_BATCH_COUNT.getPath());
         mendeleyResponseSuccessCounter = Metrics.counter(MetricPaths.MENDELEY_RESPONSE_SUCCESS.getPath());
         mendeleyResponseErrorCounter = Metrics.counter(MetricPaths.MENDELEY_RESPONSE_SUCCESS.getPath());
+        figshareApiArticleSendSumCounter = Metrics.counter(MetricPaths.FIGSHARE_API_ARTICLE_SEND_SUM.getPath());
 
     }
 
@@ -62,12 +65,12 @@ public class MetricsServiceImpl implements MetricsService {
 
     @Override
     public void sumMendeleyArticleSendSum(double sum) {
-         mendeleyArticleSendSumCounter.increment(sum);
+        mendeleyArticleSendSumCounter.increment(sum);
     }
 
     @Override
     public void sumFigshareArticleSendSum(double sum) {
-         figshareArticleSendSumCounter.increment(sum);
+        figshareArticleSendSumCounter.increment(sum);
     }
 
     @Override
@@ -86,6 +89,11 @@ public class MetricsServiceImpl implements MetricsService {
     }
 
     @Override
+    public void incrementFigshareArticleBatchCount() {
+        figshareArticleBatchCounter.increment();
+    }
+
+    @Override
     public void incrementMendeleyResponseSuccess() {
         mendeleyResponseSuccessCounter.increment();
     }
@@ -93,6 +101,11 @@ public class MetricsServiceImpl implements MetricsService {
     @Override
     public void incrementMendeleyResponseError() {
         mendeleyResponseErrorCounter.increment();
+    }
+
+    @Override
+    public void sumFigshareApiArticleSendSum(double sum) {
+        figshareApiArticleSendSumCounter.increment();
     }
 
     //TODO: check where needed

@@ -7,7 +7,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.perpetualnetworks.mdcrawler.config.SeleniumConfiguration;
+//import org.perpetualnetworks.mdcrawler.config.SeleniumConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,12 +26,13 @@ public class BrowserAutomatorImpl implements BrowserAutomator {
     public static final String FS_DIV_ARTICLE_ABSTRACT_SPAM = "div";
     public static final String FS_A_ARTICLE_DOWNLOAD = "a[title*=ownload]";
     public static final String FS_SPAN_ARTICLE_FILE_NAME = "span[title]";
-    private final SeleniumConfiguration seleniumConfiguration;
+    //private final SeleniumConfiguration seleniumConfiguration;
     private final WebDriver webDriver;
 
+    //public BrowserAutomatorImpl(SeleniumConfiguration seleniumConfiguration) {
     @Autowired
-    public BrowserAutomatorImpl(SeleniumConfiguration seleniumConfiguration) {
-        this.seleniumConfiguration = seleniumConfiguration;
+    public BrowserAutomatorImpl() {
+        //this.seleniumConfiguration = seleniumConfiguration;
         this.webDriver = createWebDriver();
     }
 
