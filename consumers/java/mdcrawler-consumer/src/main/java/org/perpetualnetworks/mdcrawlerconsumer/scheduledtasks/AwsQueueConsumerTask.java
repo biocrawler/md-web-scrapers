@@ -29,7 +29,7 @@ public class AwsQueueConsumerTask {
         SessionExecutor sessionExecutor = new SessionExecutor(sessionFactoryStore);
         ArticleRepository articleRepository = new ArticleRepository(new ArticleDao(), sessionExecutor);
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10; i++) {
             try {
                 final List<Article> articles = awsSqsConsumer.fetchArticles(10);
                 for (Article article : articles) {
@@ -43,7 +43,7 @@ public class AwsQueueConsumerTask {
             } catch (Exception e) {
                 log.error("fetch error: ", e);
             }
-            log.info("endinging scheduled task aws queue consume");
+            log.info("endinging queue consume item: " + i);
         }
     }
 

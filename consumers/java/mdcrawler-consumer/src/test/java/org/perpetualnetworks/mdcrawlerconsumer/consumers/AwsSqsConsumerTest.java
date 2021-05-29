@@ -7,10 +7,9 @@ import org.junit.jupiter.api.Test;
 import org.perpetualnetworks.mdcrawlerconsumer.config.AwsConfiguration;
 import org.perpetualnetworks.mdcrawlerconsumer.models.Article;
 import org.perpetualnetworks.mdcrawlerconsumer.utils.lzw.LZwCompressor;
-import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
+import software.amazon.awssdk.services.sqs.model.Message;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,7 +29,7 @@ class AwsSqsConsumerTest {
     @Disabled("works with live data")
     @Test
     void bob() {
-        final Optional<ReceiveMessageResponse> receiveMessageResponse = consumer.fetchMessages(1);
+        final List<Message> receiveMessageResponse = consumer.fetchMessages(1);
         System.out.println(receiveMessageResponse);
     }
 

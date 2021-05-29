@@ -13,6 +13,8 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.awscore.AwsRequestOverrideConfiguration;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sqs.SqsClient;
+import software.amazon.awssdk.services.sqs.model.DeleteMessageBatchRequest;
+import software.amazon.awssdk.services.sqs.model.DeleteMessageBatchRequestEntry;
 import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
@@ -21,8 +23,9 @@ import javax.annotation.Nonnull;
 import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -62,19 +65,35 @@ public class AwsSqsConsumer {
     }
 
     @SneakyThrows
-    public Optional<ReceiveMessageResponse> fetchMessages(Integer size) {
+    public List<Message> fetchMessages(Integer size) {
         try {
             AwsBasicCredentials credentials = AwsBasicCredentials.create(awsBasicCredentials.accessKeyId(), awsBasicCredentials.secretAccessKey());
-            ReceiveMessageRequest request = buildSqsRequest(credentials, size);
-            return Optional.of(sqsClient.receiveMessage(request));
+            ReceiveMessageRequest request = buildSqsReceiveRequest(credentials, size);
+            final ReceiveMessageResponse value = sqsClient.receiveMessage(request);
+            deleteMessages(credentials, value);
+            return value.messages();
         } catch (Exception e) {
-            log.error("error sending message: ", e.getCause());
+            log.error("error receieving message: " + e.getMessage());
         }
-        return Optional.empty();
+        return Collections.emptyList();
 
     }
 
-    private ReceiveMessageRequest buildSqsRequest(AwsBasicCredentials credentials, Integer size) {
+    private void deleteMessages(AwsBasicCredentials credentials, ReceiveMessageResponse value) {
+        try {
+            final List<DeleteMessageBatchRequestEntry> batchRequestEntries = value.messages()
+                    .stream()
+                    .map(this::buildSqsDeleteRequest)
+                    .collect(Collectors.toList());
+
+            final DeleteMessageBatchRequest deleteMessageBatchRequest = buildSqsDeleteBatchRequest(credentials, batchRequestEntries);
+            sqsClient.deleteMessageBatch(deleteMessageBatchRequest);
+        } catch (Exception e) {
+            log.error("unable to delete message batch for response: " + value);
+        }
+    }
+
+    private ReceiveMessageRequest buildSqsReceiveRequest(AwsBasicCredentials credentials, Integer size) {
         //final String compressedMessage = compressMessage(message, compressor);
         return ReceiveMessageRequest.builder()
                 .overrideConfiguration(AwsRequestOverrideConfiguration.builder()
@@ -85,16 +104,32 @@ public class AwsSqsConsumer {
                 .build();
     }
 
+    private DeleteMessageBatchRequestEntry buildSqsDeleteRequest(Message message) {
+        return DeleteMessageBatchRequestEntry.builder()
+                .receiptHandle(message.receiptHandle())
+                .id(message.messageId())
+                .build();
+    }
+
+    private DeleteMessageBatchRequest buildSqsDeleteBatchRequest(AwsBasicCredentials credentials, Collection<DeleteMessageBatchRequestEntry> entries) {
+        return DeleteMessageBatchRequest.builder()
+                .overrideConfiguration(AwsRequestOverrideConfiguration.builder()
+                        .credentialsProvider(() -> credentials)
+                        .build())
+                .queueUrl(awsConfiguration.getSqsUrl())
+                .entries(entries)
+                .build();
+    }
+
+
     public List<Article> fetchArticles(Integer size) {
-        List<Article> articles = new ArrayList<>();
-        fetchMessages(size)
-                .ifPresent(response -> articles.addAll(parseResponseMessages(response)));
-        return articles;
+        final List<Message> messages = fetchMessages(size);
+        return parseResponseMessages(messages);
     }
 
     @NotNull
-    private List<Article> parseResponseMessages(ReceiveMessageResponse response) {
-        return response.messages()
+    private List<Article> parseResponseMessages(List<Message> messages) {
+        return messages
                 .stream()
                 .map(this::parseCompressedArticle)
                 .collect(Collectors.toList());
@@ -115,6 +150,9 @@ public class AwsSqsConsumer {
 
     @Nonnull
     private Set<String> decodeKeywords(Set<String> articleKeywords) {
+        if (articleKeywords == null) {
+            return Collections.emptySet();
+        }
         Set<String> keywords = new HashSet<>();
         articleKeywords.forEach(word -> {
             Pattern normalPattern = Pattern.compile("^[a-zA-Z]+");
