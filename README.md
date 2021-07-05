@@ -18,8 +18,10 @@ The Components listed above are:
 Queue Producers:
 ---------------
 
-  These should be maintained under the `crawler_templates` directory. They supply, or produce study data that is parsed
-  or crawled from external sites
+  These should be maintained under the `boiler_plate` directory. They supply, or produce study data that is parsed
+  or crawled from external sites.
+  Hosting for producers is provided by:
+  [![FossHost](FosshostLogo_s.png)](https://fosshost.org/)
    
 Queue:
 ------
