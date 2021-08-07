@@ -67,6 +67,7 @@ public class ArticleRepository {
     }
 
     //Save or update from the Article object
+    //TODO: add metrics here
     public Integer saveOrUpdate(Article article) {
         AtomicInteger articleId = new AtomicInteger();
         Optional<ArticleEntity> existingEntity = getExistingEntity(article);

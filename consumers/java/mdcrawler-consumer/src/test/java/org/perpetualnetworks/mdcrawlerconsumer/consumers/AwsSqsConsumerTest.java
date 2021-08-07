@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.perpetualnetworks.mdcrawlerconsumer.config.AwsConfiguration;
 import org.perpetualnetworks.mdcrawlerconsumer.models.Article;
+import org.perpetualnetworks.mdcrawlerconsumer.services.AwsSqsService;
 import org.perpetualnetworks.mdcrawlerconsumer.utils.lzw.LZwCompressor;
 import software.amazon.awssdk.services.sqs.model.Message;
 
@@ -19,17 +20,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class AwsSqsConsumerTest {
 
     private final LZwCompressor lzwCompressor = new LZwCompressor();
-    private final AwsSqsConsumer consumer = new AwsSqsConsumer(AwsConfiguration.builder()
-            .sqsUrl("https://sqs.eu-central-1.amazonaws.com/397254617684/crawler_queue")
-            .credentialsFile("config/aws.json")
-            .region("eu-central-1")
-            .build(), lzwCompressor);
+    private final AwsSqsService awsSqsService = new AwsSqsService(
+            AwsConfiguration.builder()
+                    .sqsUrl("https://sqs.eu-central-1.amazonaws.com/397254617684/crawler_queue")
+                    .credentialsFile("config/aws.json")
+                    .region("eu-central-1")
+                    .build(), lzwCompressor);
+    private final AwsSqsConsumer consumer = new AwsSqsConsumer(awsSqsService);
     private final ObjectMapper mapper = new ObjectMapper();
 
     @Disabled("works with live data")
     @Test
     void bob() {
-        final List<Message> receiveMessageResponse = consumer.fetchMessages(1);
+        final List<Message> receiveMessageResponse = awsSqsService.fetchMessages(1);
         System.out.println(receiveMessageResponse);
     }
 

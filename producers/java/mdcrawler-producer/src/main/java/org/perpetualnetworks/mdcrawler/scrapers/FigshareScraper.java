@@ -1,7 +1,6 @@
 package org.perpetualnetworks.mdcrawler.scrapers;
 
 import lombok.extern.slf4j.Slf4j;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.perpetualnetworks.mdcrawler.config.FigshareConfiguration;
 import org.perpetualnetworks.mdcrawler.converters.FigshareArticleConverter;
