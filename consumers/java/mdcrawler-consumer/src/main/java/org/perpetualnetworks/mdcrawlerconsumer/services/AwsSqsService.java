@@ -57,7 +57,9 @@ public class AwsSqsService extends AbstractAwsService {
         try {
             ReceiveMessageRequest request = buildSqsReceiveRequest(this.awsBasicCredentials, size);
             final ReceiveMessageResponse value = sqsClient.receiveMessage(request);
-            deleteMessages(this.awsBasicCredentials, value);
+            if (value.hasMessages()) {
+                deleteMessages(this.awsBasicCredentials, value);
+            }
             return value.messages();
         } catch (Exception e) {
             log.error("error receieving message: " + e.getMessage());
