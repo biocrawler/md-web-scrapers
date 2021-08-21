@@ -2,6 +2,7 @@ package org.perpetualnetworks.mdcrawlerconsumer.config;
 
 import org.flywaydb.core.Flyway;
 import org.perpetualnetworks.mdcrawlerconsumer.consumers.AwsSqsConsumer;
+import org.perpetualnetworks.mdcrawlerconsumer.database.converter.Converter;
 import org.perpetualnetworks.mdcrawlerconsumer.database.dao.ArticleDao;
 import org.perpetualnetworks.mdcrawlerconsumer.database.factory.DataSourceFactories;
 import org.perpetualnetworks.mdcrawlerconsumer.database.factory.MysqlDataSourceFactory;
@@ -66,5 +67,10 @@ public class AppConfiguration {
     ArticleRepository getArticleRepository() {
         SessionExecutor sessionExecutor = new SessionExecutor(new SessionFactoryStoreImpl(getDataSourceFactories()));
         return new ArticleRepository(new ArticleDao(), sessionExecutor);
+    }
+
+    @Bean
+    Converter getConverter() {
+        return new Converter();
     }
 }

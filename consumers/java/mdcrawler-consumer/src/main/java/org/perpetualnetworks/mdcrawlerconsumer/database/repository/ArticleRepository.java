@@ -1,6 +1,7 @@
 package org.perpetualnetworks.mdcrawlerconsumer.database.repository;
 
 import com.google.common.base.Preconditions;
+import lombok.extern.slf4j.Slf4j;
 import org.perpetualnetworks.mdcrawlerconsumer.database.Database;
 import org.perpetualnetworks.mdcrawlerconsumer.database.converter.Converter;
 import org.perpetualnetworks.mdcrawlerconsumer.database.dao.ArticleAuthorRelationDao;
@@ -14,6 +15,7 @@ import org.perpetualnetworks.mdcrawlerconsumer.database.session.SessionExecutor;
 import org.perpetualnetworks.mdcrawlerconsumer.models.Article;
 import org.perpetualnetworks.mdcrawlerconsumer.models.ArticleFile;
 import org.perpetualnetworks.mdcrawlerconsumer.models.Author;
+import org.springdoc.core.converters.models.Pageable;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
@@ -21,6 +23,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Slf4j
 public class ArticleRepository {
 
     public static final Database DEFAULT_DATABASE = Database.CRAWLER_CONSUMER;
@@ -34,6 +37,7 @@ public class ArticleRepository {
         this.sessionExecutor = sessionExecutor;
         this.converter = new Converter();
     }
+
 
     public Optional<ArticleEntity> fetchArticle(String articleId) {
         return sessionExecutor.executeAndReturn(session -> {
@@ -67,6 +71,16 @@ public class ArticleRepository {
                 ArticleDao.Query.builder()
                         .build(),
                 session), DEFAULT_DATABASE);
+    }
+
+    public List<ArticleEntity> fetchAllArticles(Pageable pageable) {
+        final Long count = (Long) sessionExecutor.executeAndReturn(session -> session
+                .createQuery("SELECT count(*) from ArticleEntity").uniqueResult(), DEFAULT_DATABASE);
+        return sessionExecutor.executeAndReturn(session ->
+                        articleDao.fetch(
+                                ArticleDao.Query.builder()
+                                        .build(), pageable, session),
+                DEFAULT_DATABASE);
     }
 
     //Save or update from the Article object

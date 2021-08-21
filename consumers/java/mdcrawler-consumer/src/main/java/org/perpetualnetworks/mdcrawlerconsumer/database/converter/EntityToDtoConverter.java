@@ -20,6 +20,7 @@ public class EntityToDtoConverter {
 
     public Article convert(ArticleEntity articleEntity) {
         return Article.builder()
+                .id(articleEntity.getId())
                 .title(articleEntity.getTitle())
                 .sourceUrl(articleEntity.getSourceUrl())
                 .digitalObjectId(articleEntity.getDigitalObjectId())

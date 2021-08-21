@@ -1,9 +1,11 @@
 package org.perpetualnetworks.mdcrawlerconsumer.database.dao;
 
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.perpetualnetworks.mdcrawlerconsumer.database.entity.BaseEntity;
 import org.perpetualnetworks.mdcrawlerconsumer.database.query.BaseQuery;
 import org.perpetualnetworks.mdcrawlerconsumer.database.query.QueryHelper;
+import org.springdoc.core.converters.models.Pageable;
 
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
@@ -14,6 +16,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
 
+@Slf4j
 public class BaseDao<EntityT extends BaseEntity, QueryT extends BaseQuery> {
     private final Class<EntityT> tyClass;
     private final QueryHelper<EntityT> queryHelper = new QueryHelper<>();
@@ -26,7 +29,7 @@ public class BaseDao<EntityT extends BaseEntity, QueryT extends BaseQuery> {
         return fetch(query, null, session);
     }
 
-    public List<EntityT> fetch(QueryT query, Integer maxResults, Session session) {
+    public List<EntityT> fetch(QueryT query, Pageable pageable, Session session) {
         CriteriaQuery<EntityT> criteria = queryHelper.buildCriteriaQuery(
                 this.tyClass,
                 query.getFields(),
@@ -34,8 +37,10 @@ public class BaseDao<EntityT extends BaseEntity, QueryT extends BaseQuery> {
                 session);
 
         TypedQuery<EntityT> typedQuery = session.createQuery(criteria);
-        if (nonNull(maxResults) && maxResults != 0) {
-            typedQuery.setMaxResults(maxResults);
+        if (nonNull(pageable) && pageable.getPage() != null && pageable.getSize() != null) {
+            int firstResult = pageable.getSize() * pageable.getPage();
+            typedQuery.setMaxResults(pageable.getSize());
+            typedQuery.setFirstResult(firstResult);
         }
         return typedQuery.getResultList().stream()
                 .filter(Objects::nonNull)

@@ -1,5 +1,9 @@
 package org.perpetualnetworks.mdcrawlerconsumer;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Contact;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.info.License;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -20,6 +24,17 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @Import({JacksonAutoConfiguration.class,
         PropertySourcesPlaceholderConfigurer.class,
         ThymeleafAutoConfiguration.class})
+@OpenAPIDefinition(info = @Info(title = Constants.Swagger.TITLE,
+        version = Constants.Swagger.VERSION,
+        description = Constants.Swagger.DESCRIPTION,
+        termsOfService = "bob",
+        license = @License(name = "BSD", url = ""),
+        contact = @Contact(name = "Contact developer", email = Constants.Swagger.EMAIL)
+)
+        //TODO: set server for prod
+        //servers = {@Server(url = "https://mdcrawler-api.perpetualnetworks.org/swagger")}
+)
+//@ExternalDocumentation(url = "external doc url", description = "external doc desc")
 public class Application {
 
     public static void main(String[] args) {

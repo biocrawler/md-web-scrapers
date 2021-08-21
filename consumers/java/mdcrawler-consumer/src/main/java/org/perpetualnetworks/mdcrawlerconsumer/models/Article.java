@@ -13,6 +13,8 @@ import java.util.Set;
 @JsonDeserialize(builder = Article.ArticleBuilder.class)
 public class Article {
     @JsonProperty
+    Integer id;
+    @JsonProperty
     private String title;
     @JsonProperty("source_url")
     private String sourceUrl;
