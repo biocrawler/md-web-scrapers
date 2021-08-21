@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import static java.util.Objects.nonNull;
+
 @Component
 @Slf4j
 public class AwsQueueConsumerTask {
@@ -24,20 +26,26 @@ public class AwsQueueConsumerTask {
 
     @Scheduled(fixedRate = MINUTE_INTERVAL)
     public void run() {
-        log.info("starting scheduled task aws queue consume");
         SessionExecutor sessionExecutor = new SessionExecutor(sessionFactoryStore);
         ArticleRepository articleRepository = new ArticleRepository(new ArticleDao(), sessionExecutor);
 
+        int count = 0;
         try {
             for (Article article : awsSqsConsumer.fetchArticles(1000)) {
                 try {
-                    articleRepository.saveOrUpdate(article);
+                    final Integer result = articleRepository.saveOrUpdate(article);
+                    if (nonNull(result)) {
+                        count ++;
+                    }
                 } catch (Exception e) {
                     log.error("failed to convert article: ", e);
                 }
             }
         } catch (Exception e) {
             log.error("fetch articles from sqs consumer error: ", e);
+        }
+        if (count > 0) {
+            log.info("saved or updated %s articles");
         }
     }
 
