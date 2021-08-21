@@ -21,6 +21,7 @@ import org.perpetualnetworks.mdcrawlerconsumer.database.repository.ArticleReposi
 import org.perpetualnetworks.mdcrawlerconsumer.database.session.SessionExecutor;
 import org.perpetualnetworks.mdcrawlerconsumer.defaults.ArticleDefaults;
 import org.perpetualnetworks.mdcrawlerconsumer.models.Article;
+import org.perpetualnetworks.mdcrawlerconsumer.services.AwsSqsService;
 import org.perpetualnetworks.mdcrawlerconsumer.utils.lzw.LZwCompressor;
 
 import java.util.List;
@@ -94,11 +95,13 @@ public class IntegrationTest {
     }
 
     private AwsSqsConsumer getConsumer() {
-        return new AwsSqsConsumer(AwsConfiguration.builder()
-                .sqsUrl("https://sqs.eu-central-1.amazonaws.com/397254617684/crawler_queue")
-                .credentialsFile("config/aws.json")
-                .region("eu-central-1")
-                .build(), new LZwCompressor());
+        AwsSqsService awsSqsService = new AwsSqsService(
+                AwsConfiguration.builder()
+                        .sqsUrl("https://sqs.eu-central-1.amazonaws.com/397254617684/crawler_queue")
+                        .credentialsFile("config/aws.json")
+                        .region("eu-central-1")
+                        .build(), new LZwCompressor());
+        return new AwsSqsConsumer(awsSqsService);
     }
 
 }

@@ -419,6 +419,14 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <sourceDirectories>
+                        <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
+                        <!--<sourceDirectory>${project.build.testSourceDirectory}</sourceDirectory>-->
+                    </sourceDirectories>
+                    <!-- relates to https://github.com/checkstyle/checkstyle/blob/master/src/main/resources/google_checks.xml -->
+                    <configLocation>checkstyle.xml</configLocation>
+                </configuration>
             </plugin>
 
             <plugin>

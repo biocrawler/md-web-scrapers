@@ -9,6 +9,7 @@ import org.perpetualnetworks.mdcrawlerconsumer.database.factory.MysqlDataSourceF
 import org.perpetualnetworks.mdcrawlerconsumer.database.repository.ArticleRepository;
 import org.perpetualnetworks.mdcrawlerconsumer.database.session.SessionExecutor;
 import org.perpetualnetworks.mdcrawlerconsumer.database.session.SessionFactoryStoreImpl;
+import org.perpetualnetworks.mdcrawlerconsumer.services.AwsSqsService;
 import org.perpetualnetworks.mdcrawlerconsumer.utils.lzw.LZwCompressor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.flyway.FlywayMigrationInitializer;
@@ -59,8 +60,13 @@ public class AppConfiguration {
     }
 
     @Bean
+    AwsSqsService getAwsSqsService() {
+        return new AwsSqsService(awsConfiguration, new LZwCompressor());
+    }
+
+    @Bean
     AwsSqsConsumer getAwsSqsConsumer() {
-        return new AwsSqsConsumer(awsConfiguration, new LZwCompressor());
+        return new AwsSqsConsumer(getAwsSqsService());
     }
 
     @Bean
