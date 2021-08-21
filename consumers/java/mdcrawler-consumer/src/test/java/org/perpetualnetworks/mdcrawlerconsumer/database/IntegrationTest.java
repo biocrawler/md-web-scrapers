@@ -24,6 +24,7 @@ import org.perpetualnetworks.mdcrawlerconsumer.models.Article;
 import org.perpetualnetworks.mdcrawlerconsumer.utils.lzw.LZwCompressor;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -85,7 +86,7 @@ public class IntegrationTest {
             log.info("article saved with id: " + articleId);
             ObjectMapper mapper = new ObjectMapper();
             Converter converter = new Converter();
-            final List<ArticleEntity> articleEntities = articleRepository.fetchArticle(String.valueOf(articleId));
+            final Optional<ArticleEntity> articleEntities = articleRepository.fetchArticle(String.valueOf(articleId));
             System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(articleEntities.stream()
                     .map(converter::convert).collect(Collectors.toList())));
         }

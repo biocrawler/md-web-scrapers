@@ -35,12 +35,15 @@ public class ArticleRepository {
         this.converter = new Converter();
     }
 
-    public List<ArticleEntity> fetchArticle(String articleId) {
-        return sessionExecutor.executeAndReturn(session -> articleDao.fetch(
-                ArticleDao.Query.builder()
-                        .withId(articleId)
-                        .build(),
-                session), DEFAULT_DATABASE);
+    public Optional<ArticleEntity> fetchArticle(String articleId) {
+        return sessionExecutor.executeAndReturn(session -> {
+            List<ArticleEntity> fetch = articleDao.fetch(
+                    ArticleDao.Query.builder()
+                            .withId(articleId)
+                            .build(),
+                    session);
+            return fetch.stream().findFirst();
+        }, DEFAULT_DATABASE);
     }
 
     public List<ArticleEntity> fetchArticlesEqualTo(String digitalObjectId) {

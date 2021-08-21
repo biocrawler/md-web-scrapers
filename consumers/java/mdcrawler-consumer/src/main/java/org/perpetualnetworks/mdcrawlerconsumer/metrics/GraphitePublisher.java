@@ -1,4 +1,4 @@
 package org.perpetualnetworks.mdcrawlerconsumer.metrics;
 
-public class graphitePublisher {
+public class GraphitePublisher {
 }

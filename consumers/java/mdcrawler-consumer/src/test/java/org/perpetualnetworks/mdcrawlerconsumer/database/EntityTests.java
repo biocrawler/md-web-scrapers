@@ -26,6 +26,8 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 @Slf4j
 public class EntityTests {
 
@@ -99,10 +101,11 @@ public class EntityTests {
         SessionExecutor se = new SessionExecutor(sessionFactory);
         ObjectMapper mapper = new ObjectMapper();
         ArticleRepository articleRepository = new ArticleRepository(new ArticleDao(), se);
-        final List<ArticleEntity> articleEntities = articleRepository.fetchArticle(String.valueOf(testArticleId));
+        final Optional<ArticleEntity> article = articleRepository.fetchArticle(String.valueOf(testArticleId));
         Converter converter = new Converter();
+        assertTrue(article.isPresent());
         System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(
-                converter.convert(articleEntities.get(0))));
+                converter.convert(article.get())));
 
     }
 

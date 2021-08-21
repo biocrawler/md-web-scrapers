@@ -49,6 +49,7 @@
         <jedis.version>3.2.0</jedis.version>
         <ozimov.version>0.7.2</ozimov.version>
         <org.reflections.version>0.9.12</org.reflections.version>
+        <springdoc.ui.version>1.5.2</springdoc.ui.version>
         <!--<maven-failsafe-plugin.version>3.0.0-M3</maven-failsafe-plugin.version>-->
         <maven-failsafe-plugin.version>2.22.0</maven-failsafe-plugin.version>
         <maven-checkstyle-plugin.version>3.1.2</maven-checkstyle-plugin.version>
@@ -157,6 +158,11 @@
             <version>${guava.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>${springdoc.ui.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>com.h2database</groupId>
