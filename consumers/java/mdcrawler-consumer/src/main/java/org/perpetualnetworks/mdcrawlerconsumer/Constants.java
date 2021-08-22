@@ -32,6 +32,7 @@ public interface Constants {
         String AlternatePattern = "yyyy-MM-dd'T'HH:mm:ss.sss";
         String dateStringsPattern = "EEE MMM dd hh:mm:ss ZZZ yyyy";
     }
+
     interface Swagger {
         String TITLE = "MdCrawler API";
         String VERSION = "1.2.0";

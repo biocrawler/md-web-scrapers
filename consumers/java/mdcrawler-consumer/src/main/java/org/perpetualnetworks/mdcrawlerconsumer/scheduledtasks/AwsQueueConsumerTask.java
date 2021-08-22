@@ -35,7 +35,7 @@ public class AwsQueueConsumerTask {
                 try {
                     final Integer result = articleRepository.saveOrUpdate(article);
                     if (nonNull(result)) {
-                        count ++;
+                        count++;
                     }
                 } catch (Exception e) {
                     log.error("failed to convert article: ", e);

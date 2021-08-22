@@ -21,6 +21,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableAsync
 @EnableScheduling
+//TODO: set server for prod
+//servers = {@Server(url = "https://mdcrawler-api.perpetualnetworks.org/swagger")}
 @Import({JacksonAutoConfiguration.class,
         PropertySourcesPlaceholderConfigurer.class,
         ThymeleafAutoConfiguration.class})
@@ -29,11 +31,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         description = Constants.Swagger.DESCRIPTION,
         termsOfService = "bob",
         license = @License(name = "BSD", url = ""),
-        contact = @Contact(name = "Contact developer", email = Constants.Swagger.EMAIL)
-)
-        //TODO: set server for prod
-        //servers = {@Server(url = "https://mdcrawler-api.perpetualnetworks.org/swagger")}
-)
+        contact = @Contact(name = "Contact developer", email = Constants.Swagger.EMAIL)))
 //@ExternalDocumentation(url = "external doc url", description = "external doc desc")
 public class Application {
 
