@@ -6,6 +6,7 @@ import org.perpetualnetworks.mdcrawlerconsumer.database.converter.Converter;
 import org.perpetualnetworks.mdcrawlerconsumer.database.dao.KeywordDao;
 import org.perpetualnetworks.mdcrawlerconsumer.database.entity.KeywordEntity;
 import org.perpetualnetworks.mdcrawlerconsumer.database.session.SessionExecutor;
+import org.springdoc.core.converters.models.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,12 +26,15 @@ public class KeywordRepository {
         this.converter = new Converter();
     }
 
-    public List<KeywordEntity> fetchKeyword(Integer keywordId) {
-        return sessionExecutor.executeAndReturn(session -> keywordDao.fetch(
-                KeywordDao.Query.builder()
-                        .withId(keywordId)
-                        .build(),
-                session), DEFAULT_DATABASE);
+    public Optional<KeywordEntity> fetchKeyword(Integer keywordId) {
+        return sessionExecutor.executeAndReturn(session -> {
+            final List<KeywordEntity> fetch = keywordDao.fetch(
+                    KeywordDao.Query.builder()
+                            .withId(keywordId)
+                            .build(),
+                    session);
+            return fetch.stream().findFirst();
+        }, DEFAULT_DATABASE);
     }
 
     public List<KeywordEntity> fetchKeywordsEqualTo(String word) {
@@ -55,7 +59,15 @@ public class KeywordRepository {
                         .build(),
                 session), DEFAULT_DATABASE);
     }
-
+    public List<KeywordEntity> fetchAllKeywords(Pageable pageable) {
+        final Long count = (Long) sessionExecutor.executeAndReturn(session -> session
+                .createQuery("SELECT count(*) from KeywordEntity").uniqueResult(), DEFAULT_DATABASE);
+        return sessionExecutor.executeAndReturn(session ->
+                        keywordDao.fetch(
+                                KeywordDao.Query.builder()
+                                        .build(), pageable, session),
+                DEFAULT_DATABASE);
+    }
     //Save or update from the Keyword object
     public KeywordEntity saveOrUpdate(String keyword) {
         Optional<KeywordEntity> existingEntity = getExistingEntity(keyword);

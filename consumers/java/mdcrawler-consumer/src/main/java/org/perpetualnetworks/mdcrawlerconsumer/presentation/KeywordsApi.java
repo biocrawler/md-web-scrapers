@@ -5,9 +5,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
-import org.perpetualnetworks.mdcrawlerconsumer.database.converter.Converter;
-import org.perpetualnetworks.mdcrawlerconsumer.database.entity.ArticleEntity;
-import org.perpetualnetworks.mdcrawlerconsumer.database.repository.ArticleRepository;
+import org.perpetualnetworks.mdcrawlerconsumer.database.entity.KeywordEntity;
+import org.perpetualnetworks.mdcrawlerconsumer.database.repository.KeywordRepository;
 import org.perpetualnetworks.mdcrawlerconsumer.models.Article;
 import org.springdoc.core.converters.models.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,24 +20,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/articles")
+@RequestMapping("/api/keywords")
 @Slf4j
-public class ArticleApi {
+public class KeywordsApi {
 
     @Autowired
-    ArticleRepository articleRepository;
-
-    @Autowired
-    Converter converter;
+    KeywordRepository keywordRepository;
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Found Article",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = Article.class))})})
     @GetMapping("/{id}")
-    public Article findById(@PathVariable long id) {
-        return articleRepository.fetchArticle(String.valueOf(id))
-                .map(converter::convert)
+    public String findById(@PathVariable long id) {
+        return keywordRepository.fetchKeyword((int) id)
+                .map(KeywordEntity::getWord)
                 .orElseThrow(RuntimeException::new);
     }
 
@@ -47,14 +43,14 @@ public class ArticleApi {
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = Page.class))})})
     @GetMapping("/")
-    public Page<Article> findArticles(@RequestParam(required = false, defaultValue = "1") Integer page,
+    public Page<String> findKeywords(@RequestParam(required = false, defaultValue = "1") Integer page,
                                       @RequestParam(required = false, defaultValue = "20") Integer size,
                                       @RequestParam(required = false, defaultValue = "asc") String sort) {
-        final List<ArticleEntity> articleEntities = articleRepository.fetchAllArticles(new Pageable(page, size, List.of(sort)));
-        final List<Article> collect = articleEntities.stream()
-                .map(converter::convert)
+        final List<KeywordEntity> keywordEntities = keywordRepository.fetchAllKeywords(new Pageable(page, size, List.of(sort)));
+        final List<String> collect = keywordEntities.stream()
+                .map(KeywordEntity::getWord)
                 .collect(Collectors.toList());
-        return Page.<Article>builder().size(size).content(collect).build();
+        return Page.<String>builder().size(size).content(collect).build();
     }
 
 }

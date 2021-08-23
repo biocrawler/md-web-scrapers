@@ -38,5 +38,6 @@ public interface Constants {
         String VERSION = "1.2.0";
         String DESCRIPTION = "This is the swagger page for the md crawler api http://mdcrawler-api.perpetualnetworks.org. For this sample, you can use the api key special-key to test the authorization filters.";
         String EMAIL = "sgarcia00@gmail.com";
+        String URL = "/swagger-ui";
     }
 }

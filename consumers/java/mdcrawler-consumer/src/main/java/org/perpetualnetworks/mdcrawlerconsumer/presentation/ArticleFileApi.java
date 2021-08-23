@@ -6,9 +6,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.perpetualnetworks.mdcrawlerconsumer.database.converter.Converter;
-import org.perpetualnetworks.mdcrawlerconsumer.database.entity.ArticleEntity;
-import org.perpetualnetworks.mdcrawlerconsumer.database.repository.ArticleRepository;
+import org.perpetualnetworks.mdcrawlerconsumer.database.entity.ArticleFileEntity;
+import org.perpetualnetworks.mdcrawlerconsumer.database.repository.ArticleFileRepository;
 import org.perpetualnetworks.mdcrawlerconsumer.models.Article;
+import org.perpetualnetworks.mdcrawlerconsumer.models.ArticleFile;
 import org.springdoc.core.converters.models.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,12 +22,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/articles")
+@RequestMapping("/api/article-files")
 @Slf4j
-public class ArticleApi {
+public class ArticleFileApi {
 
     @Autowired
-    ArticleRepository articleRepository;
+    ArticleFileRepository articleFileRepository;
 
     @Autowired
     Converter converter;
@@ -36,8 +37,8 @@ public class ArticleApi {
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = Article.class))})})
     @GetMapping("/{id}")
-    public Article findById(@PathVariable long id) {
-        return articleRepository.fetchArticle(String.valueOf(id))
+    public ArticleFile findById(@PathVariable long id) {
+        return articleFileRepository.fetchArticleFile((int) id)
                 .map(converter::convert)
                 .orElseThrow(RuntimeException::new);
     }
@@ -47,14 +48,14 @@ public class ArticleApi {
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = Page.class))})})
     @GetMapping("/")
-    public Page<Article> findArticles(@RequestParam(required = false, defaultValue = "1") Integer page,
+    public Page<ArticleFile> findArticles(@RequestParam(required = false, defaultValue = "1") Integer page,
                                       @RequestParam(required = false, defaultValue = "20") Integer size,
                                       @RequestParam(required = false, defaultValue = "asc") String sort) {
-        final List<ArticleEntity> articleEntities = articleRepository.fetchAllArticles(new Pageable(page, size, List.of(sort)));
-        final List<Article> collect = articleEntities.stream()
+        final List<ArticleFileEntity> articleFileEntities = articleFileRepository.fetchAllArticleFiles(new Pageable(page, size, List.of(sort)));
+        final List<ArticleFile> collect = articleFileEntities.stream()
                 .map(converter::convert)
                 .collect(Collectors.toList());
-        return Page.<Article>builder().size(size).content(collect).build();
+        return Page.<ArticleFile>builder().size(size).content(collect).build();
     }
 
 }

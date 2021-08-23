@@ -7,6 +7,7 @@ import org.perpetualnetworks.mdcrawlerconsumer.database.dao.AuthorDao;
 import org.perpetualnetworks.mdcrawlerconsumer.database.entity.AuthorEntity;
 import org.perpetualnetworks.mdcrawlerconsumer.database.session.SessionExecutor;
 import org.perpetualnetworks.mdcrawlerconsumer.models.Author;
+import org.springdoc.core.converters.models.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,12 +26,15 @@ public class AuthorRepository {
         this.converter = new Converter();
     }
 
-    public List<AuthorEntity> fetchAuthor(Integer authorId) {
-        return sessionExecutor.executeAndReturn(session -> authorDao.fetch(
-                AuthorDao.Query.builder()
-                        .withId(authorId)
-                        .build(),
-                session), DEFAULT_DATABASE);
+    public Optional<AuthorEntity> fetchAuthor(Integer authorId) {
+        return sessionExecutor.executeAndReturn(session -> {
+            final List<AuthorEntity> fetch = authorDao.fetch(
+                    AuthorDao.Query.builder()
+                            .withId(authorId)
+                            .build(),
+                    session);
+            return fetch.stream().findFirst();
+        }, DEFAULT_DATABASE);
     }
 
     public List<AuthorEntity> fetchAuthorsEqualTo(String name) {
@@ -54,6 +58,15 @@ public class AuthorRepository {
                 AuthorDao.Query.builder()
                         .build(),
                 session), DEFAULT_DATABASE);
+    }
+    public List<AuthorEntity> fetchAllAuthors(Pageable pageable) {
+        final Long count = (Long) sessionExecutor.executeAndReturn(session -> session
+                .createQuery("SELECT count(*) from AuthorEntity").uniqueResult(), DEFAULT_DATABASE);
+        return sessionExecutor.executeAndReturn(session ->
+                        authorDao.fetch(
+                                AuthorDao.Query.builder()
+                                        .build(), pageable, session),
+                DEFAULT_DATABASE);
     }
 
     //Save or update from the Author object

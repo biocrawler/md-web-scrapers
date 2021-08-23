@@ -5,6 +5,7 @@ import org.perpetualnetworks.mdcrawlerconsumer.database.entity.ArticleEntity;
 import org.perpetualnetworks.mdcrawlerconsumer.database.entity.ArticleFileEntity;
 import org.perpetualnetworks.mdcrawlerconsumer.database.entity.ArticleFileKeywordRelationEntity;
 import org.perpetualnetworks.mdcrawlerconsumer.database.entity.ArticleKeywordRelationEntity;
+import org.perpetualnetworks.mdcrawlerconsumer.database.entity.AuthorEntity;
 import org.perpetualnetworks.mdcrawlerconsumer.database.entity.KeywordEntity;
 import org.perpetualnetworks.mdcrawlerconsumer.models.Article;
 import org.perpetualnetworks.mdcrawlerconsumer.models.ArticleFile;
@@ -51,6 +52,12 @@ public class EntityToDtoConverter {
                 .referingUrl(articleFileEntity.getReferingUrl())
                 .size(parseFileSize(articleFileEntity.getSize()))
                 .keywords(convertFileKeywords(articleFileEntity))
+                .build();
+    }
+
+    public Author convert(AuthorEntity authorEntity) {
+        return Author.builder()
+                .name(authorEntity.getName())
                 .build();
     }
 

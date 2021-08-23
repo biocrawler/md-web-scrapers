@@ -13,6 +13,7 @@ import org.perpetualnetworks.mdcrawlerconsumer.database.entity.KeywordEntity;
 import org.perpetualnetworks.mdcrawlerconsumer.database.repository.relations.ArticleFileKeywordRelationRepository;
 import org.perpetualnetworks.mdcrawlerconsumer.database.session.SessionExecutor;
 import org.perpetualnetworks.mdcrawlerconsumer.models.ArticleFile;
+import org.springdoc.core.converters.models.Pageable;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
@@ -39,16 +40,25 @@ public class ArticleFileRepository {
     }
 
     //TODO: fetch using list of integer ids
-    public List<ArticleFileEntity> fetchArticleFile(Integer id) {
-        final List<ArticleFileEntity> articleFileEntities = sessionExecutor.executeAndReturn(session -> articleFileDao.fetch(
-                ArticleFileDao.Query.builder()
-                        .withId(id)
-                        .build(),
-                session), Database.CRAWLER_CONSUMER);
-        if (articleFileEntities.size() == 0) {
-            log.error("fetch for article file with id: " + id + " had zero results");
-        }
-        return articleFileEntities;
+    public Optional<ArticleFileEntity> fetchArticleFile(Integer id) {
+        return sessionExecutor.executeAndReturn(session -> {
+            final List<ArticleFileEntity> fetch = articleFileDao.fetch(
+                    ArticleFileDao.Query.builder()
+                            .withId(id)
+                            .build(),
+                    session);
+            return fetch.stream().findFirst();
+        }, Database.CRAWLER_CONSUMER);
+    }
+
+    public List<ArticleFileEntity> fetchAllArticleFiles(Pageable pageable) {
+        final Long count = (Long) sessionExecutor.executeAndReturn(session -> session
+                .createQuery("SELECT count(*) from ArticleFileEntity").uniqueResult(), DEFAULT_DATABASE);
+        return sessionExecutor.executeAndReturn(session ->
+                        articleFileDao.fetch(
+                                ArticleFileDao.Query.builder()
+                                        .build(), pageable, session),
+                DEFAULT_DATABASE);
     }
 
     public List<ArticleFileEntity> fetchArticleFiles(String fileNameLike) {

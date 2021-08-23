@@ -4,9 +4,15 @@ import org.flywaydb.core.Flyway;
 import org.perpetualnetworks.mdcrawlerconsumer.consumers.AwsSqsConsumer;
 import org.perpetualnetworks.mdcrawlerconsumer.database.converter.Converter;
 import org.perpetualnetworks.mdcrawlerconsumer.database.dao.ArticleDao;
+import org.perpetualnetworks.mdcrawlerconsumer.database.dao.ArticleFileDao;
+import org.perpetualnetworks.mdcrawlerconsumer.database.dao.AuthorDao;
+import org.perpetualnetworks.mdcrawlerconsumer.database.dao.KeywordDao;
 import org.perpetualnetworks.mdcrawlerconsumer.database.factory.DataSourceFactories;
 import org.perpetualnetworks.mdcrawlerconsumer.database.factory.MysqlDataSourceFactory;
+import org.perpetualnetworks.mdcrawlerconsumer.database.repository.ArticleFileRepository;
 import org.perpetualnetworks.mdcrawlerconsumer.database.repository.ArticleRepository;
+import org.perpetualnetworks.mdcrawlerconsumer.database.repository.AuthorRepository;
+import org.perpetualnetworks.mdcrawlerconsumer.database.repository.KeywordRepository;
 import org.perpetualnetworks.mdcrawlerconsumer.database.session.SessionExecutor;
 import org.perpetualnetworks.mdcrawlerconsumer.database.session.SessionFactoryStoreImpl;
 import org.perpetualnetworks.mdcrawlerconsumer.services.AwsSqsService;
@@ -73,6 +79,24 @@ public class AppConfiguration {
     ArticleRepository getArticleRepository() {
         SessionExecutor sessionExecutor = new SessionExecutor(new SessionFactoryStoreImpl(getDataSourceFactories()));
         return new ArticleRepository(new ArticleDao(), sessionExecutor);
+    }
+
+    @Bean
+    ArticleFileRepository getArticleFileRepository() {
+        SessionExecutor sessionExecutor = new SessionExecutor(new SessionFactoryStoreImpl(getDataSourceFactories()));
+        return new ArticleFileRepository(new ArticleFileDao(), sessionExecutor);
+    }
+
+    @Bean
+    KeywordRepository getKeywordRepository() {
+        SessionExecutor sessionExecutor = new SessionExecutor(new SessionFactoryStoreImpl(getDataSourceFactories()));
+        return new KeywordRepository(new KeywordDao(), sessionExecutor);
+    }
+
+    @Bean
+    AuthorRepository getAuthorRepository() {
+        SessionExecutor sessionExecutor = new SessionExecutor(new SessionFactoryStoreImpl(getDataSourceFactories()));
+        return new AuthorRepository(new AuthorDao(), sessionExecutor);
     }
 
     @Bean
