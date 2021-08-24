@@ -43,6 +43,7 @@ public class Converter {
     public AuthorEntity convert(Author author) {
         return dtoToEntityConverter.convert(author);
     }
+
     public Author convert(AuthorEntity authorEntity) {
         return entityToDtoConverter.convert(authorEntity);
     }

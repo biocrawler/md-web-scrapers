@@ -59,6 +59,7 @@ public class AuthorRepository {
                         .build(),
                 session), DEFAULT_DATABASE);
     }
+
     public List<AuthorEntity> fetchAllAuthors(Pageable pageable) {
         final Long count = (Long) sessionExecutor.executeAndReturn(session -> session
                 .createQuery("SELECT count(*) from AuthorEntity").uniqueResult(), DEFAULT_DATABASE);

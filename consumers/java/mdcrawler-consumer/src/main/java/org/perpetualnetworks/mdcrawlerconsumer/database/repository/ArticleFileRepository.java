@@ -61,6 +61,13 @@ public class ArticleFileRepository {
                 DEFAULT_DATABASE);
     }
 
+    public List<ArticleFileEntity> fetchAllArticleFiles() {
+        return sessionExecutor.executeAndReturn(session -> articleFileDao.fetch(
+                ArticleFileDao.Query.builder()
+                        .build(),
+                session), Database.CRAWLER_CONSUMER);
+    }
+
     public List<ArticleFileEntity> fetchArticleFiles(String fileNameLike) {
         return sessionExecutor.executeAndReturn(session -> articleFileDao.fetch(
                 ArticleFileDao.Query.builder()
@@ -69,12 +76,6 @@ public class ArticleFileRepository {
                 session), Database.CRAWLER_CONSUMER);
     }
 
-    public List<ArticleFileEntity> fetchAllArticleFiles() {
-        return sessionExecutor.executeAndReturn(session -> articleFileDao.fetch(
-                ArticleFileDao.Query.builder()
-                        .build(),
-                session), Database.CRAWLER_CONSUMER);
-    }
 
     public void saveOrUpdate(ArticleEntity articleEntity, Set<ArticleFile> articleFiles) {
         //for debugging

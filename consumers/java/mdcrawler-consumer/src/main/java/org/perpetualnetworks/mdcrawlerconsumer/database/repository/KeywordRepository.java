@@ -59,6 +59,7 @@ public class KeywordRepository {
                         .build(),
                 session), DEFAULT_DATABASE);
     }
+
     public List<KeywordEntity> fetchAllKeywords(Pageable pageable) {
         final Long count = (Long) sessionExecutor.executeAndReturn(session -> session
                 .createQuery("SELECT count(*) from KeywordEntity").uniqueResult(), DEFAULT_DATABASE);
@@ -68,6 +69,7 @@ public class KeywordRepository {
                                         .build(), pageable, session),
                 DEFAULT_DATABASE);
     }
+
     //Save or update from the Keyword object
     public KeywordEntity saveOrUpdate(String keyword) {
         Optional<KeywordEntity> existingEntity = getExistingEntity(keyword);

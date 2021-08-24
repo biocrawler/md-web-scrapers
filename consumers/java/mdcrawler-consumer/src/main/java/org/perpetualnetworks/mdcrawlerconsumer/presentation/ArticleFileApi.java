@@ -49,8 +49,8 @@ public class ArticleFileApi {
                             schema = @Schema(implementation = Page.class))})})
     @GetMapping("/")
     public Page<ArticleFile> findArticles(@RequestParam(required = false, defaultValue = "1") Integer page,
-                                      @RequestParam(required = false, defaultValue = "20") Integer size,
-                                      @RequestParam(required = false, defaultValue = "asc") String sort) {
+                                          @RequestParam(required = false, defaultValue = "20") Integer size,
+                                          @RequestParam(required = false, defaultValue = "asc") String sort) {
         final List<ArticleFileEntity> articleFileEntities = articleFileRepository.fetchAllArticleFiles(new Pageable(page, size, List.of(sort)));
         final List<ArticleFile> collect = articleFileEntities.stream()
                 .map(converter::convert)

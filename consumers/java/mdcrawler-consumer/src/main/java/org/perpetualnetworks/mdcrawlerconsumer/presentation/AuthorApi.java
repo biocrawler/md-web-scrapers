@@ -38,7 +38,7 @@ public class AuthorApi {
                             schema = @Schema(implementation = Article.class))})})
     @GetMapping("/{id}")
     public Author findById(@PathVariable long id) {
-        return authorRepository.fetchAuthor( (int) id)
+        return authorRepository.fetchAuthor((int) id)
                 .map(converter::convert)
                 .orElseThrow(RuntimeException::new);
     }
@@ -49,8 +49,8 @@ public class AuthorApi {
                             schema = @Schema(implementation = Page.class))})})
     @GetMapping("/")
     public Page<Author> findArticles(@RequestParam(required = false, defaultValue = "1") Integer page,
-                                      @RequestParam(required = false, defaultValue = "20") Integer size,
-                                      @RequestParam(required = false, defaultValue = "asc") String sort) {
+                                     @RequestParam(required = false, defaultValue = "20") Integer size,
+                                     @RequestParam(required = false, defaultValue = "asc") String sort) {
         final List<AuthorEntity> authorEntities = authorRepository.fetchAllAuthors(new Pageable(page, size, List.of(sort)));
         final List<Author> collect = authorEntities.stream()
                 .map(converter::convert)

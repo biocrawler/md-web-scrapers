@@ -44,8 +44,8 @@ public class KeywordsApi {
                             schema = @Schema(implementation = Page.class))})})
     @GetMapping("/")
     public Page<String> findKeywords(@RequestParam(required = false, defaultValue = "1") Integer page,
-                                      @RequestParam(required = false, defaultValue = "20") Integer size,
-                                      @RequestParam(required = false, defaultValue = "asc") String sort) {
+                                     @RequestParam(required = false, defaultValue = "20") Integer size,
+                                     @RequestParam(required = false, defaultValue = "asc") String sort) {
         final List<KeywordEntity> keywordEntities = keywordRepository.fetchAllKeywords(new Pageable(page, size, List.of(sort)));
         final List<String> collect = keywordEntities.stream()
                 .map(KeywordEntity::getWord)
