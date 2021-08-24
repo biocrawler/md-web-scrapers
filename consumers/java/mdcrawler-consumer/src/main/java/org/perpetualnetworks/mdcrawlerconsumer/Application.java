@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.info.License;
+import io.swagger.v3.oas.annotations.servers.Server;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -31,7 +32,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         description = Constants.Swagger.DESCRIPTION,
         termsOfService = "bob",
         license = @License(name = "BSD", url = ""),
-        contact = @Contact(name = "Contact developer", email = Constants.Swagger.EMAIL)))
+        contact = @Contact(name = "Contact developer", email = Constants.Swagger.EMAIL)),
+        servers = {@Server(url = "https://mdcrawler-api.perpetualnetworks.org:9443", 
+                description = "staging")})
 //@ExternalDocumentation(url = "external doc url", description = "external doc desc")
 public class Application {
 
